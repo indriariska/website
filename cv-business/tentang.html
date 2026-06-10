@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tentang Kami – CVPro Studio</title>
+  <meta name="description" content="Mengenal CVPro Studio lebih dekat. Kami jasa pembuatan CV dan portofolio profesional yang telah membantu 500+ klien tampil percaya diri di dunia kerja." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Page-specific styles -->
+  <style>
+    /* ============================================
+       TENTANG PAGE — EXTENDED STYLES
+       ============================================ */
+
+    /* ---- HERO TENTANG ---- */
+    .hero-tentang {
+      min-height: 88vh;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 45%, #24243e 100%);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 130px 0 80px;
+    }
+
+    /* Orb dekorasi */
+    .hero-tentang .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .hero-tentang .orb-1 {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      animation: floatOrb 8s ease-in-out infinite;
+    }
+    .hero-tentang .orb-2 {
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(59,130,246,0.25) 0%, transparent 70%);
+      bottom: -80px; left: -80px;
+      animation: floatOrb 10s ease-in-out infinite reverse;
+    }
+    .hero-tentang .orb-3 {
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(167,139,250,0.2) 0%, transparent 70%);
+      top: 40%; left: 38%;
+      animation: floatOrb 6s ease-in-out infinite;
+    }
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%       { transform: translateY(-24px) scale(1.06); }
+    }
+
+    /* Grid layout hero tentang */
+    .hero-tentang-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Badge */
+    .tentang-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(167,139,250,0.15);
+      border: 1px solid rgba(167,139,250,0.35);
+      color: #c4b5fd;
+      padding: 9px 22px;
+      border-radius: 50px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+    }
+    .tentang-badge .dot {
+      width: 8px; height: 8px;
+      background: #a78bfa;
+      border-radius: 50%;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+    }
+
+    .hero-tentang h1 {
+      font-size: 3.4rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 22px;
+    }
+    .hero-tentang h1 .highlight {
+      background: linear-gradient(90deg, #a78bfa 0%, #60a5fa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-tentang .subtitle {
+      color: rgba(255,255,255,0.68);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+
+    /* Stat pills */
+    .hero-pills {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
+      padding: 10px 18px;
+      border-radius: 50px;
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .pill:hover {
+      background: rgba(167,139,250,0.2);
+      border-color: rgba(167,139,250,0.4);
+      transform: translateY(-2px);
+    }
+    .pill i { color: #a78bfa; font-size: 0.9rem; }
+
+    /* Right side: floating card stack */
+    .hero-visual {
+      position: relative;
+      height: 420px;
+    }
+    .visual-card {
+      position: absolute;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 24px 28px;
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+    .visual-card:hover { transform: translateY(-6px); }
+
+    .vc-main {
+      top: 20px; left: 0;
+      width: 88%;
+      z-index: 3;
+    }
+    .vc-main .vc-icon {
+      width: 52px; height: 52px;
+      background: var(--gradient);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+    .vc-main h3 { font-size: 1rem; margin-bottom: 6px; font-weight: 700; }
+    .vc-main p  { font-size: 0.82rem; color: rgba(255,255,255,0.6); margin:0; line-height:1.5; }
+
+    .vc-stat {
+      bottom: 50px; right: 0;
+      width: 55%;
+      z-index: 4;
+      text-align: center;
+    }
+    .vc-stat .big-num {
+      font-size: 2.6rem;
+      font-weight: 900;
+      background: linear-gradient(90deg,#a78bfa,#60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .vc-stat p { font-size: 0.8rem; color: rgba(255,255,255,0.6); margin:0; }
+
+    .vc-badge {
+      bottom: 0; left: 10px;
+      width: 50%;
+      z-index: 5;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .vc-badge-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg,#10b981,#059669);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .vc-badge-text h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; }
+    .vc-badge-text p  { font-size: 0.75rem; color: rgba(255,255,255,0.55); margin:0; }
+
+    /* ---- ABOUT COMPANY ---- */
+    .about-company {
+      padding: 110px 0;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-company::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(124,58,237,0.04) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .about-company-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 72px;
+      align-items: center;
+    }
+    .about-label {
+      display: inline-block;
+      background: var(--gradient-light);
+      color: var(--primary);
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .about-company h2 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 22px;
+      line-height: 1.25;
+    }
+    .about-company h2 span {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .about-desc {
+      color: var(--gray);
+      font-size: 0.97rem;
+      line-height: 1.85;
+      margin-bottom: 32px;
+    }
+    .about-desc + .about-desc { margin-top: -12px; }
+
+    .about-cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* Right: decorative image mosaic */
+    .about-mosaic {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 180px 180px;
+      gap: 16px;
+    }
+    .mosaic-tile {
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    .mosaic-tile:first-child {
+      grid-row: 1 / 3;
+      border-radius: 24px;
+    }
+    .mosaic-bg {
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      transition: transform 0.4s ease;
+    }
+    .mosaic-tile:hover .mosaic-bg { transform: scale(1.05); }
+    .mosaic-bg-1 { background: linear-gradient(135deg,#1e1b4b,#4c1d95); }
+    .mosaic-bg-2 { background: linear-gradient(135deg,#0c4a6e,#0369a1); }
+    .mosaic-bg-3 { background: linear-gradient(135deg,#064e3b,#065f46); }
+
+    .mosaic-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+      padding: 16px;
+      display: flex;
+      align-items: flex-end;
+    }
+    .mosaic-overlay span {
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* ---- VISI MISI ---- */
+    .visi-misi {
+      padding: 100px 0;
+      background: var(--light);
+      position: relative;
+      overflow: hidden;
+    }
+    .visi-misi::after {
+      content: '';
+      position: absolute;
+      bottom: -150px; left: -150px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle,rgba(59,130,246,0.06) 0%,transparent 70%);
+      border-radius: 50%;
+    }
+    .vm-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    /* Visi card */
+    .vm-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 44px 40px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(124,58,237,0.07);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .vm-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 5px;
+      background: var(--gradient);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .vm-card:hover::before { transform: scaleX(1); }
+    .vm-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+    .vm-icon-wrap {
+      width: 72px; height: 72px;
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 24px;
+      transition: var(--transition);
+    }
+    .vm-card:hover .vm-icon-wrap {
+      transform: scale(1.1) rotate(-5deg);
+    }
+    .vm-icon-visi { background: linear-gradient(135deg,#ede9fe,#dbeafe); color: var(--primary); }
+    .vm-icon-misi { background: linear-gradient(135deg,#d1fae5,#a7f3d0); color: #059669; }
+    .vm-card h3 {
+      font-size: 1.35rem;
+      color: var(--dark);
+      margin-bottom: 14px;
+      font-weight: 800;
+    }
+    .vm-card .vm-desc {
+      color: var(--gray);
+      font-size: 0.95rem;
+      line-height: 1.75;
+      margin-bottom: 20px;
+    }
+    .misi-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .misi-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+    .misi-list li .misi-bullet {
+      width: 24px; height: 24px;
+      background: var(--gradient);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ---- KEUNGGULAN / TRUST BUILDER ---- */
+    .keunggulan-trust {
+      padding: 100px 0;
+      background: #fff;
+    }
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 24px;
+    }
+    .trust-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 36px 24px;
+      text-align: center;
+      box-shadow: 0 6px 24px rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.07);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .trust-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gradient);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      border-radius: 20px;
+    }
+    .trust-card:hover::after { opacity: 1; }
+    .trust-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
+    .trust-card:hover .trust-icon,
+    .trust-card:hover .trust-num,
+    .trust-card:hover h4,
+    .trust-card:hover p { color: #fff; }
+    .trust-card:hover .trust-icon { background: rgba(255,255,255,0.2); }
+
+    .trust-icon {
+      width: 68px; height: 68px;
+      background: var(--gradient-light);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.7rem;
+      color: var(--primary);
+      margin: 0 auto 18px;
+      transition: var(--transition);
+      position: relative; z-index: 1;
+    }
+    .trust-num {
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 6px;
+      position: relative; z-index: 1;
+      transition: none;
+    }
+    .trust-card:hover .trust-num {
+      background: none;
+      -webkit-text-fill-color: #fff;
+      color: #fff;
+    }
+    .trust-card h4 {
+      font-size: 0.95rem;
+      color: var(--dark);
+      margin-bottom: 6px;
+      position: relative; z-index: 1;
+      transition: color 0.35s ease;
+    }
+    .trust-card p {
+      font-size: 0.82rem;
+      line-height: 1.55;
+      position: relative; z-index: 1;
+      transition: color 0.35s ease;
+    }
+
+    /* ---- TEAM SECTION ---- */
+    .team-section {
+      padding: 100px 0;
+      background: var(--light);
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 28px;
+    }
+    .team-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 40px 28px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(124,58,237,0.07);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .team-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--gradient);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .team-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-hover);
+    }
+    .team-card:hover::before { opacity: 0.03; }
+    .team-card:hover .team-name,
+    .team-card:hover .team-role { color: var(--primary); }
+
+    .team-avatar-wrap {
+      position: relative;
+      width: 110px; height: 110px;
+      margin: 0 auto 22px;
+      z-index: 1;
+    }
+    .team-avatar-ring {
+      position: absolute; inset: -4px;
+      border-radius: 50%;
+      background: var(--gradient);
+      z-index: 0;
+    }
+    .team-avatar-ring::before {
+      content: '';
+      position: absolute; inset: 3px;
+      background: #fff;
+      border-radius: 50%;
+    }
+    .team-avatar {
+      position: relative; z-index: 1;
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      border: 3px solid #fff;
+    }
+    /* Fallback avatar jika gambar gagal load */
+    .team-avatar-fallback {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+      position: relative; z-index: 1;
+      border: 3px solid #fff;
+      margin: 0 auto;
+    }
+
+    .team-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 4px;
+      transition: color 0.3s ease;
+      position: relative; z-index: 1;
+    }
+    .team-role {
+      font-size: 0.82rem;
+      color: var(--primary);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      transition: color 0.3s ease;
+      position: relative; z-index: 1;
+    }
+    .team-desc {
+      font-size: 0.87rem;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      position: relative; z-index: 1;
+    }
+    .team-socials {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      position: relative; z-index: 1;
+    }
+    .team-social-btn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--gradient-light);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .team-social-btn:hover {
+      background: var(--gradient);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* ---- VALUES STRIP ---- */
+    .values-strip {
+      padding: 64px 0;
+      background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #1d4ed8 100%);
+      overflow: hidden;
+    }
+    .values-inner {
+      display: flex;
+      gap: 0;
+      align-items: center;
+      animation: marquee 20s linear infinite;
+      white-space: nowrap;
+    }
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .values-strip:hover .values-inner { animation-play-state: paused; }
+    .value-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 36px;
+      color: rgba(255,255,255,0.85);
+      font-size: 0.92rem;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .value-item i { color: #a78bfa; font-size: 1rem; }
+    .value-dot {
+      width: 6px; height: 6px;
+      background: rgba(167,139,250,0.5);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ---- TIMELINE ---- */
+    .timeline-section {
+      padding: 100px 0;
+      background: #fff;
+    }
+    .timeline {
+      position: relative;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0; bottom: 0;
+      width: 3px;
+      background: var(--gradient);
+      transform: translateX(-50%);
+      border-radius: 3px;
+    }
+    .tl-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 56px;
+      position: relative;
+    }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-dot {
+      position: absolute;
+      left: 50%;
+      top: 24px;
+      transform: translateX(-50%);
+      width: 20px; height: 20px;
+      background: var(--gradient);
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: var(--shadow);
+      z-index: 1;
+    }
+
+    /* Kanan */
+    .tl-item.right .tl-content {
+      grid-column: 2;
+    }
+    .tl-item.right .tl-year-col {
+      grid-column: 1;
+      grid-row: 1;
+      text-align: right;
+      padding-top: 16px;
+    }
+    /* Kiri */
+    .tl-item.left .tl-content {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .tl-item.left .tl-year-col {
+      grid-column: 2;
+      text-align: left;
+      padding-top: 16px;
+    }
+
+    .tl-year {
+      font-size: 2rem;
+      font-weight: 900;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    .tl-content {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 26px 28px;
+      box-shadow: 0 6px 24px rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.08);
+      transition: var(--transition);
+    }
+    .tl-content:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+    .tl-content h4 {
+      font-size: 1rem;
+      color: var(--dark);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .tl-content p {
+      font-size: 0.85rem;
+      color: var(--gray);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* ---- CTA TENTANG ---- */
+    .cta-tentang {
+      padding: 110px 0;
+      background: linear-gradient(135deg,#1e1b4b 0%,#4c1d95 45%,#1d4ed8 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-tentang::before {
+      content:'';
+      position: absolute;
+      top:-50%; left:50%;
+      transform: translateX(-50%);
+      width: 900px; height: 900px;
+      background: radial-gradient(circle, rgba(167,139,250,0.12) 0%, transparent 65%);
+      border-radius: 50%;
+    }
+    .cta-tentang .cta-icon {
+      width: 80px; height: 80px;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      color: #fff;
+      margin: 0 auto 28px;
+      position: relative; z-index: 1;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    .cta-tentang h2 {
+      font-size: 2.8rem;
+      color: #fff;
+      font-weight: 800;
+      margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+    .cta-tentang p {
+      color: rgba(255,255,255,0.72);
+      font-size: 1.05rem;
+      margin-bottom: 42px;
+      max-width: 520px;
+      margin-left: auto; margin-right: auto;
+      position: relative; z-index: 1;
+    }
+    .cta-tentang .cta-btns {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative; z-index: 1;
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 1024px) {
+      .trust-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 860px) {
+      .hero-tentang-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero-tentang h1 { font-size: 2.4rem; }
+      .hero-tentang .subtitle { max-width: 100%; margin-left: auto; margin-right: auto; }
+      .hero-pills { justify-content: center; }
+      .hero-visual { display: none; }
+      .about-company-inner { grid-template-columns: 1fr; }
+      .about-mosaic { display: none; }
+      .vm-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+      .timeline::before { left: 20px; }
+      .tl-item { grid-template-columns: 1fr; padding-left: 52px; }
+      .tl-item.right .tl-content,
+      .tl-item.left  .tl-content  { grid-column: 1; grid-row: 2; }
+      .tl-item.right .tl-year-col,
+      .tl-item.left  .tl-year-col { grid-column: 1; grid-row: 1; text-align: left; }
+      .tl-dot { left: 20px; }
+      .cta-tentang h2 { font-size: 2rem; }
+    }
+    @media (max-width: 600px) {
+      .trust-grid { grid-template-columns: 1fr 1fr; }
+      .hero-tentang h1 { font-size: 2rem; }
+    }
+    @media (max-width: 400px) {
+      .trust-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================
+     NAVBAR
+     ============================================ -->
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-logo">CV<span>Pro</span> Studio</a>
+      <ul class="nav-links">
+        <li><a href="index.html"    class="nav-link">Beranda</a></li>
+        <li><a href="tentang.html"  class="nav-link">Tentang</a></li>
+        <li><a href="layanan.html"  class="nav-link">Layanan</a></li>
+        <li><a href="template.html" class="nav-link">Template</a></li>
+        <li><a href="harga.html"    class="nav-link">Harga</a></li>
+        <li><a href="kontak.html"   class="nav-link">Kontak</a></li>
+        <li><a href="kontak.html"   class="nav-link nav-cta">Pesan Sekarang</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" aria-label="Tutup menu">&times;</button>
+  <a href="index.html"    class="nav-link">Beranda</a>
+  <a href="tentang.html"  class="nav-link">Tentang</a>
+  <a href="layanan.html"  class="nav-link">Layanan</a>
+  <a href="template.html" class="nav-link">Template</a>
+  <a href="harga.html"    class="nav-link">Harga</a>
+  <a href="kontak.html"   class="nav-link">Kontak</a>
+  <a href="kontak.html"   class="btn-primary" style="margin-top:8px">Pesan Sekarang</a>
+</div>
+
+
+<!-- ============================================
+     HERO SECTION
+     ============================================ -->
+<section class="hero-tentang">
+  <!-- Orb dekorasi -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="container">
+    <div class="hero-tentang-inner">
+
+      <!-- Kiri: Teks -->
+      <div class="fade-in">
+        <div class="tentang-badge">
+          <span class="dot"></span>
+          Mengenal CVPro Studio
+        </div>
+
+        <h1>
+          Kami Ada untuk<br />
+          <span class="highlight">Karier Impianmu</span>
+        </h1>
+
+        <p class="subtitle">
+          Kami membantu Anda tampil lebih profesional dengan CV dan portofolio yang menarik, ATS-friendly, dan disesuaikan dengan kebutuhan unik setiap klien.
+        </p>
+
+        <div class="hero-pills">
+          <div class="pill"><i class="fas fa-star"></i> 500+ Klien Puas</div>
+          <div class="pill"><i class="fas fa-bolt"></i> Selesai 24 Jam</div>
+          <div class="pill"><i class="fas fa-shield-alt"></i> Terpercaya Sejak 2021</div>
+        </div>
+      </div>
+
+      <!-- Kanan: Visual cards -->
+      <div class="hero-visual fade-in-right">
+
+        <!-- Card utama -->
+        <div class="visual-card vc-main">
+          <div class="vc-icon"><i class="fas fa-layer-group"></i></div>
+          <h3>Kami bukan sekadar jasa CV biasa.</h3>
+          <p>Kami adalah mitra karier yang memastikan setiap klien tampil optimal di mata rekruter dan sistem ATS perusahaan terbaik.</p>
+        </div>
+
+        <!-- Stat card -->
+        <div class="visual-card vc-stat">
+          <div class="big-num">98%</div>
+          <p>Tingkat Kepuasan Klien</p>
+        </div>
+
+        <!-- Badge card -->
+        <div class="visual-card vc-badge">
+          <div class="vc-badge-icon"><i class="fas fa-certificate"></i></div>
+          <div class="vc-badge-text">
+            <h4>ATS Certified</h4>
+            <p>Lolos sistem rekruter</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================
+     VALUES MARQUEE STRIP
+     ============================================ -->
+<div class="values-strip" aria-hidden="true">
+  <div class="values-inner">
+    <!-- Duplikat 2x agar marquee seamless -->
+    <span class="value-item"><i class="fas fa-star"></i> Profesional</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-rocket"></i> Cepat & Tepat</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-heart"></i> Berdedikasi</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-shield-alt"></i> Terpercaya</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-paint-brush"></i> Kreatif</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-robot"></i> ATS Friendly</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-redo"></i> Revisi Bebas</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-users"></i> 500+ Klien</span><span class="value-dot"></span>
+    <!-- Duplikat -->
+    <span class="value-item"><i class="fas fa-star"></i> Profesional</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-rocket"></i> Cepat & Tepat</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-heart"></i> Berdedikasi</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-shield-alt"></i> Terpercaya</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-paint-brush"></i> Kreatif</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-robot"></i> ATS Friendly</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-redo"></i> Revisi Bebas</span><span class="value-dot"></span>
+    <span class="value-item"><i class="fas fa-users"></i> 500+ Klien</span><span class="value-dot"></span>
+  </div>
+</div>
+
+
+<!-- ============================================
+     ABOUT COMPANY
+     ============================================ -->
+<section class="about-company">
+  <div class="container">
+    <div class="about-company-inner">
+
+      <!-- Kiri: Teks -->
+      <div class="fade-in-left">
+        <span class="about-label">Cerita Kami</span>
+        <h2>Lahir dari Passion,<br /><span>Tumbuh dari Kepercayaan</span></h2>
+
+        <p class="about-desc">
+          CVPro Studio adalah layanan jasa pembuatan CV dan portofolio profesional yang berfokus membantu pencari kerja meningkatkan peluang diterima kerja. Kami percaya bahwa setiap orang berhak tampil terbaik di hadapan rekruter — dan kami hadir untuk mewujudkan itu.
+        </p>
+        <p class="about-desc" style="margin-top:14px">
+          Dengan desain modern, format ATS-friendly, dan pendekatan personal yang kami tawarkan, kami telah membantu ratusan klien — mulai dari fresh graduate hingga profesional berpengalaman — untuk tampil lebih percaya diri dan menonjol di dunia kerja yang semakin kompetitif.
+        </p>
+        <p class="about-desc" style="margin-top:14px">
+          Setiap CV yang kami buat bukan sekadar dokumen. Ia adalah representasi dirimu — cerita karier, keahlian, dan nilai yang kamu bawa ke dunia profesional.
+        </p>
+
+        <div class="about-cta-row" style="margin-top:32px">
+          <a href="layanan.html" class="btn-primary">
+            <i class="fas fa-layer-group"></i>&nbsp; Lihat Layanan
+          </a>
+          <a href="kontak.html" class="btn-outline">
+            <i class="fas fa-paper-plane"></i>&nbsp; Hubungi Kami
+          </a>
+        </div>
+      </div>
+
+      <!-- Kanan: Mosaic visual -->
+      <div class="about-mosaic fade-in-right">
+        <!-- Tile besar kiri -->
+        <div class="mosaic-tile">
+          <div class="mosaic-bg mosaic-bg-1">📄</div>
+          <div class="mosaic-overlay"><span>CV Profesional</span></div>
+        </div>
+        <!-- Tile kanan atas -->
+        <div class="mosaic-tile">
+          <div class="mosaic-bg mosaic-bg-2">🌐</div>
+          <div class="mosaic-overlay"><span>Portofolio Web</span></div>
+        </div>
+        <!-- Tile kanan bawah -->
+        <div class="mosaic-tile">
+          <div class="mosaic-bg mosaic-bg-3">💼</div>
+          <div class="mosaic-overlay"><span>Karier Impian</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================
+     VISI & MISI
+     ============================================ -->
+<section class="visi-misi">
+  <div class="container">
+    <h2 class="section-title fade-in">Visi &amp; Misi</h2>
+    <p class="section-subtitle fade-in">Landasan yang mendorong kami terus berkarya untuk klien terbaik kami</p>
+
+    <div class="vm-grid">
+
+      <!-- VISI -->
+      <div class="vm-card fade-in delay-1">
+        <div class="vm-icon-wrap vm-icon-visi">
+          <i class="fas fa-eye"></i>
+        </div>
+        <h3>Visi</h3>
+        <p class="vm-desc">
+          Menjadi jasa pembuatan CV dan portofolio terbaik dan terpercaya di Indonesia yang mampu memberdayakan setiap pencari kerja untuk tampil percaya diri dan profesional.
+        </p>
+        <!-- Highlight quote -->
+        <div style="background:var(--gradient-light);border-left:4px solid var(--primary);padding:16px 18px;border-radius:10px;margin-top:4px">
+          <p style="font-size:0.88rem;color:var(--dark);font-style:italic;margin:0;font-weight:500">
+            "Setiap orang berhak mendapatkan kesempatan karier terbaik, dimulai dari CV yang tepat."
+          </p>
+        </div>
+      </div>
+
+      <!-- MISI -->
+      <div class="vm-card fade-in delay-2">
+        <div class="vm-icon-wrap vm-icon-misi">
+          <i class="fas fa-bullseye"></i>
+        </div>
+        <h3>Misi</h3>
+        <p class="vm-desc">Kami berkomitmen menjalankan misi nyata untuk setiap klien yang kami layani:</p>
+        <ul class="misi-list">
+          <li>
+            <span class="misi-bullet"><i class="fas fa-check fa-xs"></i></span>
+            Memberikan desain CV dan portofolio berkualitas tinggi yang mencerminkan profesionalisme klien
+          </li>
+          <li>
+            <span class="misi-bullet"><i class="fas fa-check fa-xs"></i></span>
+            Membantu klien lolos seleksi kerja dengan format ATS-friendly yang teroptimasi
+          </li>
+          <li>
+            <span class="misi-bullet"><i class="fas fa-check fa-xs"></i></span>
+            Memberikan pelayanan cepat, responsif, dan profesional dari awal hingga akhir
+          </li>
+          <li>
+            <span class="misi-bullet"><i class="fas fa-check fa-xs"></i></span>
+            Terus berinovasi mengikuti tren desain dan kebutuhan rekruter terkini
+          </li>
+          <li>
+            <span class="misi-bullet"><i class="fas fa-check fa-xs"></i></span>
+            Menjaga kepercayaan klien dengan hasil kerja yang melampaui ekspektasi
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================
+     KEUNGGULAN / TRUST BUILDER
+     ============================================ -->
+<section class="keunggulan-trust">
+  <div class="container">
+    <h2 class="section-title fade-in">Mengapa Kami Dipercaya</h2>
+    <p class="section-subtitle fade-in">Angka dan komitmen yang membuktikan kualitas layanan kami</p>
+
+    <div class="trust-grid">
+
+      <div class="trust-card fade-in delay-1">
+        <div class="trust-icon"><i class="fas fa-users"></i></div>
+        <div class="trust-num">500+</div>
+        <h4>Klien Puas</h4>
+        <p>Ratusan klien dari berbagai industri telah mempercayakan CV mereka kepada kami</p>
+      </div>
+
+      <div class="trust-card fade-in delay-2">
+        <div class="trust-icon"><i class="fas fa-robot"></i></div>
+        <div class="trust-num">100%</div>
+        <h4>ATS Friendly</h4>
+        <p>Semua CV kami dirancang lolos sistem ATS perusahaan nasional & multinasional</p>
+      </div>
+
+      <div class="trust-card fade-in delay-3">
+        <div class="trust-icon"><i class="fas fa-redo-alt"></i></div>
+        <div class="trust-num">∞</div>
+        <h4>Revisi Sampai Puas</h4>
+        <p>Kami tidak berhenti sampai kamu benar-benar puas dengan hasil akhirnya</p>
+      </div>
+
+      <div class="trust-card fade-in delay-4">
+        <div class="trust-icon"><i class="fas fa-bolt"></i></div>
+        <div class="trust-num">24 Jam</div>
+        <h4>Proses Cepat</h4>
+        <p>Pengerjaan selesai dalam 24 jam — bahkan 6 jam untuk paket Premium ekspres</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================
+     TIM / FOUNDER
+     ============================================ -->
+<section class="team-section">
+  <div class="container">
+    <h2 class="section-title fade-in">Tim Kami</h2>
+    <p class="section-subtitle fade-in">Orang-orang berdedikasi di balik setiap CV premium yang kami hasilkan</p>
+
+    <!-- ============================================
+     TIM / FOUNDER (FIX 2 ORANG)
+     ============================================ -->
+
+<section class="team-section">
+  <div class="container">
+    <h2 class="section-title fade-in">Tim Kami</h2>
+    <p class="section-subtitle fade-in">Orang-orang berdedikasi di balik setiap CV premium yang kami hasilkan</p>
+
+```
+<div class="team-grid">
+
+  <!-- Member 1: Indri Ariska -->
+  <div class="team-card fade-in delay-1">
+    <div class="team-avatar-wrap">
+      <img src="assets/img/indri.jpg" class="team-avatar" alt="Indri Ariska">
+    </div>
+
+    <h3 class="team-name">Indri Ariska</h3>
+    <p class="team-role">Founder & Creative Director</p>
+    <p class="team-desc">
+      Desainer berpengalaman yang berfokus pada pembuatan CV profesional dan menarik, membantu klien tampil lebih percaya diri dan unggul di dunia kerja.
+    </p>
+
+    <div class="team-socials">
+      <a href="#" class="team-social-btn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#" class="team-social-btn"><i class="fab fa-instagram"></i></a>
+      <a href="https://wa.me/628XXXXXXXXXX" class="team-social-btn"><i class="fab fa-whatsapp"></i></a>
+    </div>
+  </div>
+
+  <!-- Member 2: Fitri Za -->
+  <div class="team-card fade-in delay-2">
+    <div class="team-avatar-wrap">
+      <img src="assets/img/fitri.jpg" class="team-avatar" alt="Fitri Za">
+    </div>
+
+    <h3 class="team-name">Fitri Za</h3>
+    <p class="team-role">Lead Designer & ATS Specialist</p>
+    <p class="team-desc">
+      Ahli desain CV modern dan ATS-friendly yang memastikan setiap CV tidak hanya menarik secara visual tetapi juga lolos sistem rekrutmen perusahaan.
+    </p>
+
+    <div class="team-socials">
+      <a href="#" class="team-social-btn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#" class="team-social-btn"><i class="fab fa-instagram"></i></a>
+    </div>
+  </div>
+
+</div>
+```
+
+  </div>
+</section>
+
+
+
+<!-- ============================================
+     TIMELINE PERJALANAN
+     ============================================ -->
+<section class="timeline-section">
+  <div class="container">
+    <h2 class="section-title fade-in">Perjalanan Kami</h2>
+    <p class="section-subtitle fade-in">Dari ide sederhana menjadi studio CV yang dipercaya ratusan klien</p>
+
+    <div class="timeline">
+
+      <!-- 2021 -->
+      <div class="tl-item right fade-in">
+        <div class="tl-dot"></div>
+        <div class="tl-year-col">
+          <div class="tl-year">2021</div>
+        </div>
+        <div class="tl-content">
+          <h4>🚀 Awal Mula</h4>
+          <p>CVPro Studio lahir dari keinginan membantu teman-teman yang kesulitan membuat CV menarik. Dimulai dari kamar kos, kami melayani 20 klien pertama.</p>
+        </div>
+      </div>
+
+      <!-- 2022 -->
+      <div class="tl-item left fade-in delay-1">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <h4>📈 Mulai Berkembang</h4>
+          <p>Klien bertambah hingga 100+ orang. Kami menambah layanan CV Kreatif dan mulai mengembangkan template ATS-friendly pertama kami.</p>
+        </div>
+        <div class="tl-year-col">
+          <div class="tl-year">2022</div>
+        </div>
+      </div>
+
+      <!-- 2023 -->
+      <div class="tl-item right fade-in delay-2">
+        <div class="tl-dot"></div>
+        <div class="tl-year-col">
+          <div class="tl-year">2023</div>
+        </div>
+        <div class="tl-content">
+          <h4>🌐 Ekspansi Layanan</h4>
+          <p>Meluncurkan layanan Portofolio Website dan Optimasi LinkedIn. Tim bertambah dengan bergabungnya Sari dan Bayu sebagai spesialis desain dan konten.</p>
+        </div>
+      </div>
+
+      <!-- 2024 -->
+      <div class="tl-item left fade-in delay-3">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <h4>🏆 Milestone 500 Klien</h4>
+          <p>Mencapai 500+ klien puas dari berbagai industri. Meluncurkan website resmi CVPro Studio dan paket Premium dengan layanan ekspres 6 jam.</p>
+        </div>
+        <div class="tl-year-col">
+          <div class="tl-year">2024</div>
+        </div>
+      </div>
+
+      <!-- 2025 -->
+      <div class="tl-item right fade-in delay-4">
+        <div class="tl-dot"></div>
+        <div class="tl-year-col">
+          <div class="tl-year">2025</div>
+        </div>
+        <div class="tl-content">
+          <h4>✨ Terus Bertumbuh</h4>
+          <p>Mengembangkan koleksi template premium baru, meningkatkan kualitas layanan, dan berkomitmen menjadi studio CV #1 yang paling terpercaya di Indonesia.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================
+     CTA PENUTUP
+     ============================================ -->
+<section class="cta-tentang">
+  <div class="container">
+    <div class="cta-icon fade-in">
+      <i class="fas fa-briefcase"></i>
+    </div>
+    <h2 class="fade-in">Siap Meningkatkan<br />Peluang Karier Anda?</h2>
+    <p class="fade-in">Bergabunglah bersama 500+ klien yang telah merasakan manfaat nyata dari CV dan portofolio profesional kami. Pesan sekarang dan rasakan perbedaannya!</p>
+    <div class="cta-btns fade-in">
+      <a href="kontak.html" class="btn-white">
+        <i class="fas fa-paper-plane"></i>&nbsp; Pesan Sekarang
+      </a>
+      <a href="harga.html" class="btn-outline-white">
+        <i class="fas fa-tags"></i>&nbsp; Lihat Harga
+      </a>
+      <a href="https://wa.me/6281234567890?text=Halo%20CVPro%20Studio%2C%20saya%20ingin%20konsultasi%20CV" target="_blank" rel="noopener" class="btn-outline-white">
+        <i class="fab fa-whatsapp"></i>&nbsp; Konsultasi Gratis
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================
+     FOOTER
+     ============================================ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="footer-logo">CV<span>Pro</span> Studio</a>
+        <p>Jasa pembuatan CV dan portofolio profesional. Kami membantu Anda tampil percaya diri dan menonjol di mata rekruter.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-btn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-btn" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+          <a href="#" class="social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="index.html"><i class="fas fa-chevron-right fa-xs"></i> Beranda</a></li>
+          <li><a href="tentang.html"><i class="fas fa-chevron-right fa-xs"></i> Tentang Kami</a></li>
+          <li><a href="layanan.html"><i class="fas fa-chevron-right fa-xs"></i> Layanan</a></li>
+          <li><a href="template.html"><i class="fas fa-chevron-right fa-xs"></i> Template</a></li>
+          <li><a href="harga.html"><i class="fas fa-chevron-right fa-xs"></i> Harga</a></li>
+          <li><a href="kontak.html"><i class="fas fa-chevron-right fa-xs"></i> Kontak</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Layanan</h4>
+        <ul class="footer-links">
+          <li><a href="layanan.html"><i class="fas fa-chevron-right fa-xs"></i> CV ATS</a></li>
+          <li><a href="layanan.html"><i class="fas fa-chevron-right fa-xs"></i> CV Kreatif</a></li>
+          <li><a href="layanan.html"><i class="fas fa-chevron-right fa-xs"></i> Portofolio Web</a></li>
+          <li><a href="layanan.html"><i class="fas fa-chevron-right fa-xs"></i> Optimasi LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Hubungi Kami</h4>
+        <ul class="footer-links">
+          <li><a href="https://wa.me/6281234567890"><i class="fab fa-whatsapp"></i> +62 812-3456-7890</a></li>
+          <li><a href="mailto:hello@cvprostudio.id"><i class="fas fa-envelope"></i> hello@cvprostudio.id</a></li>
+          <li><a href="#"><i class="fab fa-instagram"></i> @cvprostudio</a></li>
+          <li><a href="#"><i class="fas fa-clock"></i> Buka 08.00–22.00 WIB</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 CVPro Studio. Hak cipta dilindungi.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Kebijakan Privasi</a>
+        <a href="#">Syarat &amp; Ketentuan</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- WA Float -->
+<div class="wa-float">
+  <span class="wa-tooltip">Chat via WhatsApp</span>
+  <a href="https://wa.me/6281234567890?text=Halo%20CVPro%20Studio%2C%20saya%20ingin%20konsultasi%20CV" class="wa-btn" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
