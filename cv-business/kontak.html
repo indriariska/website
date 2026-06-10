@@ -273,7 +273,7 @@
     <h2 class="fade-in">Atau Hubungi Langsung via WhatsApp</h2>
     <p class="fade-in">Lebih suka ngobrol? Chat langsung dengan tim kami di WhatsApp. Respons cepat!</p>
     <div class="cta-buttons fade-in">
-      <a href="https://wa.me/6281234567890?text=Halo%20CVPro%20Studio%2C%20saya%20ingin%20pesan%20CV%20profesional" target="_blank" class="btn-white">
+      <a href="https://wa.me/6283122172584?text=Halo%20CVPro%20Studio%2C%20saya%20ingin%20pesan%20CV%20profesional" target="_blank" class="btn-white">
         <i class="fab fa-whatsapp"></i>&nbsp; Chat WhatsApp Sekarang
       </a>
     </div>
@@ -337,7 +337,7 @@
 <!-- WA Float -->
 <div class="wa-float">
   <span class="wa-tooltip">Chat via WhatsApp</span>
-  <a href="https://wa.me/6281234567890?text=Halo%20CVPro%20Studio%2C%20saya%20ingin%20pesan%20CV%20profesional" class="wa-btn" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <a href="https://wa.me/+62 83122172584?text=Halo%20CVPro%20Studio%2C%20saya%20ingin%20pesan%20CV%20profesional" class="wa-btn" target="_blank" rel="noopener" aria-label="WhatsApp">
     <i class="fab fa-whatsapp"></i>
   </a>
 </div>
@@ -375,6 +375,39 @@
       }
     }
   });
+</script>
+<script>
+document.getElementById("orderForm").addEventListener("submit", function(e) {
+  e.preventDefault(); // STOP pindah ke sukses dulu
+
+  // Ambil data form
+  var nama = document.getElementById("nama").value;
+  var email = document.getElementById("email").value;
+  var wa = document.getElementById("whatsapp").value;
+  var layanan = document.getElementById("layanan").value;
+  var template = document.getElementById("template").value;
+  var pesan = document.getElementById("pesan").value;
+
+  // Format pesan ke WhatsApp
+  var text = "📥 PESANAN BARU CVPro Studio%0A%0A"
+           + "👤 Nama: " + nama + "%0A"
+           + "📧 Email: " + email + "%0A"
+           + "📱 WhatsApp: " + wa + "%0A"
+           + "📦 Layanan: " + layanan + "%0A"
+           + "🎨 Template: " + template + "%0A"
+           + "📝 Pesan: " + pesan;
+
+  // Nomor admin (GANTI INI)
+  var nomorAdmin = "6283122172584";
+
+  // Buka WhatsApp
+  window.open("https://wa.me/" + nomorAdmin + "?text=" + text, "_blank");
+
+  // Setelah 1 detik pindah ke halaman sukses
+  setTimeout(function() {
+    window.location.href = "sukses.html";
+  }, 1000);
+});
 </script>
 </body>
 </html>

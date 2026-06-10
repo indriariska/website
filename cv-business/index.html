@@ -425,9 +425,9 @@
       <div class="footer-col">
         <h4>Hubungi Kami</h4>
         <ul class="footer-links">
-          <li><a href="https://wa.me/6281234567890"><i class="fab fa-whatsapp"></i> +62 812-3456-7890</a></li>
-          <li><a href="mailto:hello@cvprostudio.id"><i class="fas fa-envelope"></i> hello@cvprostudio.id</a></li>
-          <li><a href="#"><i class="fab fa-instagram"></i> @cvprostudio</a></li>
+          <li><a href="https://wa.me/6283122172584"><i class="fab fa-whatsapp"></i> +62 831-2217-2584</a></li>
+          <li><a href="mailto:hello@cvprostudio.id"><i class="fas fa-envelope"></i> hello@indriariska469.com</a></li>
+          <li><a href="#"><i class="fab fa-instagram"></i> @ftryy.z.a_</a></li>
           <li><a href="#"><i class="fas fa-clock"></i> Buka 08.00–22.00 WIB</a></li>
         </ul>
       </div>
@@ -449,12 +449,45 @@
      ============================================ -->
 <div class="wa-float">
   <span class="wa-tooltip">Chat via WhatsApp</span>
-  <a href="https://wa.me/6281234567890?text=Halo%20CVPro%20Studio%2C%20saya%20ingin%20pesan%20CV%20profesional" class="wa-btn" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <a href="https://wa.me/6283122172584?text=Halo%20CVPro%20Studio%2C%20saya%20ingin%20pesan%20CV%20profesional" class="wa-btn" target="_blank" rel="noopener" aria-label="WhatsApp">
     <i class="fab fa-whatsapp"></i>
   </a>
 </div>
 
 <!-- Script -->
 <script src="js/script.js"></script>
+<script>
+document.querySelector("form").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  var nama = document.querySelector("input[name='nama']").value;
+  var email = document.querySelector("input[name='email']").value;
+  var nomor = document.querySelector("input[name='nomor']").value;
+  var layanan = document.querySelector("select[name='layanan']").value;
+  var template = document.querySelector("select[name='template']").value;
+  var pesanTambahan = document.querySelector("textarea").value;
+
+  var nomorAdmin = "6283122172584";
+
+  var pesan =
+    "📌 PESANAN BARU CV%0A%0A" +
+    "👤 Nama: " + nama + "%0A" +
+    "📧 Email: " + email + "%0A" +
+    "📱 No WA: " + nomor + "%0A" +
+    "🛠 Layanan: " + layanan + "%0A" +
+    "🎨 Template: " + template + "%0A" +
+    "📝 Pesan: " + pesanTambahan;
+
+  var url = "https://wa.me/" + nomorAdmin + "?text=" + pesan;
+
+  // buka WA dulu
+  window.open(url, "_blank");
+
+  // lalu pindah ke sukses
+  setTimeout(function() {
+    window.location.href = "sukses.html";
+  }, 1000);
+});
+</script>
 </body>
 </html>
