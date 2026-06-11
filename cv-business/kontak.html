@@ -235,17 +235,8 @@
             <span class="form-error" id="template-error">Pilih template yang diinginkan</span>
           </div>
 
-          <!-- Paket -->
-<div class="form-group">
-  <label>Paket</label>
-  <input type="text" id="paket" name="paket" readonly>
-</div>
-
-<!-- Harga -->
-<div class="form-group">
-  <label>Harga</label>
-  <input type="text" id="harga" name="harga" readonly>
-</div>
+          <!-- Paket (hidden, auto-filled from URL) -->
+<input type="hidden" id="paket" name="paket" value="" />
 
           <!-- Pesan Tambahan -->
           <div class="form-group">
@@ -383,15 +374,6 @@
         pesanEl.value = 'Saya ingin memesan paket ' + paketParam + '.';
       }
     }
-
-    // ================= HARGA =================
-  const hargaParam = params.get('harga');
-  if (hargaParam) {
-    const hargaInput = document.getElementById('harga');
-    if (hargaInput) {
-      hargaInput.value = "Rp " + parseInt(hargaParam).toLocaleString("id-ID");
-    }
-  }
 });
 </script>
 <script>
