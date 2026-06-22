@@ -457,6 +457,26 @@
   document.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
 
+    // Auto-fill layanan dari URL (dari halaman layanan)
+    const layananParam = params.get('layanan');
+    if (layananParam) {
+      const select = document.getElementById('template');
+      if (select) {
+        for (let opt of select.options) {
+          if (opt.value.toLowerCase() === layananParam.toLowerCase()) {
+            opt.selected = true;
+            // Auto-fill harga dari data-price
+            const hargaInput = document.getElementById('harga');
+            if (hargaInput && opt.dataset.price) {
+              const price = parseInt(opt.dataset.price);
+              hargaInput.value = price > 0 ? 'Rp' + price.toLocaleString('id-ID') : 'Rp0';
+            }
+            break;
+          }
+        }
+      }
+    }
+
     // Auto-fill template dari URL
     const templateParam = params.get('template');
     if (templateParam) {
@@ -477,11 +497,29 @@
       }
     }
 
-    // Auto-fill paket dari URL (dari halaman harga)
+    // Auto-fill paket dari URL (dari halaman harga/beranda)
     const paketParam = params.get('paket');
     if (paketParam) {
       const paketInput = document.getElementById('paket');
       if (paketInput) paketInput.value = paketParam;
+
+      // Juga auto-fill template dropdown berdasarkan paket
+      const select = document.getElementById('template');
+      if (select) {
+        for (let opt of select.options) {
+          // Cek jika option value mengandung nama paket (case-insensitive)
+          if (opt.value.toLowerCase().includes(paketParam.toLowerCase())) {
+            opt.selected = true;
+            // Auto-fill harga dari data-price
+            const hargaInput = document.getElementById('harga');
+            if (hargaInput && opt.dataset.price) {
+              const price = parseInt(opt.dataset.price);
+              hargaInput.value = price > 0 ? 'Rp' + price.toLocaleString('id-ID') : 'Rp0';
+            }
+            break;
+          }
+        }
+      }
     }
 
     // Auto-fill harga dari URL

@@ -1355,6 +1355,11 @@ a {
 }
 
 /* Review Modal */
+.review-modal {
+  z-index: 2500;
+  background: transparent;
+}
+
 .review-modal .modal-content {
   max-width: 500px;
 }
@@ -2948,6 +2953,234 @@ textarea.form-control {
     font-size: 1.4rem;
   }
 }
+
+/* ============================================
+   IMAGE-BASED TEMPLATE PREVIEW SYSTEM
+   ============================================ */
+
+/* Template Preview Image on Homepage */
+.template-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Template Detail Modal - Preview Section */
+.template-detail-preview-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.template-detail-preview-wrapper:hover {
+  transform: scale(1.02);
+}
+
+.template-detail-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: var(--light);
+}
+
+.template-detail-preview-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.template-detail-preview-wrapper:hover .template-detail-preview-overlay {
+  opacity: 1;
+}
+
+.btn-view-full {
+  background: var(--white);
+  color: var(--primary);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-view-full:hover {
+  background: var(--gradient);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
+/* Fullscreen Preview Modal */
+.full-preview-modal {
+  z-index: 3000;
+}
+
+.modal-content-fullscreen {
+  max-width: 95vw;
+  max-height: 95vh;
+  width: 95vw;
+  height: 95vh;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.modal-header-fullscreen {
+  padding: 20px 28px;
+}
+
+.modal-body-fullscreen {
+  padding: 0;
+  height: calc(95vh - 80px);
+  overflow: hidden;
+}
+
+.full-preview-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--light);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.full-preview-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+/* Modal Content Large for Template Detail */
+.modal-content-large {
+  max-width: 900px;
+  width: 100%;
+}
+
+.template-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.template-detail-preview {
+  min-height: 400px;
+  background: var(--light);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.template-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.template-detail-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.template-detail-badges .template-type-badge,
+.template-detail-badges .template-category-badge {
+  position: static;
+  font-size: 0.8rem;
+}
+
+.template-detail-features {
+  background: var(--light);
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.template-detail-features h5 {
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  color: var(--dark);
+}
+
+.template-detail-features ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.template-detail-features li {
+  font-size: 0.85rem;
+  color: var(--gray);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.template-detail-features li i {
+  color: var(--primary);
+}
+
+.template-detail-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.template-detail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+}
+
+/* Responsive Styles for Template Detail Modal */
+@media (max-width: 768px) {
+  .template-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .template-detail-preview {
+    min-height: 300px;
+  }
+
+  .modal-content-fullscreen {
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .modal-body-fullscreen {
+    height: calc(100vh - 70px);
+  }
+
+  .full-preview-container {
+    padding: 10px;
+  }
+}
+
 .center-team {
   display: flex !important;
   justify-content: center !important;

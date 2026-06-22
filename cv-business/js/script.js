@@ -1100,82 +1100,57 @@ function initModals() {
 
       e.stopPropagation();
 
-      const tmplId = this.dataset.template;
+      // Find the parent template card to get image data
+      const templateCard = this.closest('.template-card');
+      const previewImage = templateCard.querySelector('.template-preview-image');
 
-      const data = templates[tmplId];
+      if (!previewImage) return;
 
-      if (!data) return;
+      // Get data from image attributes
+      const title = previewImage.dataset.title;
+      const desc = previewImage.dataset.desc;
+      const type = previewImage.dataset.type;
+      const category = previewImage.dataset.category;
+      const package = previewImage.dataset.package;
+      const price = previewImage.dataset.price;
+      const previewSrc = previewImage.src;
+      const fullSrc = previewImage.dataset.fullImage;
 
+      if (!title) return;
 
+      // Update modal content
+      const modal = document.getElementById('templateDetailModal');
+      if (!modal) return;
 
-      modalTitle.textContent = data.title;
+      document.getElementById('templateDetailTitle').textContent = 'Detail Template';
+      document.getElementById('templateDetailName').textContent = title;
+      document.getElementById('templateDetailDesc').textContent = desc;
+      document.getElementById('templateDetailType').textContent = type;
+      document.getElementById('templateDetailCategory').textContent = category;
+      document.getElementById('templateDetailPrice').textContent = 'Rp' + parseInt(price).toLocaleString('id-ID');
 
-      modalInfoTitle.textContent = data.title;
-
-      modalInfoDesc.textContent = data.desc;
-
-
-
-      // Render preview
-
-      modalPreview.className = 'modal-preview-inner ' + data.class;
-
-      modalPreview.innerHTML = `
-
-        <div class="modal-watermark">SAMPLE</div>
-
-        <div class="tmpl-header">
-
-          <div class="tmpl-avatar">👤</div>
-
-          <div class="tmpl-info">
-
-            <div class="tmpl-name"></div>
-
-            <div class="tmpl-role"></div>
-
-          </div>
-
-        </div>
-
-        <div class="tmpl-line w-full"></div>
-
-        <div class="tmpl-line w-3-4"></div>
-
-        <div class="tmpl-line w-1-2"></div>
-
-        <div class="tmpl-line w-full"></div>
-
-        <div class="tmpl-line w-2-3"></div>
-
-        <div class="tmpl-line w-3-4"></div>
-
-        <div class="tmpl-line w-1-2"></div>
-
-      `;
-
-
-
-      // Set pesan button
-
-      const pesanBtn = modal.querySelector('#modalPesanBtn');
-
-      if (pesanBtn) {
-
-        pesanBtn.dataset.templateName = data.title;
-
-        pesanBtn.addEventListener('click', function() {
-
-          pilihTemplate(data.title);
-
-        });
-
+      // Update preview image
+      const previewImg = document.getElementById('templateDetailPreviewImage');
+      if (previewImg) {
+        previewImg.src = previewSrc;
       }
 
+      // Update order button
+      const orderBtn = document.getElementById('templateDetailOrderBtn');
+      if (orderBtn) {
+        orderBtn.href = `kontak.html?paket=${encodeURIComponent(type + ' ' + package)}&harga=${price}`;
+      }
 
+      // Setup fullscreen preview button
+      const viewFullBtn = document.getElementById('btnViewFullTemplate');
+      if (viewFullBtn) {
+        viewFullBtn.onclick = function() {
+          openFullPreview(fullSrc, title);
+        };
+      }
 
+      // Show modal
       modal.classList.add('active');
-
       document.body.style.overflow = 'hidden';
 
     });
@@ -2720,6 +2695,106 @@ function initLayananFilter() {
 
 /* ============================================
 
+   FULLSCREEN PREVIEW MODAL FUNCTIONS
+
+   ============================================ */
+
+function openFullPreview(imageSrc, title) {
+
+  const modal = document.getElementById('fullPreviewModal');
+
+  if (!modal) return;
+
+
+
+  const fullPreviewImage = document.getElementById('fullPreviewImage');
+
+  const fullPreviewTitle = document.getElementById('fullPreviewTitle');
+
+
+
+  if (fullPreviewImage) {
+
+    fullPreviewImage.src = imageSrc;
+
+  }
+
+
+
+  if (fullPreviewTitle) {
+
+    fullPreviewTitle.textContent = 'Preview Template Penuh: ' + title;
+
+  }
+
+
+
+  modal.classList.add('active');
+
+  document.body.style.overflow = 'hidden';
+
+}
+
+
+
+function closeFullPreviewModal() {
+
+  const modal = document.getElementById('fullPreviewModal');
+
+  if (modal) {
+
+    modal.classList.remove('active');
+
+    document.body.style.overflow = '';
+
+  }
+
+}
+
+
+
+// Initialize fullscreen modal event listeners
+
+function initFullPreviewModal() {
+
+  const modal = document.getElementById('fullPreviewModal');
+
+  if (!modal) return;
+
+
+
+  // Close when clicking outside
+
+  modal.addEventListener('click', function(e) {
+
+    if (e.target === modal) {
+
+      closeFullPreviewModal();
+
+    }
+
+  });
+
+
+
+  // Close on Escape key
+
+  document.addEventListener('keydown', function(e) {
+
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+
+      closeFullPreviewModal();
+
+    }
+
+  });
+
+}
+
+
+
+/* ============================================
+
    14. INIT ALL
 
    ============================================ */
@@ -2741,6 +2816,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initReviewButtons();
 
   initLayananFilter();
+
+  initFullPreviewModal();
 
 
 

@@ -92,7 +92,7 @@
           </ul>
           <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap">
             <button class="btn-outline" onclick="openServiceModal('cv-ats')"><i class="fas fa-eye"></i> Lihat Template</button>
-            <a href="kontak.html?layanan=CV+ATS" class="btn-primary">Pesan CV ATS</a>
+            <a href="kontak.html?layanan=CV+ATS+Professional" class="btn-primary">Pesan CV ATS</a>
           </div>
         </div>
       </div>
@@ -117,7 +117,7 @@
           </ul>
           <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap">
             <button class="btn-outline" onclick="openServiceModal('cv-kreatif')"><i class="fas fa-eye"></i> Lihat Template</button>
-            <a href="kontak.html?layanan=CV+Kreatif" class="btn-primary">Pesan CV Kreatif</a>
+            <a href="kontak.html?layanan=CV+Kreatif+%26+Modern" class="btn-primary">Pesan CV Kreatif</a>
           </div>
         </div>
       </div>
@@ -532,6 +532,14 @@ document.getElementById('serviceTemplateModal').addEventListener('click', functi
     document.body.style.overflow = '';
   }
 });
+
+// Close review modal (only close review, keep service modal open)
+function closeReviewModal() {
+  const reviewModal = document.getElementById('reviewModal');
+  if (reviewModal) {
+    reviewModal.classList.remove('active');
+  }
+}
 
 // Add CSS for service template grid
 const style = document.createElement('style');
