@@ -133,6 +133,43 @@
 
       <!-- Right: Order Form -->
       <div class="fade-in-right">
+        <!-- Payment Methods Section -->
+        <div class="payment-methods-section" style="margin-bottom:32px">
+          <h3 style="margin-bottom:20px;font-size:1.2rem"><i class="fas fa-credit-card" style="color:var(--primary)"></i>&nbsp; Metode Pembayaran</h3>
+          <div class="payment-methods-grid">
+            <div class="payment-card">
+              <div class="payment-icon"><i class="fas fa-university"></i></div>
+              <div class="payment-name">BCA</div>
+              <div class="payment-number">123-456-7890</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-icon"><i class="fas fa-mosque"></i></div>
+              <div class="payment-name">BSI</div>
+              <div class="payment-number">7123-4567-890</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-icon"><i class="fas fa-building"></i></div>
+              <div class="payment-name">BRI</div>
+              <div class="payment-number">0023-0101-5678-901</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-icon"><i class="fas fa-landmark"></i></div>
+              <div class="payment-name">Mandiri</div>
+              <div class="payment-number">123-000-4567-890</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-icon"><i class="fas fa-wallet"></i></div>
+              <div class="payment-name">DANA</div>
+              <div class="payment-number">0812-3456-7890</div>
+            </div>
+            <div class="payment-card">
+              <div class="payment-icon"><i class="fas fa-mobile-alt"></i></div>
+              <div class="payment-name">GoPay</div>
+              <div class="payment-number">0812-3456-7890</div>
+            </div>
+          </div>
+        </div>
+
         <!-- 
           Netlify Form:
           - Gunakan method POST
@@ -169,6 +206,7 @@
               <span class="form-error" id="nama-error">Nama lengkap wajib diisi</span>
             </div>
 
+            
             <div class="form-group">
               <label for="email">Email <span>*</span></label>
               <input
@@ -197,40 +235,82 @@
             <span class="form-error" id="whatsapp-error">Nomor WhatsApp wajib diisi</span>
           </div>
 
-          <!-- Layanan -->
-          <div class="form-group">
-            <label for="layanan">Pilih Layanan <span>*</span></label>
-            <select id="layanan" name="layanan" class="form-control">
-              <option value="">-- Pilih Layanan --</option>
-              <option value="CV ATS">CV ATS Profesional</option>
-              <option value="CV Kreatif">CV Kreatif &amp; Modern</option>
-              <option value="Portfolio Website">Portfolio Website</option>
-              <option value="Optimasi LinkedIn">Optimasi LinkedIn</option>
-              <option value="Paket Lengkap">Paket Lengkap (CV + LinkedIn)</option>
-            </select>
-            <span class="form-error" id="layanan-error">Pilih layanan yang diinginkan</span>
-          </div>
-
           <!-- Template -->
           <div class="form-group">
-            <label for="template">Pilih Template <span>*</span></label>
+            <label for="template">Pilih Template / Layanan <span>*</span></label>
             <select id="template" name="template" class="form-control">
-              <option value="">-- Pilih Template --</option>
-              <optgroup label="Template CV">
-                <option value="CV Modern Professional">CV Modern Professional</option>
-                <option value="CV Clean Minimalist">CV Clean &amp; Minimalist</option>
-                <option value="CV Creative Dark">CV Creative Dark</option>
-                <option value="CV Minimal Elegant">CV Minimal Elegant</option>
-                <option value="CV Elegant Green">CV Elegant Green</option>
-                <option value="CV Bold Vibrant">CV Bold &amp; Vibrant</option>
+              <option value="" data-price="">-- Pilih Template / Layanan --</option>
+              <optgroup label="Layanan">
+                <option value="CV ATS Professional" data-price="150000">CV ATS Professional</option>
+                <option value="CV Kreatif & Modern" data-price="250000">CV Kreatif & Modern</option>
+                <option value="Portfolio Website" data-price="500000">Portfolio Website</option>
+                <option value="Optimasi LinkedIn" data-price="200000">Optimasi LinkedIn</option>
               </optgroup>
-              <optgroup label="Template Portofolio">
-                <option value="Portofolio Ocean Blue">Portofolio Ocean Blue</option>
-                <option value="Portofolio Forest Green">Portofolio Forest Green</option>
-                <option value="Portofolio Warm Amber">Portofolio Warm Amber</option>
-                <option value="Portofolio Royal Purple">Portofolio Royal Purple</option>
+              <optgroup label="CV Basic">
+                <option value="CV Basic Clean" data-price="99000">CV Basic Clean</option>
+                <option value="CV Basic Simple" data-price="99000">CV Basic Simple</option>
+                <option value="CV Basic Classic" data-price="99000">CV Basic Classic</option>
+                <option value="CV Basic Standard" data-price="99000">CV Basic Standard</option>
+                <option value="CV Basic Minimal" data-price="99000">CV Basic Minimal</option>
+                <option value="CV Basic Professional" data-price="99000">CV Basic Professional</option>
               </optgroup>
-              <option value="Sesuaikan saja">Sesuaikan saja / Tidak tahu</option>
+              <optgroup label="CV Standard">
+                <option value="CV Modern Professional" data-price="199000">CV Modern Professional</option>
+                <option value="CV Clean & Minimalist" data-price="199000">CV Clean & Minimalist</option>
+                <option value="CV Two Column" data-price="199000">CV Two Column</option>
+                <option value="CV Sidebar Accent" data-price="199000">CV Sidebar Accent</option>
+                <option value="CV Professional Blue" data-price="199000">CV Professional Blue</option>
+                <option value="CV Executive Style" data-price="199000">CV Executive Style</option>
+              </optgroup>
+              <optgroup label="CV Premium">
+                <option value="CV Creative Dark" data-price="499000">CV Creative Dark</option>
+                <option value="CV Minimal Elegant" data-price="499000">CV Minimal Elegant</option>
+                <option value="CV Elegant Green" data-price="499000">CV Elegant Green</option>
+                <option value="CV Bold & Vibrant" data-price="499000">CV Bold & Vibrant</option>
+                <option value="CV Gradient Modern" data-price="499000">CV Gradient Modern</option>
+                <option value="CV Infographic Style" data-price="499000">CV Infographic Style</option>
+              </optgroup>
+              <optgroup label="CV Professional">
+                <option value="CV Luxury Gold" data-price="799000">CV Luxury Gold</option>
+                <option value="CV Executive Premium" data-price="799000">CV Executive Premium</option>
+                <option value="CV Corporate Elite" data-price="799000">CV Corporate Elite</option>
+                <option value="CV Designer Pro" data-price="799000">CV Designer Pro</option>
+                <option value="CV Tech Lead" data-price="799000">CV Tech Lead</option>
+                <option value="CV Consultant Expert" data-price="799000">CV Consultant Expert</option>
+              </optgroup>
+              <optgroup label="Portofolio Basic">
+                <option value="Portofolio Simple Clean" data-price="99000">Portofolio Simple Clean</option>
+                <option value="Portofolio Minimal Start" data-price="99000">Portofolio Minimal Start</option>
+                <option value="Portofolio Basic Grid" data-price="99000">Portofolio Basic Grid</option>
+                <option value="Portofolio Clean Layout" data-price="99000">Portofolio Clean Layout</option>
+                <option value="Portofolio Starter" data-price="99000">Portofolio Starter</option>
+                <option value="Portofolio Entry Level" data-price="99000">Portofolio Entry Level</option>
+              </optgroup>
+              <optgroup label="Portofolio Standard">
+                <option value="Portofolio Ocean Blue" data-price="199000">Portofolio Ocean Blue</option>
+                <option value="Portofolio Forest Green" data-price="199000">Portofolio Forest Green</option>
+                <option value="Portofolio Warm Amber" data-price="199000">Portofolio Warm Amber</option>
+                <option value="Portofolio Royal Purple" data-price="199000">Portofolio Royal Purple</option>
+                <option value="Portofolio Modern Dark" data-price="199000">Portofolio Modern Dark</option>
+                <option value="Portofolio Light Clean" data-price="199000">Portofolio Light Clean</option>
+              </optgroup>
+              <optgroup label="Portofolio Premium">
+                <option value="Portofolio Creative Pro" data-price="499000">Portofolio Creative Pro</option>
+                <option value="Portofolio Interactive" data-price="499000">Portofolio Interactive</option>
+                <option value="Portofolio Gallery Style" data-price="499000">Portofolio Gallery Style</option>
+                <option value="Portofolio Bold Design" data-price="499000">Portofolio Bold Design</option>
+                <option value="Portofolio Gradient Flow" data-price="499000">Portofolio Gradient Flow</option>
+                <option value="Portofolio Minimal Premium" data-price="499000">Portofolio Minimal Premium</option>
+              </optgroup>
+              <optgroup label="Portofolio Professional">
+                <option value="Portofolio Agency Elite" data-price="799000">Portofolio Agency Elite</option>
+                <option value="Portofolio Corporate Pro" data-price="799000">Portofolio Corporate Pro</option>
+                <option value="Portofolio Expert Showcase" data-price="799000">Portofolio Expert Showcase</option>
+                <option value="Portofolio Luxury Brand" data-price="799000">Portofolio Luxury Brand</option>
+                <option value="Portofolio Award Winning" data-price="799000">Portofolio Award Winning</option>
+                <option value="Portofolio Master Class" data-price="799000">Portofolio Master Class</option>
+              </optgroup>
+              <option value="Sesuaikan saja" data-price="0">Sesuaikan saja / Tidak tahu</option>
             </select>
             <span class="form-error" id="template-error">Pilih template yang diinginkan</span>
           </div>
@@ -238,17 +318,45 @@
           <!-- Paket (hidden, auto-filled from URL) -->
 <input type="hidden" id="paket" name="paket" value="" />
 
-          <!-- Pesan Tambahan -->
+          <!-- Harga (readonly, auto-filled) -->
           <div class="form-group">
-            <label for="pesan">Pesan Tambahan <span>*</span></label>
+            <label for="harga">Harga</label>
+            <input
+              type="text"
+              id="harga"
+              name="harga"
+              class="form-control"
+              placeholder="Rp0"
+              readonly
+              style="background:var(--light);cursor:not-allowed"
+            />
+          </div>
+
+          <!-- Metode Pembayaran -->
+          <div class="form-group">
+            <label for="metode_pembayaran">Metode Pembayaran <span>*</span></label>
+            <select id="metode_pembayaran" name="metode_pembayaran" class="form-control">
+              <option value="">-- Pilih Metode Pembayaran --</option>
+              <option value="BCA">BCA</option>
+              <option value="BSI">BSI (Bank Syariah Indonesia)</option>
+              <option value="BRI">BRI</option>
+              <option value="Mandiri">Mandiri</option>
+              <option value="DANA">DANA</option>
+              <option value="GoPay">GoPay</option>
+            </select>
+            <span class="form-error" id="metode_pembayaran-error">Pilih metode pembayaran</span>
+          </div>
+
+          <!-- Pesan Tambahan (opsional) -->
+          <div class="form-group">
+            <label for="pesan">Pesan Tambahan</label>
             <textarea
               id="pesan"
               name="pesan"
               class="form-control"
               placeholder="Ceritakan detail kebutuhanmu: pengalaman kerja, industri, posisi yang dilamar, atau permintaan khusus lainnya..."
-              rows="5"
+              rows="4"
             ></textarea>
-            <span class="form-error" id="pesan-error">Pesan tambahan wajib diisi</span>
           </div>
 
           <!-- Submit -->
@@ -344,19 +452,25 @@
 
 <script src="js/script.js"></script>
 
-<!-- Auto-fill layanan & paket dari URL parameter -->
+<!-- Auto-fill template, paket, harga dari URL parameter -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
 
-    // Auto-fill layanan dari URL
-    const layananParam = params.get('layanan');
-    if (layananParam) {
-      const select = document.getElementById('layanan');
+    // Auto-fill template dari URL
+    const templateParam = params.get('template');
+    if (templateParam) {
+      const select = document.getElementById('template');
       if (select) {
         for (let opt of select.options) {
-          if (opt.value.toLowerCase() === layananParam.toLowerCase()) {
+          if (opt.value.toLowerCase() === templateParam.toLowerCase()) {
             opt.selected = true;
+            // Auto-fill harga dari data-price
+            const hargaInput = document.getElementById('harga');
+            if (hargaInput && opt.dataset.price) {
+              const price = parseInt(opt.dataset.price);
+              hargaInput.value = price > 0 ? 'Rp' + price.toLocaleString('id-ID') : 'Rp0';
+            }
             break;
           }
         }
@@ -368,13 +482,31 @@
     if (paketParam) {
       const paketInput = document.getElementById('paket');
       if (paketInput) paketInput.value = paketParam;
-      // Juga tampilkan info paket di pesan
-      const pesanEl = document.getElementById('pesan');
-      if (pesanEl && !pesanEl.value) {
-        pesanEl.value = 'Saya ingin memesan paket ' + paketParam + '.';
+    }
+
+    // Auto-fill harga dari URL
+    const hargaParam = params.get('harga');
+    if (hargaParam) {
+      const hargaInput = document.getElementById('harga');
+      if (hargaInput) {
+        const price = parseInt(hargaParam);
+        hargaInput.value = price > 0 ? 'Rp' + price.toLocaleString('id-ID') : 'Rp0';
       }
     }
-});
+
+    // Auto-fill harga saat template dipilih
+    const templateSelect = document.getElementById('template');
+    if (templateSelect) {
+      templateSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const hargaInput = document.getElementById('harga');
+        if (hargaInput && selectedOption.dataset.price) {
+          const price = parseInt(selectedOption.dataset.price);
+          hargaInput.value = price > 0 ? 'Rp' + price.toLocaleString('id-ID') : 'Rp0';
+        }
+      });
+    }
+  });
 </script>
 <script>
 document.getElementById("orderForm").addEventListener("submit", function(e) {
@@ -384,8 +516,10 @@ document.getElementById("orderForm").addEventListener("submit", function(e) {
   var nama = document.getElementById("nama").value;
   var email = document.getElementById("email").value;
   var wa = document.getElementById("whatsapp").value;
-  var layanan = document.getElementById("layanan").value;
   var template = document.getElementById("template").value;
+  var paket = document.getElementById("paket").value;
+  var harga = document.getElementById("harga").value;
+  var metodePembayaran = document.getElementById("metode_pembayaran").value;
   var pesan = document.getElementById("pesan").value;
 
   // Format pesan ke WhatsApp
@@ -393,9 +527,11 @@ document.getElementById("orderForm").addEventListener("submit", function(e) {
            + "👤 Nama: " + nama + "%0A"
            + "📧 Email: " + email + "%0A"
            + "📱 WhatsApp: " + wa + "%0A"
-           + "📦 Layanan: " + layanan + "%0A"
            + "🎨 Template: " + template + "%0A"
-           + "📝 Pesan: " + pesan;
+           + "📦 Paket: " + (paket || '-') + "%0A"
+           + "💰 Harga: " + harga + "%0A"
+           + "💳 Metode Pembayaran: " + metodePembayaran + "%0A"
+           + "📝 Pesan: " + (pesan || '-');
 
   // Nomor admin (GANTI INI)
   var nomorAdmin = "6283122172584";
@@ -411,3 +547,4 @@ document.getElementById("orderForm").addEventListener("submit", function(e) {
 </script>
 </body>
 </html>
+

@@ -81,6 +81,7 @@
           <span class="layanan-badge">Terlaris</span>
           <h3>CV ATS Profesional</h3>
           <p>CV yang dirancang khusus untuk lolos sistem ATS (Applicant Tracking System) yang digunakan perusahaan besar, startup, dan MNC.</p>
+          <div class="layanan-price">Mulai dari Rp 150.000</div>
           <ul class="layanan-list">
             <li>Format sesuai standar ATS internasional</li>
             <li>Keyword optimization sesuai industri</li>
@@ -89,7 +90,8 @@
             <li>Konsultasi konten CV gratis</li>
             <li>Revisi hingga puas</li>
           </ul>
-          <div style="margin-top:20px">
+          <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap">
+            <button class="btn-outline" onclick="openServiceModal('cv-ats')"><i class="fas fa-eye"></i> Lihat Template</button>
             <a href="kontak.html?layanan=CV+ATS" class="btn-primary">Pesan CV ATS</a>
           </div>
         </div>
@@ -104,6 +106,7 @@
           <span class="layanan-badge" style="background:linear-gradient(135deg,#ede9fe,#dbeafe);color:#7c3aed">Populer</span>
           <h3>CV Kreatif & Modern</h3>
           <p>CV dengan desain visual yang mencolok dan unik. Ideal untuk posisi di industri kreatif, desain, marketing, dan media.</p>
+          <div class="layanan-price">Mulai dari Rp 250.000</div>
           <ul class="layanan-list">
             <li>Desain custom eksklusif</li>
             <li>Pilihan dari 6+ template premium</li>
@@ -112,7 +115,8 @@
             <li>Format PDF siap cetak & digital</li>
             <li>Revisi hingga puas</li>
           </ul>
-          <div style="margin-top:20px">
+          <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap">
+            <button class="btn-outline" onclick="openServiceModal('cv-kreatif')"><i class="fas fa-eye"></i> Lihat Template</button>
             <a href="kontak.html?layanan=CV+Kreatif" class="btn-primary">Pesan CV Kreatif</a>
           </div>
         </div>
@@ -127,6 +131,7 @@
           <span class="layanan-badge" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46">Premium</span>
           <h3>Portfolio Website</h3>
           <p>Website portofolio profesional yang menampilkan karya dan kemampuanmu secara digital. Berkesan dan mudah diakses kapan saja.</p>
+          <div class="layanan-price">Mulai dari Rp 500.000</div>
           <ul class="layanan-list">
             <li>Desain responsif (HP & laptop)</li>
             <li>Halaman tentang saya, proyek, kontak</li>
@@ -135,7 +140,8 @@
             <li>Deploy ke hosting gratis (Netlify/Vercel)</li>
             <li>Panduan update konten</li>
           </ul>
-          <div style="margin-top:20px">
+          <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap">
+            <button class="btn-outline" onclick="openServiceModal('portfolio')"><i class="fas fa-eye"></i> Lihat Template</button>
             <a href="kontak.html?layanan=Portfolio+Website" class="btn-primary">Pesan Portfolio</a>
           </div>
         </div>
@@ -150,6 +156,7 @@
           <span class="layanan-badge" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e">Baru</span>
           <h3>Optimasi LinkedIn</h3>
           <p>Optimalkan profil LinkedIn-mu agar lebih mudah ditemukan rekruter dan memberikan kesan profesional yang kuat.</p>
+          <div class="layanan-price">Mulai dari Rp 200.000</div>
           <ul class="layanan-list">
             <li>Penulisan headline & summary menarik</li>
             <li>Optimasi keyword untuk pencarian</li>
@@ -158,7 +165,8 @@
             <li>Foto profil & banner profesional</li>
             <li>Strategi personal branding</li>
           </ul>
-          <div style="margin-top:20px">
+          <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap">
+            <button class="btn-outline" onclick="openServiceModal('linkedin')"><i class="fas fa-eye"></i> Lihat Template</button>
             <a href="kontak.html?layanan=Optimasi+LinkedIn" class="btn-primary">Pesan Optimasi</a>
           </div>
         </div>
@@ -197,19 +205,82 @@
       <!-- Step 3 -->
       <div style="text-align:center;position:relative;z-index:1" class="fade-in delay-3">
         <div style="width:72px;height:72px;background:var(--gradient);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:white;font-size:1.5rem;font-weight:800;box-shadow:var(--shadow)">3</div>
-        <h4 style="font-size:1rem;color:var(--dark);margin-bottom:8px">Proses Pengerjaan</h4>
-        <p style="font-size:0.85rem">Kami mulai mengerjakan CV/portofolio sesuai pesananmu</p>
+        <h4 style="font-size:1rem;color:var(--dark);margin-bottom:8px">Pengerjaan</h4>
+        <p style="font-size:0.85rem">Tim profesional kami mengerjakan pesananmu dengan teliti</p>
       </div>
 
       <!-- Step 4 -->
       <div style="text-align:center;position:relative;z-index:1" class="fade-in delay-4">
         <div style="width:72px;height:72px;background:var(--gradient);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:white;font-size:1.5rem;font-weight:800;box-shadow:var(--shadow)">4</div>
-        <h4 style="font-size:1rem;color:var(--dark);margin-bottom:8px">Terima & Revisi</h4>
-        <p style="font-size:0.85rem">Hasil dikirim, kamu bisa revisi gratis sampai puas</p>
+        <h4 style="font-size:1rem;color:var(--dark);margin-bottom:8px">Revisi & Selesai</h4>
+        <p style="font-size:0.85rem">Revisi sesuai kebutuhan hingga puas, lalu file dikirim</p>
       </div>
     </div>
   </div>
 </section>
+
+
+<!-- REVIEW MODAL -->
+<div class="modal review-modal" id="reviewModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="reviewModalTitle">Review Layanan</h3>
+      <button class="modal-close" onclick="closeReviewModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div id="reviewModalContent" class="review-content">
+        <!-- Reviews will be dynamically inserted here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICE TEMPLATE MODAL -->
+<div class="modal" id="serviceTemplateModal" role="dialog" aria-modal="true">
+  <div class="modal-content" style="max-width:1200px">
+    <div class="modal-header">
+      <h3 id="serviceModalTitle">Template Layanan</h3>
+      <button class="modal-close" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="serviceModalContent" class="service-template-grid">
+        <!-- Template cards will be dynamically inserted here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPLATE PREVIEW MODAL -->
+<div class="modal" id="templateModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalTitle">Preview Template</h3>
+      <button class="modal-close" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Preview area -->
+      <div class="modal-preview">
+        <div class="modal-preview-inner" id="modalPreview">
+          <div class="modal-watermark">SAMPLE</div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="modal-info">
+        <h4 id="modalInfoTitle">Nama Template</h4>
+        <p id="modalInfoDesc">Deskripsi template akan muncul di sini.</p>
+        <div class="modal-actions">
+          <button class="btn-primary" id="modalPesanBtn" onclick="void(0)">
+            <i class="fas fa-paper-plane"></i>&nbsp; Pilih Template Ini
+          </button>
+          <button class="btn-outline modal-close-btn" onclick="document.getElementById('templateModal').classList.remove('active');document.body.style.overflow=''">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- CTA -->
 <section class="cta-section">
@@ -286,5 +357,283 @@
 </div>
 
 <script src="js/script.js"></script>
+
+<script>
+// Service template data
+const serviceTemplates = {
+  'cv-ats': {
+    title: 'CV ATS Professional',
+    templates: [
+      { id: 'cv-ats-1', name: 'CV ATS Software Engineer', desc: 'Format ATS-friendly untuk posisi teknologi', image: 'https://via.placeholder.com/300x400/7c3aed/ffffff?text=CV+ATS+1' },
+      { id: 'cv-ats-2', name: 'CV ATS Marketing', desc: 'Optimasi keyword untuk industri marketing', image: 'https://via.placeholder.com/300x400/3b82f6/ffffff?text=CV+ATS+2' },
+      { id: 'cv-ats-3', name: 'CV ATS Finance', desc: 'Format profesional untuk keuangan', image: 'https://via.placeholder.com/300x400/065f46/ffffff?text=CV+ATS+3' },
+      { id: 'cv-ats-4', name: 'CV ATS Healthcare', desc: 'Format ATS untuk bidang kesehatan', image: 'https://via.placeholder.com/300x400/dc2626/ffffff?text=CV+ATS+4' }
+    ]
+  },
+  'cv-kreatif': {
+    title: 'CV Kreatif & Modern',
+    templates: [
+      { id: 'cv-kreatif-1', name: 'CV Kreatif Designer', desc: 'Desain visual untuk desainer grafis', image: 'https://via.placeholder.com/300x400/9333ea/ffffff?text=CV+Kreatif+1' },
+      { id: 'cv-kreatif-2', name: 'CV Kreatif Marketing', desc: 'Desain modern untuk marketing', image: 'https://via.placeholder.com/300x400/ec4899/ffffff?text=CV+Kreatif+2' },
+      { id: 'cv-kreatif-3', name: 'CV Kreatif Media', desc: 'Desain eye-catching untuk media', image: 'https://via.placeholder.com/300x400/f59e0b/ffffff?text=CV+Kreatif+3' },
+      { id: 'cv-kreatif-4', name: 'CV Kreatif Startup', desc: 'Desain modern untuk startup', image: 'https://via.placeholder.com/300x400/10b981/ffffff?text=CV+Kreatif+4' }
+    ]
+  },
+  'portfolio': {
+    title: 'Portfolio Website',
+    templates: [
+      { id: 'porto-1', name: 'Portofolio Developer', desc: 'Website portofolio untuk developer', image: 'https://via.placeholder.com/300x400/0ea5e9/ffffff?text=Portofolio+1' },
+      { id: 'porto-2', name: 'Portofolio Designer', desc: 'Website portofolio untuk desainer', image: 'https://via.placeholder.com/300x400/8b5cf6/ffffff?text=Portofolio+2' },
+      { id: 'porto-3', name: 'Portofolio Photographer', desc: 'Website portofolio untuk fotografer', image: 'https://via.placeholder.com/300x400/f43f5e/ffffff?text=Portofolio+3' },
+      { id: 'porto-4', name: 'Portofolio Writer', desc: 'Website portofolio untuk penulis', image: 'https://via.placeholder.com/300x400/14b8a6/ffffff?text=Portofolio+4' }
+    ]
+  },
+  'linkedin': {
+    title: 'Optimasi LinkedIn',
+    templates: [
+      { id: 'linkedin-1', name: 'LinkedIn Tech Professional', desc: 'Profil LinkedIn untuk teknologi', image: 'https://via.placeholder.com/300x400/0077b5/ffffff?text=LinkedIn+1' },
+      { id: 'linkedin-2', name: 'LinkedIn Executive', desc: 'Profil LinkedIn untuk eksekutif', image: 'https://via.placeholder.com/300x400/00a0dc/ffffff?text=LinkedIn+2' },
+      { id: 'linkedin-3', name: 'LinkedIn Creative', desc: 'Profil LinkedIn untuk kreatif', image: 'https://via.placeholder.com/300x400/0e76a8/ffffff?text=LinkedIn+3' },
+      { id: 'linkedin-4', name: 'LinkedIn Fresh Graduate', desc: 'Profil LinkedIn untuk fresh graduate', image: 'https://via.placeholder.com/300x400/004182/ffffff?text=LinkedIn+4' }
+    ]
+  }
+};
+
+// Open service modal
+function openServiceModal(serviceType) {
+  const modal = document.getElementById('serviceTemplateModal');
+  const modalTitle = document.getElementById('serviceModalTitle');
+  const modalContent = document.getElementById('serviceModalContent');
+  
+  const serviceData = serviceTemplates[serviceType];
+  if (!serviceData) return;
+  
+  modalTitle.textContent = serviceData.title;
+  
+  // Render template cards
+  modalContent.innerHTML = serviceData.templates.map(template => `
+    <div class="template-card">
+      <div class="template-thumb">
+        <img src="${template.image}" alt="${template.name}">
+      </div>
+      <div class="template-info">
+        <h4>${template.name}</h4>
+        <p>${template.desc}</p>
+        <div class="template-actions">
+          <button class="btn-outline btn-preview" data-template="${template.id}" onclick="previewTemplate('${template.id}', '${template.name}', '${template.desc}')">
+            <i class="fas fa-eye"></i> Lihat Detail
+          </button>
+          <button class="btn-outline btn-review" onclick="showReview('${template.id}')">
+            <i class="fas fa-star"></i> Lihat Review
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+// Preview template
+function previewTemplate(templateId, templateName, templateDesc) {
+  const modal = document.getElementById('templateModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalInfoTitle = document.getElementById('modalInfoTitle');
+  const modalInfoDesc = document.getElementById('modalInfoDesc');
+  const modalPreview = document.getElementById('modalPreview');
+  
+  modalTitle.textContent = templateName;
+  modalInfoTitle.textContent = templateName;
+  modalInfoDesc.textContent = templateDesc;
+  
+  // Render preview with placeholder
+  modalPreview.className = 'modal-preview-inner';
+  modalPreview.innerHTML = `
+    <div class="modal-watermark">SAMPLE</div>
+    <div class="tmpl-header">
+      <div class="tmpl-avatar">👤</div>
+      <div class="tmpl-info">
+        <div class="tmpl-name"></div>
+        <div class="tmpl-role"></div>
+      </div>
+    </div>
+    <div class="tmpl-line w-full"></div>
+    <div class="tmpl-line w-3-4"></div>
+    <div class="tmpl-line w-1-2"></div>
+    <div class="tmpl-line w-full"></div>
+    <div class="tmpl-line w-2-3"></div>
+    <div class="tmpl-line w-3-4"></div>
+    <div class="tmpl-line w-1-2"></div>
+  `;
+  
+  // Close service modal
+  document.getElementById('serviceTemplateModal').classList.remove('active');
+  
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+// Show review
+function showReview(templateId) {
+  const reviewModal = document.getElementById('reviewModal');
+  const reviewTitle = document.getElementById('reviewModalTitle');
+  const reviewContent = document.getElementById('reviewModalContent');
+  
+  reviewTitle.textContent = 'Review Template';
+  reviewContent.innerHTML = `
+    <div class="review-item">
+      <div class="review-header">
+        <div class="reviewer-info">
+          <div class="reviewer-avatar">👤</div>
+          <div class="reviewer-name">Ahmad R.</div>
+        </div>
+        <div class="review-rating">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+      </div>
+      <p class="review-text">Template ini sangat profesional dan mudah digunakan. Hasilnya sangat memuaskan!</p>
+    </div>
+    <div class="review-item">
+      <div class="review-header">
+        <div class="reviewer-info">
+          <div class="reviewer-avatar">👤</div>
+          <div class="reviewer-name">Siti M.</div>
+        </div>
+        <div class="review-rating">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+        </div>
+      </div>
+      <p class="review-text">Desain yang modern dan sesuai dengan kebutuhan saya. Sangat recommended!</p>
+    </div>
+  `;
+  
+  reviewModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+// Close service modal
+document.getElementById('serviceTemplateModal').querySelector('.modal-close').addEventListener('click', function() {
+  document.getElementById('serviceTemplateModal').classList.remove('active');
+  document.body.style.overflow = '';
+});
+
+document.getElementById('serviceTemplateModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+});
+
+// Add CSS for service template grid
+const style = document.createElement('style');
+style.textContent = `
+  .service-template-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    padding: 20px 0;
+  }
+  @media (max-width: 768px) {
+    .service-template-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .template-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .template-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+  .template-thumb {
+    padding: 16px;
+    background: #f9fafb;
+    flex-shrink: 0;
+  }
+  .template-thumb img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .template-info {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .template-info h4 {
+    margin: 0 0 8px 0;
+    color: var(--dark);
+    font-size: 1.1rem;
+  }
+  .template-info p {
+    margin: 0 0 16px 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+    flex-grow: 1;
+  }
+  .template-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    justify-content: center;
+  }
+  .template-actions button {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .template-actions .btn-outline {
+    background: white;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+  }
+  .template-actions .btn-outline:hover {
+    background: var(--primary);
+    color: white;
+  }
+  .template-actions .btn-primary {
+    background: var(--primary);
+    color: white;
+    border: 2px solid var(--primary);
+  }
+  .template-actions .btn-primary:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+  }
+  .layanan-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border-radius: 8px;
+    display: inline-block;
+  }
+`;
+document.head.appendChild(style);
+</script>
 </body>
 </html>
