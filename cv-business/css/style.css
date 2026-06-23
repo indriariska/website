@@ -576,20 +576,26 @@ a {
   background: var(--light);
 }
 
+/* Grid 3 kolom — 2 baris (3 CV + 3 Portofolio) */
 .template-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  gap: 24px;
   margin-bottom: 40px;
+  align-items: stretch;
 }
 
+/* Card: flex column agar tingginya seragam */
 .template-card {
   background: var(--white);
-  border-radius: var(--radius);
+  border-radius: 20px;
   overflow: hidden;
   box-shadow: var(--shadow);
   transition: var(--transition);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .template-card:hover {
@@ -597,11 +603,54 @@ a {
   box-shadow: var(--shadow-hover);
 }
 
+/* Thumb: tinggi fixed agar semua baris sama */
 .template-thumb {
-  width: 100%;
-  height: 220px;
   position: relative;
   overflow: hidden;
+  background: #f5f3ff;
+  height: 320px;           /* tinggi seragam untuk semua card */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  flex-shrink: 0;          /* jangan menyusut */
+}
+
+/* Gambar: contain agar portrait CV tidak terpotong */
+.template-preview .template-card .template-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 10px;
+  transition: transform 0.4s ease;
+}
+
+.template-preview .template-card:hover .template-preview-image {
+  transform: scale(1.03);
+}
+
+/* Video: cover agar mengisi penuh */
+.template-preview .template-card .template-preview-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+  transition: transform 0.4s ease;
+}
+
+.template-preview .template-card:hover .template-preview-video {
+  transform: scale(1.03);
+}
+
+/* Info bawah card: flex grow mengisi sisa ruang */
+.template-preview .template-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px 18px 18px;
 }
 
 .template-mock {
@@ -2961,10 +3010,11 @@ textarea.form-control {
 /* Template Preview Image on Homepage */
 .template-preview-image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   display: block;
 }
+
+
 
 /* Template Detail Modal - Preview Section */
 .template-detail-preview-wrapper {
@@ -3188,3 +3238,31 @@ textarea.form-control {
   gap: 30px;
   flex-wrap: wrap;
 }
+
+/* ============================================================
+   OVERRIDE GAMBAR TEMPLATE — Beranda (index.html)
+   Sudah dihandle di blok TEMPLATE PREVIEW di atas.
+   Block ini dipertahankan untuk backward compat.
+   ============================================================ */
+
+/* Responsive beranda */
+@media (max-width: 992px) {
+  .template-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .template-grid {
+    grid-template-columns: 1fr;
+  }
+  .template-thumb {
+    height: 260px;
+  }
+}
+
+/* ============================================================
+   VIDEO PREVIEW — Beranda (index.html) section .template-preview
+   Nama file: vidio1.mp4 / vidio2.mp4
+   Sudah dihandle di blok TEMPLATE PREVIEW di atas.
+   ============================================================ */

@@ -32,14 +32,73 @@
 /* ----------------------------------------------------------
    TEMPLATE CARD — image-based
    ---------------------------------------------------------- */
-.template-thumb { position: relative; overflow: hidden; height: 220px; background: #f5f3ff; }
 
-.template-preview-image {
-  width: 100%; height: 100%;
-  object-fit: cover; display: block;
+/* Base thumb — dipakai semua card */
+.template-thumb {
+  position: relative;
+  overflow: hidden;
+  background: #f5f3ff;
+}
+
+/* ---- PORTOFOLIO: tampil penuh, rapi dalam card ---- */
+.template-card[data-type="Portofolio"] .template-thumb {
+  height: auto;
+  min-height: 220px;
+  max-height: 320px;
+  min-height: unset;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 10px;
+  background: #f5f3ff;
+  border-radius: 18px 18px 0 0;
+}
+
+.template-card[data-type="Portofolio"] .template-preview-image {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  object-position: top;
+  display: block;
+  border-radius: 10px;
+  transition: transform 0.4s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+
+/* ---- CV: portrait — tampil penuh tidak terpotong ---- */
+.template-card[data-type="CV"] .template-thumb {
+  height: auto !important;
+  min-height: 280px;
+  max-height: 440px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 10px;
+}
+
+.template-card[data-type="CV"] .template-preview-image {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 420px;
+  object-fit: contain !important;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.14);
   transition: transform 0.4s ease;
 }
-.template-card:hover .template-preview-image { transform: scale(1.05); }
+
+/* Hover zoom semua tipe */
+.template-card:hover .template-preview-image {
+  transform: scale(1.03);
+}
+
+/* Overlay mengisi seluruh thumb */
+.template-thumb .template-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
 
 .template-category-badge {
   position: absolute; top: 12px; right: 12px;
@@ -52,7 +111,7 @@
   display: inline-block;
   font-size: 0.88rem;
   font-weight: 700;
-  color: #fff;
+  color: #7c3aed;
   margin-top: 4px;
 }
 
@@ -172,6 +231,13 @@
 @media (max-width: 620px) {
   .tp-detail-grid { grid-template-columns: 1fr; }
   .tp-detail-box  { max-width: 100%; }
+  /* CV portrait di mobile — batasi tinggi agar tidak terlalu panjang */
+  .template-card[data-type="CV"] .template-thumb {
+    max-height: 340px;
+  }
+  .template-card[data-type="CV"] .template-preview-image {
+    max-height: 320px;
+  }
 }
 
 /* ----------------------------------------------------------
