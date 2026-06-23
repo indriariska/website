@@ -191,6 +191,28 @@
 
           <h3><i class="fas fa-paper-plane" style="color:var(--primary)"></i>&nbsp; Form Pemesanan</h3>
 
+          <!-- Ringkasan Pesanan (muncul otomatis jika ada template dari URL) -->
+          <div id="orderSummaryBox" style="display:none;background:linear-gradient(135deg,#ede9fe,#dbeafe);border-radius:14px;padding:18px 20px;margin-bottom:20px;border-left:4px solid #7c3aed">
+            <p style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7c3aed;margin-bottom:10px">
+              <i class="fas fa-receipt"></i>&nbsp; Ringkasan Pesanan
+            </p>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:0.84rem;color:#6b7280">Template</span>
+                <span id="summaryTemplate" style="font-size:0.9rem;font-weight:700;color:#1e1b4b">–</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:0.84rem;color:#6b7280">Kategori</span>
+                <span id="summaryCategory" style="font-size:0.84rem;font-weight:600;color:#6b7280">–</span>
+              </div>
+              <div style="height:1px;background:rgba(124,58,237,0.15);margin:4px 0"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:0.84rem;color:#6b7280">Total Harga</span>
+                <span id="summaryHarga" style="font-size:1.1rem;font-weight:900;background:linear-gradient(135deg,#7c3aed,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">–</span>
+              </div>
+            </div>
+          </div>
+
           <!-- Row 1: Nama & Email -->
           <div class="form-row">
             <div class="form-group">
@@ -454,135 +476,114 @@
 
 <!-- Auto-fill template, paket, harga dari URL parameter -->
 <script>
+(function() {
+  /* ---- Helper format harga ---- */
+  function fmtRp(val) {
+    var n = parseInt(val) || 0;
+    return n > 0 ? 'Rp' + n.toLocaleString('id-ID') : '';
+  }
+
+  /* ---- Pilih option di select berdasarkan value (exact) ---- */
+  function selectExact(selectEl, val) {
+    if (!selectEl || !val) return false;
+    var v = val.toLowerCase().trim();
+    for (var i = 0; i < selectEl.options.length; i++) {
+      if (selectEl.options[i].value.toLowerCase().trim() === v) {
+        selectEl.selectedIndex = i;
+        return selectEl.options[i];
+      }
+    }
+    return false;
+  }
+
+  /* ---- Update field harga dari option yang terpilih ---- */
+  function updateHarga(opt) {
+    var hargaInput = document.getElementById('harga');
+    if (!hargaInput || !opt) return;
+    var price = opt && opt.dataset && opt.dataset.price ? parseInt(opt.dataset.price) : 0;
+    hargaInput.value = price > 0 ? fmtRp(price) : '';
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
-    const params = new URLSearchParams(window.location.search);
+    var params   = new URLSearchParams(window.location.search);
+    var tmplSel  = document.getElementById('template');
+    var paketInp = document.getElementById('paket');
+    var hargaInp = document.getElementById('harga');
 
-    // Auto-fill layanan dari URL (dari halaman layanan)
-    const layananParam = params.get('layanan');
-    if (layananParam) {
-      const select = document.getElementById('template');
-      if (select) {
-        for (let opt of select.options) {
-          if (opt.value.toLowerCase() === layananParam.toLowerCase()) {
-            opt.selected = true;
-            // Auto-fill harga dari data-price
-            const hargaInput = document.getElementById('harga');
-            if (hargaInput && opt.dataset.price) {
-              const price = parseInt(opt.dataset.price);
-              hargaInput.value = price > 0 ? 'Rp' + price.toLocaleString('id-ID') : 'Rp0';
-            }
-            break;
-          }
-        }
+    /* 1. Auto-fill template dari URL ?template= */
+    var tmplParam = params.get('template');
+    if (tmplParam && tmplParam !== 'null' && tmplParam !== 'undefined') {
+      var matched = selectExact(tmplSel, tmplParam);
+      if (matched) updateHarga(matched);
+    }
+
+    /* 2. Auto-fill layanan dari URL ?layanan= (dari halaman layanan) */
+    var layananParam = params.get('layanan');
+    if (layananParam && layananParam !== 'null' && !tmplParam) {
+      var mL = selectExact(tmplSel, layananParam);
+      if (mL) updateHarga(mL);
+    }
+
+    /* 3. Harga dari URL ?harga= — override jika lebih spesifik */
+    var hargaParam = params.get('harga');
+    if (hargaParam && hargaParam !== '0' && hargaParam !== 'null' && hargaParam !== 'undefined') {
+      if (hargaInp) {
+        var formatted = fmtRp(hargaParam);
+        if (formatted) hargaInp.value = formatted;
       }
     }
 
-    // Auto-fill template dari URL
-    const templateParam = params.get('template');
-    if (templateParam) {
-      const select = document.getElementById('template');
-      if (select) {
-        for (let opt of select.options) {
-          if (opt.value.toLowerCase() === templateParam.toLowerCase()) {
-            opt.selected = true;
-            // Auto-fill harga dari data-price
-            const hargaInput = document.getElementById('harga');
-            if (hargaInput && opt.dataset.price) {
-              const price = parseInt(opt.dataset.price);
-              hargaInput.value = price > 0 ? 'Rp' + price.toLocaleString('id-ID') : 'Rp0';
-            }
-            break;
-          }
-        }
-      }
+    /* 4. Paket (hidden) dari URL ?paket= */
+    var paketParam = params.get('paket');
+    if (paketParam && paketParam !== 'null' && paketParam !== 'undefined') {
+      if (paketInp) paketInp.value = paketParam;
     }
 
-    // Auto-fill paket dari URL (dari halaman harga/beranda)
-    const paketParam = params.get('paket');
-    if (paketParam) {
-      const paketInput = document.getElementById('paket');
-      if (paketInput) paketInput.value = paketParam;
-
-      // Juga auto-fill template dropdown berdasarkan paket
-      const select = document.getElementById('template');
-      if (select) {
-        for (let opt of select.options) {
-          // Cek jika option value mengandung nama paket (case-insensitive)
-          if (opt.value.toLowerCase().includes(paketParam.toLowerCase())) {
-            opt.selected = true;
-            // Auto-fill harga dari data-price
-            const hargaInput = document.getElementById('harga');
-            if (hargaInput && opt.dataset.price) {
-              const price = parseInt(opt.dataset.price);
-              hargaInput.value = price > 0 ? 'Rp' + price.toLocaleString('id-ID') : 'Rp0';
-            }
-            break;
-          }
-        }
-      }
-    }
-
-    // Auto-fill harga dari URL
-    const hargaParam = params.get('harga');
-    if (hargaParam) {
-      const hargaInput = document.getElementById('harga');
-      if (hargaInput) {
-        const price = parseInt(hargaParam);
-        hargaInput.value = price > 0 ? 'Rp' + price.toLocaleString('id-ID') : 'Rp0';
-      }
-    }
-
-    // Auto-fill harga saat template dipilih
-    const templateSelect = document.getElementById('template');
-    if (templateSelect) {
-      templateSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const hargaInput = document.getElementById('harga');
-        if (hargaInput && selectedOption.dataset.price) {
-          const price = parseInt(selectedOption.dataset.price);
-          hargaInput.value = price > 0 ? 'Rp' + price.toLocaleString('id-ID') : 'Rp0';
-        }
+    /* 5. Live: update harga saat user ganti pilihan template */
+    if (tmplSel) {
+      tmplSel.addEventListener('change', function() {
+        var opt = this.options[this.selectedIndex];
+        updateHarga(opt);
       });
     }
   });
+})();
 </script>
+
+<!-- Submit → kirim WhatsApp lalu redirect sukses -->
 <script>
-document.getElementById("orderForm").addEventListener("submit", function(e) {
-  e.preventDefault(); // STOP pindah ke sukses dulu
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('orderForm');
+    if (!form) return;
 
-  // Ambil data form
-  var nama = document.getElementById("nama").value;
-  var email = document.getElementById("email").value;
-  var wa = document.getElementById("whatsapp").value;
-  var template = document.getElementById("template").value;
-  var paket = document.getElementById("paket").value;
-  var harga = document.getElementById("harga").value;
-  var metodePembayaran = document.getElementById("metode_pembayaran").value;
-  var pesan = document.getElementById("pesan").value;
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
 
-  // Format pesan ke WhatsApp
-  var text = "📥 PESANAN BARU CVPro Studio%0A%0A"
-           + "👤 Nama: " + nama + "%0A"
-           + "📧 Email: " + email + "%0A"
-           + "📱 WhatsApp: " + wa + "%0A"
-           + "🎨 Template: " + template + "%0A"
-           + "📦 Paket: " + (paket || '-') + "%0A"
-           + "💰 Harga: " + harga + "%0A"
-           + "💳 Metode Pembayaran: " + metodePembayaran + "%0A"
-           + "📝 Pesan: " + (pesan || '-');
+      var nama     = (document.getElementById('nama')              || {value:''}).value;
+      var email    = (document.getElementById('email')             || {value:''}).value;
+      var wa       = (document.getElementById('whatsapp')          || {value:''}).value;
+      var template = (document.getElementById('template')          || {value:''}).value;
+      var paket    = (document.getElementById('paket')             || {value:''}).value;
+      var harga    = (document.getElementById('harga')             || {value:''}).value;
+      var metode   = (document.getElementById('metode_pembayaran') || {value:''}).value;
+      var pesan    = (document.getElementById('pesan')             || {value:''}).value;
 
-  // Nomor admin (GANTI INI)
-  var nomorAdmin = "6283122172584";
+      var text = '%F0%9F%93%A5 PESANAN BARU CVPro Studio%0A%0A'
+        + '%F0%9F%91%A4 Nama: '    + encodeURIComponent(nama)     + '%0A'
+        + '%F0%9F%93%A7 Email: '   + encodeURIComponent(email)    + '%0A'
+        + '%F0%9F%93%B1 WA: '      + encodeURIComponent(wa)       + '%0A'
+        + '%F0%9F%8E%A8 Template: '+ encodeURIComponent(template) + '%0A'
+        + '%F0%9F%93%A6 Paket: '   + encodeURIComponent(paket||'-') + '%0A'
+        + '%F0%9F%92%B0 Harga: '   + encodeURIComponent(harga||'-') + '%0A'
+        + '%F0%9F%92%B3 Metode: '  + encodeURIComponent(metode)   + '%0A'
+        + '%F0%9F%93%9D Pesan: '   + encodeURIComponent(pesan||'-');
 
-  // Buka WhatsApp
-  window.open("https://wa.me/" + nomorAdmin + "?text=" + text, "_blank");
-
-  // Setelah 1 detik pindah ke halaman sukses
-  setTimeout(function() {
-    window.location.href = "sukses.html";
-  }, 1000);
-});
+      window.open('https://wa.me/6283122172584?text=' + text, '_blank');
+      setTimeout(function() { window.location.href = 'sukses.html'; }, 1000);
+    });
+  });
+})();
 </script>
 </body>
 </html>
-
