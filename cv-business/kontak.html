@@ -16,6 +16,8 @@
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="css/style.css" />
+  <!-- Kontak page styles -->
+  <link rel="stylesheet" href="css/kontak.css" />
 </head>
 <body>
 
@@ -133,6 +135,19 @@
 
       <!-- Right: Order Form -->
       <div class="fade-in-right">
+
+        <!-- Step Indicator -->
+        <div class="order-steps" id="orderSteps">
+          <div class="order-step active" data-step="1">
+            <span class="step-num">1</span>
+            <span>Data Diri</span>
+          </div>
+          <div class="step-connector" id="stepConnector"></div>
+          <div class="order-step" data-step="2">
+            <span class="step-num">2</span>
+            <span>Pembayaran</span>
+          </div>
+        </div>
         <!-- Payment Methods Section -->
         <div class="payment-methods-section" style="margin-bottom:32px">
           <h3 style="margin-bottom:20px;font-size:1.2rem"><i class="fas fa-credit-card" style="color:var(--primary)"></i>&nbsp; Metode Pembayaran</h3>
@@ -170,13 +185,6 @@
           </div>
         </div>
 
-        <!-- 
-          Netlify Form:
-          - Gunakan method POST
-          - data-netlify="true" agar Netlify menangani form
-          - input hidden form-name diperlukan Netlify
-          - action ke sukses.html setelah berhasil
-        -->
         <form
           class="order-form"
           id="orderForm"
@@ -382,15 +390,104 @@
           </div>
 
           <!-- Submit -->
-          <button type="submit" class="btn-submit">
-            <i class="fas fa-paper-plane"></i>
-            Kirim Pesanan
+          <button type="button" class="btn-submit" id="btnLanjutPembayaran">
+            <i class="fas fa-arrow-right"></i>
+            Lanjut ke Pembayaran
           </button>
 
           <p style="text-align:center;font-size:0.8rem;color:var(--gray);margin-top:16px">
             <i class="fas fa-lock" style="color:var(--primary)"></i>&nbsp; Data Anda aman dan tidak akan dibagikan ke pihak ketiga
           </p>
         </form>
+
+        <!-- ================================================
+             SECTION PEMBAYARAN (muncul setelah form diisi)
+             ================================================ -->
+        <div id="sectionPembayaran" class="payment-section" style="display:none" aria-live="polite">
+
+          <!-- Header step -->
+          <div class="pay-step-header">
+            <button class="pay-back-btn" id="btnBackToForm" aria-label="Kembali ke form">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <div>
+              <h3 class="pay-step-title">Langkah 2: Pembayaran</h3>
+              <p class="pay-step-sub">Transfer ke rekening berikut, lalu upload bukti pembayaran</p>
+            </div>
+          </div>
+
+          <!-- Ringkasan pesanan -->
+          <div class="pay-summary-card" id="paySummaryCard">
+            <div class="pay-summary-row">
+              <span>Template / Layanan</span>
+              <strong id="paySummaryTemplate">–</strong>
+            </div>
+            <div class="pay-summary-row">
+              <span>Metode Pembayaran</span>
+              <strong id="paySummaryMetode">–</strong>
+            </div>
+            <div class="pay-summary-divider"></div>
+            <div class="pay-summary-row pay-summary-total">
+              <span>Total Bayar</span>
+              <strong id="paySummaryHarga">–</strong>
+            </div>
+          </div>
+
+          <!-- Info rekening / e-wallet -->
+          <div class="pay-bank-card" id="payBankCard">
+            <div class="pay-bank-header">
+              <div class="pay-bank-icon" id="payBankIcon"><i class="fas fa-university"></i></div>
+              <div>
+                <div class="pay-bank-name" id="payBankName">Nama Bank</div>
+                <div class="pay-bank-holder" id="payBankHolder">Nama Pemilik</div>
+              </div>
+            </div>
+            <div class="pay-bank-number-wrap">
+              <span class="pay-bank-label">Nomor Rekening / Akun</span>
+              <div class="pay-bank-number-row">
+                <span class="pay-bank-number" id="payBankNumber">–</span>
+                <button class="pay-copy-btn" id="payCopyBtn" type="button" aria-label="Salin nomor rekening">
+                  <i class="fas fa-copy"></i> Salin
+                </button>
+              </div>
+              <span class="pay-copy-toast" id="payCopyToast">✓ Disalin!</span>
+            </div>
+          </div>
+
+          <!-- Upload bukti pembayaran -->
+          <div class="pay-upload-section">
+            <label class="pay-upload-label" for="buktiBayar">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <span id="payUploadText">Upload Bukti Pembayaran</span>
+              <small>JPG, PNG, PDF — maks. 5MB</small>
+              <input type="file" id="buktiBayar" name="buktiBayar" accept="image/*,application/pdf" hidden />
+            </label>
+
+            <!-- Preview gambar -->
+            <div class="pay-preview-wrap" id="payPreviewWrap" style="display:none">
+              <img id="payPreviewImg" src="" alt="Bukti Transfer" class="pay-preview-img" />
+              <button class="pay-remove-btn" id="payRemoveBtn" type="button" aria-label="Hapus bukti">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+
+            <!-- Status -->
+            <div class="pay-status" id="payStatus">
+              <i class="fas fa-hourglass-half pay-status-icon" id="payStatusIcon"></i>
+              <span id="payStatusText">Menunggu bukti pembayaran diupload</span>
+            </div>
+          </div>
+
+          <!-- Tombol kirim final -->
+          <button type="button" class="btn-submit" id="btnKirimPesanan" disabled>
+            <i class="fas fa-paper-plane"></i>
+            Kirim Pesanan ke WhatsApp
+          </button>
+
+          <p style="text-align:center;font-size:0.8rem;color:var(--gray);margin-top:14px">
+            <i class="fas fa-lock" style="color:var(--primary)"></i>&nbsp; Data Anda aman dan tidak dibagikan ke pihak ketiga
+          </p>
+        </div>
       </div>
 
     </div>
@@ -473,117 +570,6 @@
 </div>
 
 <script src="js/script.js"></script>
-
-<!-- Auto-fill template, paket, harga dari URL parameter -->
-<script>
-(function() {
-  /* ---- Helper format harga ---- */
-  function fmtRp(val) {
-    var n = parseInt(val) || 0;
-    return n > 0 ? 'Rp' + n.toLocaleString('id-ID') : '';
-  }
-
-  /* ---- Pilih option di select berdasarkan value (exact) ---- */
-  function selectExact(selectEl, val) {
-    if (!selectEl || !val) return false;
-    var v = val.toLowerCase().trim();
-    for (var i = 0; i < selectEl.options.length; i++) {
-      if (selectEl.options[i].value.toLowerCase().trim() === v) {
-        selectEl.selectedIndex = i;
-        return selectEl.options[i];
-      }
-    }
-    return false;
-  }
-
-  /* ---- Update field harga dari option yang terpilih ---- */
-  function updateHarga(opt) {
-    var hargaInput = document.getElementById('harga');
-    if (!hargaInput || !opt) return;
-    var price = opt && opt.dataset && opt.dataset.price ? parseInt(opt.dataset.price) : 0;
-    hargaInput.value = price > 0 ? fmtRp(price) : '';
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    var params   = new URLSearchParams(window.location.search);
-    var tmplSel  = document.getElementById('template');
-    var paketInp = document.getElementById('paket');
-    var hargaInp = document.getElementById('harga');
-
-    /* 1. Auto-fill template dari URL ?template= */
-    var tmplParam = params.get('template');
-    if (tmplParam && tmplParam !== 'null' && tmplParam !== 'undefined') {
-      var matched = selectExact(tmplSel, tmplParam);
-      if (matched) updateHarga(matched);
-    }
-
-    /* 2. Auto-fill layanan dari URL ?layanan= (dari halaman layanan) */
-    var layananParam = params.get('layanan');
-    if (layananParam && layananParam !== 'null' && !tmplParam) {
-      var mL = selectExact(tmplSel, layananParam);
-      if (mL) updateHarga(mL);
-    }
-
-    /* 3. Harga dari URL ?harga= — override jika lebih spesifik */
-    var hargaParam = params.get('harga');
-    if (hargaParam && hargaParam !== '0' && hargaParam !== 'null' && hargaParam !== 'undefined') {
-      if (hargaInp) {
-        var formatted = fmtRp(hargaParam);
-        if (formatted) hargaInp.value = formatted;
-      }
-    }
-
-    /* 4. Paket (hidden) dari URL ?paket= */
-    var paketParam = params.get('paket');
-    if (paketParam && paketParam !== 'null' && paketParam !== 'undefined') {
-      if (paketInp) paketInp.value = paketParam;
-    }
-
-    /* 5. Live: update harga saat user ganti pilihan template */
-    if (tmplSel) {
-      tmplSel.addEventListener('change', function() {
-        var opt = this.options[this.selectedIndex];
-        updateHarga(opt);
-      });
-    }
-  });
-})();
-</script>
-
-<!-- Submit → kirim WhatsApp lalu redirect sukses -->
-<script>
-(function() {
-  document.addEventListener('DOMContentLoaded', function() {
-    var form = document.getElementById('orderForm');
-    if (!form) return;
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      var nama     = (document.getElementById('nama')              || {value:''}).value;
-      var email    = (document.getElementById('email')             || {value:''}).value;
-      var wa       = (document.getElementById('whatsapp')          || {value:''}).value;
-      var template = (document.getElementById('template')          || {value:''}).value;
-      var paket    = (document.getElementById('paket')             || {value:''}).value;
-      var harga    = (document.getElementById('harga')             || {value:''}).value;
-      var metode   = (document.getElementById('metode_pembayaran') || {value:''}).value;
-      var pesan    = (document.getElementById('pesan')             || {value:''}).value;
-
-      var text = '%F0%9F%93%A5 PESANAN BARU CVPro Studio%0A%0A'
-        + '%F0%9F%91%A4 Nama: '    + encodeURIComponent(nama)     + '%0A'
-        + '%F0%9F%93%A7 Email: '   + encodeURIComponent(email)    + '%0A'
-        + '%F0%9F%93%B1 WA: '      + encodeURIComponent(wa)       + '%0A'
-        + '%F0%9F%8E%A8 Template: '+ encodeURIComponent(template) + '%0A'
-        + '%F0%9F%93%A6 Paket: '   + encodeURIComponent(paket||'-') + '%0A'
-        + '%F0%9F%92%B0 Harga: '   + encodeURIComponent(harga||'-') + '%0A'
-        + '%F0%9F%92%B3 Metode: '  + encodeURIComponent(metode)   + '%0A'
-        + '%F0%9F%93%9D Pesan: '   + encodeURIComponent(pesan||'-');
-
-      window.open('https://wa.me/6283122172584?text=' + text, '_blank');
-      setTimeout(function() { window.location.href = 'sukses.html'; }, 1000);
-    });
-  });
-})();
-</script>
+<script src="js/kontak.js"></script>
 </body>
 </html>

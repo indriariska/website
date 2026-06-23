@@ -1380,17 +1380,12 @@ function autoFillTemplate() {
 
 
   // Auto-fill price
-
   if (harga) {
-
     const hargaInput = document.getElementById('harga');
-
-    if (hargaInput) {
-
+    // Jangan override jika sudah diisi oleh kontak.js
+    if (hargaInput && !hargaInput.value) {
       hargaInput.value = harga;
-
     }
-
   }
 
 
@@ -1498,94 +1493,96 @@ function initFormValidation() {
 
 
   // Form submit
+  // Skip submit handler di kontak.html — dihandle oleh kontak.js
+  const isKontakPage = document.getElementById('btnLanjutPembayaran');
 
-  form.addEventListener('submit', function(e) {
+  if (!isKontakPage) {
 
-    e.preventDefault();
+    form.addEventListener('submit', function(e) {
 
-
-
-    let isValid = true;
+      e.preventDefault();
 
 
 
-    fields.forEach(fieldId => {
+      let isValid = true;
 
-      const field = document.getElementById(fieldId);
 
-      if (!field) return;
 
-      if (!validateField(field, fieldId)) {
+      fields.forEach(fieldId => {
 
-        isValid = false;
+        const field = document.getElementById(fieldId);
+
+        if (!field) return;
+
+        if (!validateField(field, fieldId)) {
+
+          isValid = false;
+
+        }
+
+      });
+
+
+
+      if (!isValid) {
+
+        // Scroll to first error
+
+        const firstError = form.querySelector('.form-control.error');
+
+        if (firstError) {
+
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          firstError.focus();
+
+        }
+
+        return;
 
       }
 
-    });
+
+
+      // Show loading state
+
+      const btn = form.querySelector('.btn-submit');
+
+      if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...'; btn.disabled = true; }
 
 
 
-    if (!isValid) {
+      // Submit form to Netlify
 
-      // Scroll to first error
-
-      const firstError = form.querySelector('.form-control.error');
-
-      if (firstError) {
-
-        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        firstError.focus();
-
-      }
-
-      return;
-
-    }
+      const formData = new FormData(form);
 
 
 
-    // Show loading state
+      fetch('/', {
 
-    const btn = form.querySelector('.btn-submit');
+        method: 'POST',
 
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 
-    btn.disabled = true;
+        body: new URLSearchParams(formData).toString()
 
+      })
 
+      .then(() => {
 
-    // Submit form to Netlify
+        window.location.href = 'sukses.html';
 
-    const formData = new FormData(form);
+      })
 
+      .catch(() => {
 
+        window.location.href = 'sukses.html';
 
-    fetch('/', {
-
-      method: 'POST',
-
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-
-      body: new URLSearchParams(formData).toString()
-
-    })
-
-    .then(() => {
-
-      window.location.href = 'sukses.html';
-
-    })
-
-    .catch(() => {
-
-      // Fallback: redirect anyway (Netlify handles it)
-
-      window.location.href = 'sukses.html';
+      });
 
     });
 
-  });
+  }
 
 
 
