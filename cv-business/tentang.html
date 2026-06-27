@@ -493,131 +493,156 @@
       transition: color 0.35s ease;
     }
 
-    /* ---- TEAM SECTION ---- */
+    /* ---- TEAM SECTION (HORIZONTAL CARDS) ---- */
     .team-section {
-      padding: 100px 0;
-      background: var(--light);
+      padding: 140px 0;
+      background: #fafafa;
     }
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 28px;
-    }
-    .team-card {
-      background: #fff;
-      border-radius: 24px;
-      padding: 40px 28px;
-      text-align: center;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(124,58,237,0.07);
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-    .team-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: var(--gradient);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    .team-card:hover {
-      transform: translateY(-10px);
-      box-shadow: var(--shadow-hover);
-    }
-    .team-card:hover::before { opacity: 0.03; }
-    .team-card:hover .team-name,
-    .team-card:hover .team-role { color: var(--primary); }
 
-    .team-avatar-wrap {
-      position: relative;
-      width: 110px; height: 110px;
-      margin: 0 auto 22px;
-      z-index: 1;
+    /* Section header */
+    .team-header {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 80px;
     }
-    .team-avatar-ring {
-      position: absolute; inset: -4px;
-      border-radius: 50%;
-      background: var(--gradient);
-      z-index: 0;
+    .team-label {
+      display: inline-block;
+      background: linear-gradient(135deg, #ede9fe, #dbeafe);
+      color: var(--primary);
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
     }
-    .team-avatar-ring::before {
-      content: '';
-      position: absolute; inset: 3px;
-      background: #fff;
-      border-radius: 50%;
-    }
-    .team-avatar {
-      position: relative; z-index: 1;
-      width: 110px; height: 110px;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      border: 3px solid #fff;
-    }
-    /* Fallback avatar jika gambar gagal load */
-    .team-avatar-fallback {
-      width: 110px; height: 110px;
-      border-radius: 50%;
-      background: var(--gradient);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2.4rem;
+    .team-header h2 {
+      font-size: 2.6rem;
       font-weight: 800;
-      color: #fff;
-      position: relative; z-index: 1;
-      border: 3px solid #fff;
+      color: var(--dark);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .team-header h2 .highlight {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .team-subtitle {
+      font-size: 1rem;
+      color: var(--gray);
+      line-height: 1.7;
+      max-width: 520px;
       margin: 0 auto;
     }
 
-    .team-name {
-      font-size: 1.1rem;
+    /* Team grid */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 48px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Team card - horizontal layout */
+    .team-card {
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: stretch;
+    }
+    .team-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+      border-color: rgba(124, 58, 237, 0.1);
+    }
+
+    /* Photo wrapper - left side */
+    .team-photo-wrapper {
+      width: 42%;
+      background: #f5f5f5;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .team-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+    .team-photo-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
       font-weight: 800;
+      color: var(--primary);
+      background: linear-gradient(135deg, #ede9fe, #dbeafe);
+    }
+
+    /* Card content - right side */
+    .team-card-content {
+      flex: 1;
+      padding: 32px 28px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .team-name {
+      font-size: 1.5rem;
+      font-weight: 700;
       color: var(--dark);
-      margin-bottom: 4px;
-      transition: color 0.3s ease;
-      position: relative; z-index: 1;
+      margin-bottom: 6px;
+      line-height: 1.3;
     }
     .team-role {
-      font-size: 0.82rem;
+      font-size: 0.9rem;
       color: var(--primary);
       font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
       margin-bottom: 14px;
-      transition: color 0.3s ease;
-      position: relative; z-index: 1;
     }
     .team-desc {
-      font-size: 0.87rem;
+      font-size: 0.9rem;
       color: var(--gray);
-      line-height: 1.7;
+      line-height: 1.65;
       margin-bottom: 20px;
-      position: relative; z-index: 1;
+      max-height: 2.8em;
+      overflow: hidden;
     }
+
+    /* Social links */
     .team-socials {
       display: flex;
-      justify-content: center;
       gap: 10px;
-      position: relative; z-index: 1;
     }
-    .team-social-btn {
-      width: 36px; height: 36px;
-      border-radius: 10px;
-      background: var(--gradient-light);
+    .team-social-link {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #f8f7ff;
       color: var(--primary);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem;
-      transition: var(--transition);
-      border: none;
-      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      transition: all 0.25s ease;
       text-decoration: none;
+      border: 1px solid rgba(124, 58, 237, 0.08);
     }
-    .team-social-btn:hover {
+    .team-social-link:hover {
       background: var(--gradient);
       color: #fff;
-      transform: translateY(-2px);
+      border-color: transparent;
     }
 
     /* ---- VALUES STRIP ---- */
@@ -818,7 +843,11 @@
       .about-company-inner { grid-template-columns: 1fr; }
       .about-mosaic { display: none; }
       .vm-grid { grid-template-columns: 1fr; }
-      .team-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; max-width: 680px; }
+      .team-photo-wrapper { width: 40%; }
+      .team-card-content { padding: 24px 20px 20px; }
+      .team-name { font-size: 1.35rem; }
+      .team-header h2 { font-size: 2.2rem; }
       .timeline::before { left: 20px; }
       .tl-item { grid-template-columns: 1fr; padding-left: 52px; }
       .tl-item.right .tl-content,
@@ -831,9 +860,23 @@
     @media (max-width: 600px) {
       .trust-grid { grid-template-columns: 1fr 1fr; }
       .hero-tentang h1 { font-size: 2rem; }
+      .team-section { padding: 80px 0; }
+      .team-header { margin-bottom: 48px; }
+      .team-header h2 { font-size: 1.9rem; }
+      .team-grid { grid-template-columns: 1fr; max-width: 100%; gap: 32px; }
+      
+      /* Mobile: stacked layout (photo top, info bottom) */
+      .team-card { flex-direction: column; }
+      .team-photo-wrapper { width: 100%; height: 280px; }
+      .team-card-content { padding: 24px 20px 20px; }
+      .team-name { font-size: 1.35rem; }
+      .team-desc { font-size: 0.88rem; }
     }
     @media (max-width: 400px) {
       .trust-grid { grid-template-columns: 1fr; }
+      .team-grid { gap: 24px; }
+      .team-card-content { padding: 20px 18px 18px; }
+      .team-photo-wrapper { height: 240px; }
     }
   </style>
 </head>
@@ -1135,52 +1178,64 @@
      ============================================ -->
 <section class="team-section">
   <div class="container">
-    <h2 class="section-title fade-in">Tim Kami</h2>
-    <p class="section-subtitle fade-in">Orang-orang berdedikasi di balik setiap CV premium yang kami hasilkan</p>
-
-    
-<div class="team-grid center-team">
-
-  <!-- Member 1: Indri Ariska -->
-  <div class="team-card fade-in delay-1">
-    <div class="team-avatar-wrap">
-      <img src="assets\images/indri.jpg" class="team-avatar" alt="Indri Ariska">
+    <div class="team-header fade-in">
+      <span class="team-label">Tim Kami</span>
+      <h2>Orang-orang di Balik<br /><span class="highlight">Setiap Karya Premium</span></h2>
+      <p class="team-subtitle">Dedikasi dan keahlian yang menghadirkan CV dan portofolio terbaik untuk karier Anda</p>
     </div>
 
-    <h3 class="team-name">Indri Ariska</h3>
-    <p class="team-role">Founder & Creative Director</p>
-    <p class="team-desc">
-      Desainer berpengalaman yang berfokus pada pembuatan CV profesional dan menarik, membantu klien tampil lebih percaya diri dan unggul di dunia kerja.
-    </p>
+    <div class="team-grid">
 
-    <div class="team-socials">
-      <a href="#" class="team-social-btn"><i class="fab fa-linkedin-in"></i></a>
-      <a href="#" class="team-social-btn"><i class="fab fa-instagram"></i></a>
-      <a href="https://wa.me/628XXXXXXXXXX" class="team-social-btn"><i class="fab fa-whatsapp"></i></a>
+      <!-- Member 1: Indri Ariska -->
+      <div class="team-card fade-in delay-1">
+        <div class="team-photo-wrapper">
+          <img src="assets/images/indri.jpg" class="team-photo" alt="Indri Ariska" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="team-photo-fallback" style="display:none">IA</div>
+        </div>
+        <div class="team-card-content">
+          <h3 class="team-name">Indri Ariska</h3>
+          <p class="team-role">Founder & Creative Director</p>
+          <p class="team-desc">
+            Desainer berpengalaman yang berfokus pada pembuatan CV profesional dan menarik.
+          </p>
+          <div class="team-socials">
+            <a href="#" class="team-social-link" aria-label="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="team-social-link" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://wa.me/628XXXXXXXXXX" class="team-social-link" aria-label="WhatsApp">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Member 2: Fitri Za -->
+      <div class="team-card fade-in delay-2">
+        <div class="team-photo-wrapper">
+          <img src="assets/images/FITRIBIAH.jpg" class="team-photo" alt="Fitri Za" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="team-photo-fallback" style="display:none">FZ</div>
+        </div>
+        <div class="team-card-content">
+          <h3 class="team-name">Fitri Za</h3>
+          <p class="team-role">Lead Designer & ATS Specialist</p>
+          <p class="team-desc">
+            Ahli desain CV modern dan ATS-friendly untuk lolos sistem rekrutmen perusahaan.
+          </p>
+          <div class="team-socials">
+            <a href="#" class="team-social-link" aria-label="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="team-social-link" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
     </div>
-  </div>
-
-  <!-- Member 2: Fitri Za -->
-  <div class="team-card fade-in delay-2">
-    <div class="team-avatar-wrap">
-      <img src="assets\images/FITRIBIAH.jpg" class="team-avatar" alt="Fitri Za">
-    </div>
-
-    <h3 class="team-name">Fitri Za</h3>
-    <p class="team-role">Lead Designer & ATS Specialist</p>
-    <p class="team-desc">
-      Ahli desain CV modern dan ATS-friendly yang memastikan setiap CV tidak hanya menarik secara visual tetapi juga lolos sistem rekrutmen perusahaan.
-    </p>
-
-    <div class="team-socials">
-      <a href="#" class="team-social-btn"><i class="fab fa-linkedin-in"></i></a>
-      <a href="#" class="team-social-btn"><i class="fab fa-instagram"></i></a>
-    </div>
-  </div>
-
-</div>
-```
-
   </div>
 </section>
 
