@@ -3266,3 +3266,48 @@ textarea.form-control {
    Nama file: vidio1.mp4 / vidio2.mp4
    Sudah dihandle di blok TEMPLATE PREVIEW di atas.
    ============================================================ */
+/* ==========================
+   Gallery Image
+========================== */
+
+.gallery-thumb{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.gallery-image{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    transition:transform .4s ease;
+}
+
+.gallery-item:hover .gallery-image{
+    transform:scale(1.08);
+}
+
+.gallery-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.35);
+    display:flex;
+    justify-content:center;
+    align-items:flex-end;
+    padding:18px;
+    opacity:0;
+    transition:.35s;
+}
+
+.gallery-item:hover .gallery-overlay{
+    opacity:1;
+}
+
+.gallery-title-overlay{
+    color:#fff;
+    font-weight:600;
+    font-size:15px;
+}
