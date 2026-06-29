@@ -9,7 +9,7 @@
 
   /* ----------------------------------------------------------
      DATA PEMBAYARAN
-     Ganti nomor rekening sesuai data asli di sini
+     Load dari API settings, fallback ke hardcoded data
      ---------------------------------------------------------- */
   var PAYMENT_DATA = {
     BCA:     { icon: 'fas fa-university',  color: '#005BAC', name: 'Bank BCA',    holder: 'A.N. Indri Ariska',   number: '123-456-7890' },
@@ -21,6 +21,25 @@
   };
 
   var ADMIN_WA = '6283122172584';
+
+  async function loadPaymentSettings() {
+    try {
+      const response = await API.getSettings();
+      if (response.success && response.data) {
+        const settings = response.data;
+        if (settings.payment_bca) PAYMENT_DATA.BCA = JSON.parse(settings.payment_bca);
+        if (settings.payment_bsi) PAYMENT_DATA.BSI = JSON.parse(settings.payment_bsi);
+        if (settings.payment_bri) PAYMENT_DATA.BRI = JSON.parse(settings.payment_bri);
+        if (settings.payment_mandiri) PAYMENT_DATA.Mandiri = JSON.parse(settings.payment_mandiri);
+        if (settings.payment_dana) PAYMENT_DATA.DANA = JSON.parse(settings.payment_dana);
+        if (settings.payment_gopay) PAYMENT_DATA.GoPay = JSON.parse(settings.payment_gopay);
+        if (settings.admin_wa) ADMIN_WA = settings.admin_wa;
+        console.log('Payment settings loaded from API');
+      }
+    } catch (error) {
+      console.error('Failed to load payment settings, using defaults:', error);
+    }
+  }
 
   /* ----------------------------------------------------------
      HELPER FUNCTIONS
@@ -378,6 +397,44 @@
   }
 
   /* ----------------------------------------------------------
+     SUBMIT ORDER KE API
+     ---------------------------------------------------------- */
+  async function submitOrderToAPI() {
+    var nama   = getVal('nama');
+    var email  = getVal('email');
+    var wa     = getVal('whatsapp');
+    var tmpl   = getVal('template');
+    var harga  = getVal('harga');
+    var metode = getVal('metode_pembayaran');
+    var pesan  = getVal('pesan');
+    var paket  = getVal('paket');
+
+    var orderData = {
+      customerName: nama,
+      customerEmail: email,
+      customerWhatsapp: wa,
+      serviceType: tmpl,
+      package: paket,
+      price: parseInt(harga.replace(/[^0-9]/g, '')) || 0,
+      paymentMethod: metode,
+      message: pesan
+    };
+
+    try {
+      const response = await API.createOrder(orderData, uploadedFile);
+      if (response.success) {
+        console.log('Order submitted to API:', response.data);
+        return response.data;
+      } else {
+        throw new Error(response.message || 'Failed to submit order');
+      }
+    } catch (error) {
+      console.error('Failed to submit order to API:', error);
+      throw error;
+    }
+  }
+
+  /* ----------------------------------------------------------
      AUTO-FILL DARI URL PARAMS
      ---------------------------------------------------------- */
   function initAutoFill() {
@@ -418,6 +475,9 @@
      INIT SEMUA
      ---------------------------------------------------------- */
   document.addEventListener('DOMContentLoaded', function () {
+
+    /* Load payment settings dari API */
+    loadPaymentSettings();
 
     /* Auto-fill dari URL */
     initAutoFill();
@@ -469,22 +529,28 @@
     /* Tombol "Kirim Pesanan ke WhatsApp" */
     var btnKirim = document.getElementById('btnKirimPesanan');
     if (btnKirim) {
-      btnKirim.addEventListener('click', function () {
+      btnKirim.addEventListener('click', async function () {
         if (!uploadedFile) {
           showToast('Upload bukti pembayaran terlebih dahulu', 'fas fa-exclamation-circle');
           return;
         }
 
-        /* Buka WhatsApp */
-        window.open(buildWAMessage(), '_blank');
+        btnKirim.disabled = true;
+        btnKirim.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
 
-        /* Tampilkan toast sukses */
-        showToast('Pesanan berhasil dikirim! Mengalihkan...', 'fas fa-check-circle');
-
-        /* Redirect ke sukses.html */
-        setTimeout(function () {
-          window.location.href = 'sukses.html';
-        }, 2000);
+        try {
+          await submitOrderToAPI();
+          showToast('Pesanan berhasil dikirim! Mengalihkan...', 'fas fa-check-circle');
+          
+          setTimeout(function () {
+            window.location.href = 'sukses.html';
+          }, 2000);
+        } catch (error) {
+          console.error('Order submission failed:', error);
+          showToast('Gagal mengirim pesanan. Silakan coba lagi.', 'fas fa-exclamation-circle');
+          btnKirim.disabled = false;
+          btnKirim.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Pesanan ke WhatsApp';
+        }
       });
     }
 

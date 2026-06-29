@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Store Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-store"></i>
+        </div>
+        <h2>Admin Panel</h2>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="/admin/dashboard.html" class="nav-item" data-page="dashboard">
+          <i class="fas fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/admin/orders.html" class="nav-item" data-page="orders">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Orders</span>
+        </a>
+        <a href="/admin/products.html" class="nav-item" data-page="products">
+          <i class="fas fa-box"></i>
+          <span>Products</span>
+        </a>
+        <a href="/admin/customers.html" class="nav-item" data-page="customers">
+          <i class="fas fa-users"></i>
+          <span>Customers</span>
+        </a>
+        <a href="/admin/expenses.html" class="nav-item" data-page="expenses">
+          <i class="fas fa-receipt"></i>
+          <span>Expenses</span>
+        </a>
+        <a href="/admin/reports.html" class="nav-item" data-page="reports">
+          <i class="fas fa-chart-bar"></i>
+          <span>Reports</span>
+        </a>
+        <a href="/admin/settings.html" class="nav-item active" data-page="settings">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button class="logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="top-bar-right">
+          <div class="user-info">
+            <span class="user-name" id="userName">Admin</span>
+            <span class="user-role" id="userRole">Administrator</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Settings Content -->
+      <div class="content">
+        <div class="page-header">
+          <h1>Settings</h1>
+          <p class="subtitle">Manage store configuration</p>
+        </div>
+
+        <div class="settings-container">
+          <!-- Store Settings -->
+          <div class="settings-section">
+            <h2><i class="fas fa-store"></i> Store Information</h2>
+            <form id="storeSettingsForm" class="form-grid">
+              <div class="form-group">
+                <label for="storeName">Store Name *</label>
+                <input type="text" id="storeName" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="storePhone">Phone Number</label>
+                <input type="text" id="storePhone">
+              </div>
+              
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="storeAddress">Address</label>
+                <textarea id="storeAddress" rows="3"></textarea>
+              </div>
+              
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="storeLogo">Store Logo</label>
+                <input type="file" id="storeLogo" accept="image/*">
+                <div id="logoPreview" class="logo-preview"></div>
+              </div>
+            </form>
+            
+            <div class="form-actions">
+              <button class="btn-primary" id="saveStoreSettingsBtn">
+                <i class="fas fa-save"></i>
+                Save Store Settings
+              </button>
+            </div>
+          </div>
+
+          <!-- Account Settings -->
+          <div class="settings-section">
+            <h2><i class="fas fa-user"></i> Account Settings</h2>
+            <form id="accountSettingsForm" class="form-grid">
+              <div class="form-group">
+                <label for="currentName">Current Name</label>
+                <input type="text" id="currentName" disabled>
+              </div>
+              
+              <div class="form-group">
+                <label for="currentEmail">Current Email</label>
+                <input type="email" id="currentEmail" disabled>
+              </div>
+              
+              <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" placeholder="Leave blank to keep current">
+              </div>
+              
+              <div class="form-group">
+                <label for="confirmPassword">Confirm New Password</label>
+                <input type="password" id="confirmPassword" placeholder="Leave blank to keep current">
+              </div>
+            </form>
+            
+            <div class="form-actions">
+              <button class="btn-primary" id="saveAccountSettingsBtn">
+                <i class="fas fa-save"></i>
+                Update Password
+              </button>
+            </div>
+          </div>
+
+          <!-- Database Info -->
+          <div class="settings-section">
+            <h2><i class="fas fa-database"></i> Database Information</h2>
+            <div class="info-grid">
+              <div class="info-item">
+                <label>Database Name</label>
+                <span>cvpro_studio</span>
+              </div>
+              <div class="info-item">
+                <label>Database Type</label>
+                <span>PostgreSQL</span>
+              </div>
+              <div class="info-item">
+                <label>ORM</label>
+                <span>Prisma</span>
+              </div>
+              <div class="info-item">
+                <label>Environment</label>
+                <span>Development</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>
