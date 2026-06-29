@@ -254,32 +254,30 @@
   </div>
 </div>
 
-<!-- TEMPLATE PREVIEW MODAL -->
+<!-- TEMPLATE PREVIEW MODAL - NEW DESIGN -->
 <div class="modal" id="templateModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal-content">
+  <div class="modal-content modal-template-large">
     <div class="modal-header">
-      <h3 id="modalTitle">Preview Template</h3>
+      <h3 id="modalTitle">Detail Template</h3>
       <button class="modal-close" aria-label="Tutup">&times;</button>
     </div>
-    <div class="modal-body">
-      <!-- Preview area -->
-      <div class="modal-preview">
-        <div class="modal-preview-inner" id="modalPreview">
-          <div class="modal-watermark">SAMPLE</div>
+    <div class="modal-body modal-template-body">
+      <div class="template-detail-grid">
+        <!-- LEFT: Preview Area -->
+        <div class="template-detail-preview">
+          <div class="template-detail-preview-wrapper">
+            <img id="templatePreviewImage" src="" alt="Template Preview" class="template-preview-img">
+          </div>
+          <button class="btn-preview-fullscreen" id="btnViewFullTemplate">
+            <i class="fas fa-expand"></i> Klik untuk lihat penuh
+          </button>
         </div>
-      </div>
 
-      <!-- Info -->
-      <div class="modal-info">
-        <h4 id="modalInfoTitle">Nama Template</h4>
-        <p id="modalInfoDesc">Deskripsi template akan muncul di sini.</p>
-        <div class="modal-actions">
-          <button class="btn-primary" id="modalPesanBtn" onclick="void(0)">
-            <i class="fas fa-paper-plane"></i>&nbsp; Pilih Template Ini
-          </button>
-          <button class="btn-outline modal-close-btn" onclick="document.getElementById('templateModal').classList.remove('active');document.body.style.overflow=''">
-            Tutup
-          </button>
+        <!-- RIGHT: Info Area -->
+        <div class="template-detail-info">
+          <div id="templateDetailContent">
+            <!-- Content will be dynamically inserted here -->
+          </div>
         </div>
       </div>
     </div>
@@ -363,42 +361,170 @@
 <script src="js/script.js"></script>
 
 <script>
-// Service template data
+// Service template data with pricing and features
 const serviceTemplates = {
   'cv-ats': {
     title: 'CV ATS Professional',
     templates: [
-      { id: 'cv-ats-1', name: 'CV ATS Software Engineer', desc: 'Format ATS-friendly untuk posisi teknologi', image: 'assets/layanan/sofware.png' },
-      { id: 'cv-ats-2', name: 'CV ATS Marketing', desc: 'Optimasi keyword untuk industri marketing', image: 'assets/layanan/marketing.png' },
-      { id: 'cv-ats-3', name: 'CV ATS Finance', desc: 'Format profesional untuk keuangan', image: 'assets/layanan/finace.png' },
-      { id: 'cv-ats-4', name: 'CV ATS Healthcare', desc: 'Format ATS untuk bidang kesehatan', image: 'assets/layanan/helaticare.png' }
+      { 
+        id: 'cv-ats-1', 
+        name: 'CV ATS Software Engineer', 
+        desc: 'Format ATS-friendly untuk posisi teknologi', 
+        image: 'assets/layanan/sofware.png',
+        price: 150000,
+        category: 'ATS',
+        features: ['Format ATS standar internasional', 'Keyword optimization teknologi', 'Layout mudah dibaca HRD', 'File PDF & Word editable', 'Revisi hingga puas']
+      },
+      { 
+        id: 'cv-ats-2', 
+        name: 'CV ATS Marketing', 
+        desc: 'Optimasi keyword untuk industri marketing', 
+        image: 'assets/layanan/marketing.png',
+        price: 150000,
+        category: 'ATS',
+        features: ['Format ATS standar internasional', 'Keyword optimization marketing', 'Layout mudah dibaca HRD', 'File PDF & Word editable', 'Revisi hingga puas']
+      },
+      { 
+        id: 'cv-ats-3', 
+        name: 'CV ATS Finance', 
+        desc: 'Format profesional untuk keuangan', 
+        image: 'assets/layanan/finace.png',
+        price: 150000,
+        category: 'ATS',
+        features: ['Format ATS standar internasional', 'Keyword optimization finance', 'Layout mudah dibaca HRD', 'File PDF & Word editable', 'Revisi hingga puas']
+      },
+      { 
+        id: 'cv-ats-4', 
+        name: 'CV ATS Healthcare', 
+        desc: 'Format ATS untuk bidang kesehatan', 
+        image: 'assets/layanan/helaticare.png',
+        price: 150000,
+        category: 'ATS',
+        features: ['Format ATS standar internasional', 'Keyword optimization healthcare', 'Layout mudah dibaca HRD', 'File PDF & Word editable', 'Revisi hingga puas']
+      }
     ]
   },
   'cv-kreatif': {
     title: 'CV Kreatif & Modern',
     templates: [
-      { id: 'cv-kreatif-1', name: 'CV Kreatif Designer', desc: 'Desain visual untuk desainer grafis', image: 'assets/layanan/sofware.png' },
-      { id: 'cv-kreatif-2', name: 'CV Kreatif Marketing', desc: 'Desain modern untuk marketing', image: 'assets/layanan/marketing.png' },
-      { id: 'cv-kreatif-3', name: 'CV Kreatif Media', desc: 'Desain eye-catching untuk media', image: 'assets/layanan/media1.png' },
-      { id: 'cv-kreatif-4', name: 'CV Kreatif Startup', desc: 'Desain modern untuk startup', image: 'assets/layanan/media2.png' }
+      { 
+        id: 'cv-kreatif-1', 
+        name: 'CV Kreatif Designer', 
+        desc: 'Desain visual untuk desainer grafis', 
+        image: 'assets/layanan/sofware.png',
+        price: 250000,
+        category: 'Kreatif',
+        features: ['Desain custom eksklusif', 'Infographic skill & experience', 'Palet warna sesuai preferensi', 'Format PDF siap cetak', 'Revisi hingga puas']
+      },
+      { 
+        id: 'cv-kreatif-2', 
+        name: 'CV Kreatif Marketing', 
+        desc: 'Desain modern untuk marketing', 
+        image: 'assets/layanan/marketing.png',
+        price: 250000,
+        category: 'Kreatif',
+        features: ['Desain custom eksklusif', 'Infographic skill & experience', 'Palet warna sesuai preferensi', 'Format PDF siap cetak', 'Revisi hingga puas']
+      },
+      { 
+        id: 'cv-kreatif-3', 
+        name: 'CV Kreatif Media', 
+        desc: 'Desain eye-catching untuk media', 
+        image: 'assets/layanan/media1.png',
+        price: 250000,
+        category: 'Kreatif',
+        features: ['Desain custom eksklusif', 'Infographic skill & experience', 'Palet warna sesuai preferensi', 'Format PDF siap cetak', 'Revisi hingga puas']
+      },
+      { 
+        id: 'cv-kreatif-4', 
+        name: 'CV Kreatif Startup', 
+        desc: 'Desain modern untuk startup', 
+        image: 'assets/layanan/media2.png',
+        price: 250000,
+        category: 'Kreatif',
+        features: ['Desain custom eksklusif', 'Infographic skill & experience', 'Palet warna sesuai preferensi', 'Format PDF siap cetak', 'Revisi hingga puas']
+      }
     ]
   },
   'portfolio': {
     title: 'Portfolio Website',
     templates: [
-      { id: 'porto-1', name: 'Portofolio Developer', desc: 'Website portofolio untuk developer', image: 'assets/layanan/sofware.png' },
-      { id: 'porto-2', name: 'Portofolio Designer', desc: 'Website portofolio untuk desainer', image: 'assets/layanan/marketing.png' },
-      { id: 'porto-3', name: 'Portofolio Photographer', desc: 'Website portofolio untuk fotografer', image: 'assets/layanan/media3.png' },
-      { id: 'porto-4', name: 'Portofolio Writer', desc: 'Website portofolio untuk penulis', image: 'assets/layanan/media4.png' }
+      { 
+        id: 'porto-1', 
+        name: 'Portofolio Developer', 
+        desc: 'Website portofolio untuk developer', 
+        image: 'assets/layanan/sofware.png',
+        price: 500000,
+        category: 'Portofolio',
+        features: ['Desain responsif HP & laptop', 'Halaman proyek & kontak', 'Animasi modern & interaktif', 'Optimasi kecepatan loading', 'Deploy ke hosting gratis']
+      },
+      { 
+        id: 'porto-2', 
+        name: 'Portofolio Designer', 
+        desc: 'Website portofolio untuk desainer', 
+        image: 'assets/layanan/marketing.png',
+        price: 500000,
+        category: 'Portofolio',
+        features: ['Desain responsif HP & laptop', 'Halaman proyek & kontak', 'Animasi modern & interaktif', 'Optimasi kecepatan loading', 'Deploy ke hosting gratis']
+      },
+      { 
+        id: 'porto-3', 
+        name: 'Portofolio Photographer', 
+        desc: 'Website portofolio untuk fotografer', 
+        image: 'assets/layanan/media3.png',
+        price: 500000,
+        category: 'Portofolio',
+        features: ['Desain responsif HP & laptop', 'Halaman proyek & kontak', 'Animasi modern & interaktif', 'Optimasi kecepatan loading', 'Deploy ke hosting gratis']
+      },
+      { 
+        id: 'porto-4', 
+        name: 'Portofolio Writer', 
+        desc: 'Website portofolio untuk penulis', 
+        image: 'assets/layanan/media4.png',
+        price: 500000,
+        category: 'Portofolio',
+        features: ['Desain responsif HP & laptop', 'Halaman proyek & kontak', 'Animasi modern & interaktif', 'Optimasi kecepatan loading', 'Deploy ke hosting gratis']
+      }
     ]
   },
   'linkedin': {
     title: 'Optimasi LinkedIn',
     templates: [
-      { id: 'linkedin-1', name: 'LinkedIn Tech Professional', desc: 'Profil LinkedIn untuk teknologi', image: 'assets/layanan/sofware.png' },
-      { id: 'linkedin-2', name: 'LinkedIn Executive', desc: 'Profil LinkedIn untuk eksekutif', image: 'assets/layanan/finace.png' },
-      { id: 'linkedin-3', name: 'LinkedIn Creative', desc: 'Profil LinkedIn untuk kreatif', image: 'assets/layanan/helaticare.png' },
-      { id: 'linkedin-4', name: 'LinkedIn Fresh Graduate', desc: 'Profil LinkedIn untuk fresh graduate', image: 'assets/layanan/marketing.png' }
+      { 
+        id: 'linkedin-1', 
+        name: 'LinkedIn Tech Professional', 
+        desc: 'Profil LinkedIn untuk teknologi', 
+        image: 'assets/layanan/sofware.png',
+        price: 200000,
+        category: 'LinkedIn',
+        features: ['Penulisan headline menarik', 'Optimasi keyword pencarian', 'Sinkronisasi dengan CV', 'Tips membangun network', 'Strategi personal branding']
+      },
+      { 
+        id: 'linkedin-2', 
+        name: 'LinkedIn Executive', 
+        desc: 'Profil LinkedIn untuk eksekutif', 
+        image: 'assets/layanan/finace.png',
+        price: 200000,
+        category: 'LinkedIn',
+        features: ['Penulisan headline menarik', 'Optimasi keyword pencarian', 'Sinkronisasi dengan CV', 'Tips membangun network', 'Strategi personal branding']
+      },
+      { 
+        id: 'linkedin-3', 
+        name: 'LinkedIn Creative', 
+        desc: 'Profil LinkedIn untuk kreatif', 
+        image: 'assets/layanan/helaticare.png',
+        price: 200000,
+        category: 'LinkedIn',
+        features: ['Penulisan headline menarik', 'Optimasi keyword pencarian', 'Sinkronisasi dengan CV', 'Tips membangun network', 'Strategi personal branding']
+      },
+      { 
+        id: 'linkedin-4', 
+        name: 'LinkedIn Fresh Graduate', 
+        desc: 'Profil LinkedIn untuk fresh graduate', 
+        image: 'assets/layanan/marketing.png',
+        price: 200000,
+        category: 'LinkedIn',
+        features: ['Penulisan headline menarik', 'Optimasi keyword pencarian', 'Sinkronisasi dengan CV', 'Tips membangun network', 'Strategi personal branding']
+      }
     ]
   }
 };
@@ -439,43 +565,116 @@ function openServiceModal(serviceType) {
   document.body.style.overflow = 'hidden';
 }
 
-// Preview template
+// Preview template with actual image and data
 function previewTemplate(templateId, templateName, templateDesc) {
   const modal = document.getElementById('templateModal');
   const modalTitle = document.getElementById('modalTitle');
-  const modalInfoTitle = document.getElementById('modalInfoTitle');
-  const modalInfoDesc = document.getElementById('modalInfoDesc');
-  const modalPreview = document.getElementById('modalPreview');
+  const templatePreviewImage = document.getElementById('templatePreviewImage');
+  const templateDetailContent = document.getElementById('templateDetailContent');
   
-  modalTitle.textContent = templateName;
-  modalInfoTitle.textContent = templateName;
-  modalInfoDesc.textContent = templateDesc;
+  // Find template data
+  let templateData = null;
+  for (let serviceType in serviceTemplates) {
+    const service = serviceTemplates[serviceType];
+    templateData = service.templates.find(t => t.id === templateId);
+    if (templateData) break;
+  }
   
-  // Render preview with placeholder
-  modalPreview.className = 'modal-preview-inner';
-  modalPreview.innerHTML = `
-    <div class="modal-watermark">SAMPLE</div>
-    <div class="tmpl-header">
-      <div class="tmpl-avatar">👤</div>
-      <div class="tmpl-info">
-        <div class="tmpl-name"></div>
-        <div class="tmpl-role"></div>
-      </div>
+  if (!templateData) return;
+  
+  // Update modal title
+  modalTitle.textContent = 'Detail Template';
+  
+  // Set preview image
+  templatePreviewImage.src = templateData.image;
+  templatePreviewImage.alt = templateData.name;
+  
+  // Format price
+  const priceFormatted = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0
+  }).format(templateData.price);
+  
+  // Build features list
+  const featuresList = templateData.features ? templateData.features.map(f => 
+    `<li><i class="fas fa-check-circle"></i> ${f}</li>`
+  ).join('') : '';
+  
+  // Update right panel with info
+  templateDetailContent.innerHTML = `
+    <div class="template-info-header">
+      <span class="template-badge">${templateData.category}</span>
     </div>
-    <div class="tmpl-line w-full"></div>
-    <div class="tmpl-line w-3-4"></div>
-    <div class="tmpl-line w-1-2"></div>
-    <div class="tmpl-line w-full"></div>
-    <div class="tmpl-line w-2-3"></div>
-    <div class="tmpl-line w-3-4"></div>
-    <div class="tmpl-line w-1-2"></div>
+    
+    <h3 class="template-info-title">${templateData.name}</h3>
+    
+    <p class="template-info-desc">${templateData.desc}</p>
+    
+    <div class="template-info-price">
+      <span class="price-label">Harga</span>
+      <span class="price-value">${priceFormatted}</span>
+    </div>
+    
+    ${featuresList ? `
+      <div class="template-info-features">
+        <h5>Fitur Template:</h5>
+        <ul>
+          ${featuresList}
+        </ul>
+      </div>
+    ` : ''}
+    
+    <div class="template-info-actions">
+      <button class="btn-primary btn-order" onclick="pesanTemplate('${templateData.name}', ${templateData.price})">
+        <i class="fas fa-paper-plane"></i> Pesan Template Ini
+      </button>
+      <button class="btn-outline btn-close-modal" onclick="closeTemplateModal()">
+        Tutup
+      </button>
+    </div>
   `;
+  
+  // Setup fullscreen button
+  const viewFullBtn = document.getElementById('btnViewFullTemplate');
+  if (viewFullBtn) {
+    viewFullBtn.onclick = function() {
+      openFullPreview(templateData.image, templateData.name);
+    };
+  }
   
   // Close service modal
   document.getElementById('serviceTemplateModal').classList.remove('active');
   
+  // Open template detail modal
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
+}
+
+// Close template modal
+function closeTemplateModal() {
+  const modal = document.getElementById('templateModal');
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+// Open fullscreen preview
+function openFullPreview(imageUrl, imageName) {
+  // Simple implementation - open image in new tab or modal
+  // For now, just alert - can be enhanced with lightbox
+  alert('Fullscreen preview: ' + imageName);
+}
+
+// Function to handle template ordering
+function pesanTemplate(templateName, price) {
+  const params = new URLSearchParams();
+  params.set('template', templateName);
+  params.set('layanan', templateName);
+  params.set('harga', price);
+  
+  window.location.href = 'kontak.html?' + params.toString();
 }
 
 // Show review
@@ -534,6 +733,17 @@ document.getElementById('serviceTemplateModal').addEventListener('click', functi
   if (e.target === this) {
     this.classList.remove('active');
     document.body.style.overflow = '';
+  }
+});
+
+// Close template modal
+document.getElementById('templateModal').querySelector('.modal-close').addEventListener('click', function() {
+  closeTemplateModal();
+});
+
+document.getElementById('templateModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeTemplateModal();
   }
 });
 

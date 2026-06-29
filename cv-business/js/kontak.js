@@ -435,6 +435,43 @@
   }
 
   /* ----------------------------------------------------------
+     MAPPING TEMPLATE NAMES
+     Mapping dari template spesifik ke kategori layanan
+     ---------------------------------------------------------- */
+  function mapTemplateToOption(templateName) {
+    if (!templateName) return null;
+    
+    var mapping = {
+      // CV ATS Professional variants
+      'CV ATS Software Engineer': 'CV ATS Professional',
+      'CV ATS Marketing': 'CV ATS Professional',
+      'CV ATS Finance': 'CV ATS Professional',
+      'CV ATS Healthcare': 'CV ATS Professional',
+      
+      // CV Kreatif & Modern variants
+      'CV Kreatif Designer': 'CV Kreatif & Modern',
+      'CV Kreatif Marketing': 'CV Kreatif & Modern',
+      'CV Kreatif Media': 'CV Kreatif & Modern',
+      'CV Kreatif Startup': 'CV Kreatif & Modern',
+      
+      // Portfolio Website variants
+      'Portofolio Developer': 'Portfolio Website',
+      'Portofolio Designer': 'Portfolio Website',
+      'Portofolio Photographer': 'Portfolio Website',
+      'Portofolio Writer': 'Portfolio Website',
+      
+      // LinkedIn variants
+      'LinkedIn Tech Professional': 'Optimasi LinkedIn',
+      'LinkedIn Executive': 'Optimasi LinkedIn',
+      'LinkedIn Creative': 'Optimasi LinkedIn',
+      'LinkedIn Fresh Graduate': 'Optimasi LinkedIn'
+    };
+    
+    // Return mapped value or original template name if not in mapping
+    return mapping[templateName] || templateName;
+  }
+
+  /* ----------------------------------------------------------
      AUTO-FILL DARI URL PARAMS
      ---------------------------------------------------------- */
   function initAutoFill() {
@@ -448,12 +485,16 @@
     var hargaParam   = params.get('harga');
     var paketParam   = params.get('paket');
 
-    /* Template */
+    /* Template - dengan mapping untuk template spesifik */
     if (tmplParam) {
-      var m = selectExact(tmplSel, tmplParam);
+      // Map template name to option value
+      var mappedTemplate = mapTemplateToOption(tmplParam);
+      var m = selectExact(tmplSel, mappedTemplate);
       if (m) updateHargaFromOption(m);
     } else if (layananParam) {
-      var mL = selectExact(tmplSel, layananParam);
+      // Map layanan name to option value
+      var mappedLayanan = mapTemplateToOption(layananParam);
+      var mL = selectExact(tmplSel, mappedLayanan);
       if (mL) updateHargaFromOption(mL);
     }
 
