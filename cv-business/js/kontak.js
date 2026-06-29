@@ -20,7 +20,7 @@
     GoPay:   { icon: 'fas fa-mobile-alt',  color: '#00AED6', name: 'GoPay',       holder: 'A.N. Indri Ariska',   number: '0838-3009-4365' }
   };
 
-  var ADMIN_WA = '6283122172584';
+  var ADMIN_WA = '6283122172586';
 
   async function loadPaymentSettings() {
     try {

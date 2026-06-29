@@ -37,6 +37,18 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('orderModal').addEventListener('click', function (e) {
     if (e.target === this) closeModal();
   });
+
+  // Update status filter options to match new statuses
+  const statusFilter = document.getElementById('statusFilter');
+  if (statusFilter) {
+    statusFilter.innerHTML = `
+      <option value="">Semua Status</option>
+      <option value="menunggu_verifikasi">Menunggu Verifikasi</option>
+      <option value="diproses">Diproses</option>
+      <option value="selesai">Selesai</option>
+      <option value="ditolak">Ditolak</option>
+    `;
+  }
 });
 
 let allOrders = [];
@@ -93,22 +105,20 @@ function renderOrders(orders) {
       <td><code>#${order.id.substring(0, 8)}</code></td>
       <td>
         <strong>${escHtml(order.customerName)}</strong><br>
-        <small style="color:#6b7280">${escHtml(order.customerWhatsapp)}</small>
+        <small style="color:#6b7280">${escHtml(order.customerWhatsapp)}</small><br>
+        <small style="color:#9ca3af">${escHtml(order.customerEmail)}</small>
       </td>
       <td>
         ${escHtml(order.serviceType)}<br>
         ${order.package ? `<small style="color:#6b7280">${escHtml(order.package)}</small>` : ''}
       </td>
       <td>${formatCurrency(order.price)}</td>
-      <td><span class="status-badge ${order.status}">${statusLabel(order.status)}</span></td>
       <td>${escHtml(order.paymentMethod)}</td>
+      <td><span class="status-badge ${order.status}">${statusLabel(order.status)}</span></td>
       <td>${formatDate(order.createdAt)}</td>
       <td>
         <button class="btn-action" onclick="viewOrder('${order.id}')" title="Lihat Detail">
           <i class="fas fa-eye"></i>
-        </button>
-        <button class="btn-action" onclick="updateStatus('${order.id}')" title="Ubah Status">
-          <i class="fas fa-edit"></i>
         </button>
         <button class="btn-action danger" onclick="deleteOrder('${order.id}')" title="Hapus">
           <i class="fas fa-trash"></i>
@@ -125,27 +135,28 @@ async function viewOrder(id) {
     if (!response.success) return;
     const o = response.data;
 
-    const proofHtml = o.proofImageUrl
-      ? `<a href="${escHtml(o.proofImageUrl)}" target="_blank">
-           <img src="${escHtml(o.proofImageUrl)}" alt="Bukti Bayar"
-                style="max-width:100%;border-radius:8px;margin-top:6px;border:1px solid #e5e7eb">
-         </a>`
-      : '<em style="color:#9ca3af">Belum ada bukti pembayaran</em>';
+    // Build proof image HTML
+    let proofHtml = '<em style="color:#9ca3af">Belum ada bukti pembayaran</em>';
+    if (o.proofImageUrl) {
+      const imgSrc = o.proofImageUrl.startsWith('http')
+        ? o.proofImageUrl
+        : 'http://localhost:3000' + o.proofImageUrl;
+      proofHtml = `
+        <a href="${escHtml(imgSrc)}" target="_blank">
+          <img src="${escHtml(imgSrc)}" alt="Bukti Pembayaran"
+               style="max-width:100%;border-radius:8px;margin-top:6px;border:1px solid #e5e7eb;cursor:pointer"
+               title="Klik untuk lihat penuh">
+        </a>
+        <p style="font-size:0.8rem;color:#6b7280;margin-top:4px">
+          <i class="fas fa-external-link-alt"></i> Klik gambar untuk memperbesar
+        </p>`;
+    }
 
     document.getElementById('orderModalBody').innerHTML = `
       <div class="order-detail">
-        <div class="detail-section">
-          <h3>Informasi Pesanan</h3>
-          <div class="detail-grid">
-            <div><label>Order ID</label><span><code>${o.id}</code></span></div>
-            <div><label>Tanggal</label><span>${formatDate(o.createdAt)}</span></div>
-            <div><label>Status</label><span class="status-badge ${o.status}">${statusLabel(o.status)}</span></div>
-            <div><label>Selesai</label><span>${o.completedAt ? formatDate(o.completedAt) : '–'}</span></div>
-          </div>
-        </div>
 
         <div class="detail-section">
-          <h3>Data Pelanggan</h3>
+          <h3>Informasi Pelanggan</h3>
           <div class="detail-grid">
             <div><label>Nama</label><span>${escHtml(o.customerName)}</span></div>
             <div><label>Email</label><span>${escHtml(o.customerEmail)}</span></div>
@@ -160,34 +171,54 @@ async function viewOrder(id) {
         </div>
 
         <div class="detail-section">
-          <h3>Detail Layanan</h3>
+          <h3>Informasi Layanan</h3>
           <div class="detail-grid">
+            <div><label>Order ID</label><span><code>${o.id}</code></span></div>
             <div><label>Layanan</label><span>${escHtml(o.serviceType)}</span></div>
             <div><label>Paket</label><span>${escHtml(o.package || '–')}</span></div>
             <div><label>Harga</label><span>${formatCurrency(o.price)}</span></div>
             <div><label>Metode Bayar</label><span>${escHtml(o.paymentMethod)}</span></div>
+            <div><label>Status</label><span class="status-badge ${o.status}">${statusLabel(o.status)}</span></div>
+            <div><label>Tanggal Pesan</label><span>${formatDate(o.createdAt)}</span></div>
+            ${o.completedAt ? `<div><label>Tanggal Selesai</label><span>${formatDate(o.completedAt)}</span></div>` : ''}
           </div>
         </div>
+
+        ${(o.message) ? `
+        <div class="detail-section">
+          <h3>Pesan dari Pelanggan</h3>
+          <p style="white-space:pre-wrap;font-size:0.9rem;color:#374151;background:#f9fafb;padding:12px;border-radius:8px">${escHtml(o.message)}</p>
+        </div>` : ''}
+
+        ${(o.adminNotes) ? `
+        <div class="detail-section">
+          <h3>Catatan Admin</h3>
+          <p style="white-space:pre-wrap;font-size:0.9rem;color:#374151">${escHtml(o.adminNotes)}</p>
+        </div>` : ''}
 
         <div class="detail-section">
           <h3>Bukti Pembayaran</h3>
           ${proofHtml}
         </div>
 
-        ${o.adminNotes ? `
-        <div class="detail-section">
-          <h3>Catatan Admin</h3>
-          <p style="white-space:pre-wrap;font-size:0.9rem;color:#374151">${escHtml(o.adminNotes)}</p>
-        </div>` : ''}
-
-        <div class="modal-actions">
-          <button class="btn-primary" onclick="updateStatus('${o.id}')">
-            <i class="fas fa-edit"></i> Ubah Status
+        <div class="modal-actions" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px">
+          <button class="btn-primary" onclick="setOrderStatus('${o.id}', 'menunggu_verifikasi')" style="background:#f59e0b;border-color:#f59e0b">
+            <i class="fas fa-hourglass-half"></i> Verifikasi
+          </button>
+          <button class="btn-primary" onclick="setOrderStatus('${o.id}', 'diproses')" style="background:#3b82f6;border-color:#3b82f6">
+            <i class="fas fa-cog"></i> Proses
+          </button>
+          <button class="btn-primary" onclick="setOrderStatus('${o.id}', 'selesai')" style="background:#10b981;border-color:#10b981">
+            <i class="fas fa-check-circle"></i> Selesai
+          </button>
+          <button class="btn-primary" onclick="setOrderStatus('${o.id}', 'ditolak')" style="background:#ef4444;border-color:#ef4444">
+            <i class="fas fa-times-circle"></i> Tolak
           </button>
           <a href="https://wa.me/${o.customerWhatsapp.replace(/\D/g,'')}" target="_blank" class="btn-secondary">
-            <i class="fab fa-whatsapp"></i> Hubungi via WA
+            <i class="fab fa-whatsapp"></i> Hubungi WA
           </a>
         </div>
+
       </div>
     `;
 
@@ -198,25 +229,16 @@ async function viewOrder(id) {
   }
 }
 
-// ── Update Status ─────────────────────────────────────────────────
-async function updateStatus(id) {
-  const order = allOrders.find(o => o.id === id);
-  if (!order) return;
-
-  const options = ['pending', 'paid', 'processing', 'completed', 'cancelled'];
-  const newStatus = prompt(
-    `Status saat ini: ${statusLabel(order.status)}\n\nMasukkan status baru:\n${options.map((s, i) => `${i + 1}. ${s}`).join('\n')}`,
-    order.status
-  );
-
-  if (!newStatus || !options.includes(newStatus)) return;
-
-  const notes = prompt('Catatan admin (opsional):', order.adminNotes || '');
+// ── Set Status Directly (from modal buttons) ──────────────────────
+async function setOrderStatus(id, newStatus) {
+  const notes = newStatus === 'ditolak'
+    ? prompt('Alasan penolakan (opsional):', '')
+    : null;
 
   try {
     const response = await AdminAPI.updateOrderStatus(id, newStatus, notes || undefined);
     if (response.success) {
-      showToast('Status pesanan berhasil diperbarui', 'success');
+      showToast(`Status berhasil diubah ke: ${statusLabel(newStatus)}`, 'success');
       closeModal();
       loadOrders();
     }
@@ -254,7 +276,7 @@ function exportCSV() {
     o.package || '',
     o.price,
     o.paymentMethod,
-    o.status,
+    statusLabel(o.status),
     new Date(o.createdAt).toISOString().split('T')[0],
   ]);
 
@@ -285,7 +307,18 @@ function formatDate(ds) {
 }
 
 function statusLabel(status) {
-  const map = { pending: 'Pending', paid: 'Dibayar', processing: 'Diproses', completed: 'Selesai', cancelled: 'Dibatalkan' };
+  const map = {
+    menunggu_verifikasi: 'Menunggu Verifikasi',
+    diproses:            'Diproses',
+    selesai:             'Selesai',
+    ditolak:             'Ditolak',
+    // Legacy fallbacks
+    pending:     'Menunggu Verifikasi',
+    paid:        'Diproses',
+    processing:  'Diproses',
+    completed:   'Selesai',
+    cancelled:   'Ditolak',
+  };
   return map[status] || status;
 }
 

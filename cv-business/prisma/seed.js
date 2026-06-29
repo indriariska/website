@@ -10,6 +10,12 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Starting CVPro Studio seed...');
 
+  // Clear non-user data first to avoid duplicates on re-run
+  await prisma.order.deleteMany({});
+  await prisma.expense.deleteMany({});
+  await prisma.setting.deleteMany({});
+  console.log('Cleared existing orders, expenses, settings.');
+
   // ── Admin user ──────────────────────────────────────────────
   const adminPassword = await Bcrypt.hash('admin123');
   const admin = await prisma.user.upsert({
@@ -48,8 +54,9 @@ async function main() {
       package: 'Standard',
       price: 199000,
       paymentMethod: 'BCA',
-      status: 'completed',
+      status: 'selesai',
       adminNotes: 'CV selesai, sudah dikirim via email.',
+      message: 'Saya ingin CV yang profesional untuk melamar pekerjaan di bidang IT.',
       completedAt: new Date('2025-05-10'),
     },
     {
@@ -60,8 +67,9 @@ async function main() {
       package: 'Premium',
       price: 499000,
       paymentMethod: 'DANA',
-      status: 'completed',
+      status: 'selesai',
       adminNotes: 'Portofolio website telah deploy.',
+      message: 'Butuh portofolio untuk freelance desainer.',
       completedAt: new Date('2025-05-15'),
     },
     {
@@ -72,8 +80,9 @@ async function main() {
       package: 'Standard',
       price: 199000,
       paymentMethod: 'BSI',
-      status: 'processing',
+      status: 'diproses',
       adminNotes: 'Sedang dikerjakan.',
+      message: 'Ingin CV modern untuk posisi Software Engineer.',
     },
     {
       customerName: 'Rizky Pratama',
@@ -83,7 +92,8 @@ async function main() {
       package: 'Professional',
       price: 799000,
       paymentMethod: 'Mandiri',
-      status: 'pending',
+      status: 'menunggu_verifikasi',
+      message: 'Perlu CV mewah untuk posisi C-level.',
     },
     {
       customerName: 'Sari Dewi',
@@ -93,7 +103,8 @@ async function main() {
       package: 'Standard',
       price: 200000,
       paymentMethod: 'GoPay',
-      status: 'completed',
+      status: 'selesai',
+      message: 'Mau optimasi LinkedIn supaya lebih mudah ditemukan rekruter.',
       completedAt: new Date('2025-06-01'),
     },
     {
@@ -104,8 +115,9 @@ async function main() {
       package: 'Professional',
       price: 799000,
       paymentMethod: 'BRI',
-      status: 'paid',
-      adminNotes: 'Pembayaran sudah diverifikasi, menunggu pengerjaan.',
+      status: 'diproses',
+      adminNotes: 'Bukti transfer sudah diverifikasi, sedang pengerjaan.',
+      message: 'Butuh portofolio untuk agency kreatif.',
     },
   ];
 
@@ -143,7 +155,7 @@ async function main() {
       businessName: 'CVPro Studio',
       ownerName: 'Indri Ariska',
       phone: '+62 83830094365',
-      whatsapp: '6283122172584',
+      whatsapp: '6283122172586',
       email: 'indriariska469@gmail.com',
       address: 'Indonesia',
       instagram: 'ftryy.z.a_',

@@ -25,11 +25,11 @@ class DashboardController {
         ordersThisMonth,
       ] = await Promise.all([
         prisma.order.count(),
-        prisma.order.count({ where: { status: 'pending' } }),
-        prisma.order.count({ where: { status: 'paid' } }),
-        prisma.order.count({ where: { status: 'processing' } }),
-        prisma.order.count({ where: { status: 'completed' } }),
-        prisma.order.count({ where: { status: 'cancelled' } }),
+        prisma.order.count({ where: { status: 'menunggu_verifikasi' } }),
+        prisma.order.count({ where: { status: 'diproses' } }),
+        prisma.order.count({ where: { status: 'diproses' } }),
+        prisma.order.count({ where: { status: 'selesai' } }),
+        prisma.order.count({ where: { status: 'ditolak' } }),
         prisma.order.count({ where: { createdAt: { gte: today } } }),
         prisma.order.count({ where: { createdAt: { gte: monthStart } } }),
       ]);

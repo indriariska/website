@@ -1,9 +1,8 @@
 const ORDER_STATUS = {
-  PENDING: 'pending',
-  PAID: 'paid',
-  PROCESSING: 'processing',
-  COMPLETED: 'completed',
-  CANCELLED: 'cancelled',
+  MENUNGGU_VERIFIKASI: 'menunggu_verifikasi',
+  DIPROSES:           'diproses',
+  SELESAI:            'selesai',
+  DITOLAK:            'ditolak',
 };
 
 const PAYMENT_STATUS = {

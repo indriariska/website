@@ -401,9 +401,37 @@ body {
   font-weight: 500;
 }
 
+/* New statuses */
+.status-badge.menunggu_verifikasi {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.status-badge.diproses {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-badge.selesai {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.status-badge.ditolak {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Legacy fallbacks */
 .status-badge.pending {
   background: #fef3c7;
   color: #d97706;
+}
+
+.status-badge.paid,
+.status-badge.processing {
+  background: #dbeafe;
+  color: #1d4ed8;
 }
 
 .status-badge.completed {

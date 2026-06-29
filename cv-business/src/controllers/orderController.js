@@ -63,11 +63,11 @@ class OrderController {
     try {
       const [total, pending, paid, processing, completed, cancelled] = await Promise.all([
         prisma.order.count(),
-        prisma.order.count({ where: { status: 'pending' } }),
-        prisma.order.count({ where: { status: 'paid' } }),
-        prisma.order.count({ where: { status: 'processing' } }),
-        prisma.order.count({ where: { status: 'completed' } }),
-        prisma.order.count({ where: { status: 'cancelled' } }),
+        prisma.order.count({ where: { status: 'menunggu_verifikasi' } }),
+        prisma.order.count({ where: { status: 'diproses' } }),
+        prisma.order.count({ where: { status: 'diproses' } }),
+        prisma.order.count({ where: { status: 'selesai' } }),
+        prisma.order.count({ where: { status: 'ditolak' } }),
       ]);
 
       const orders = await prisma.order.findMany({ select: { price: true } });
@@ -131,8 +131,8 @@ class OrderController {
           price: parseInt(String(price).replace(/[^0-9]/g, '')) || 0,
           paymentMethod,
           proofImageUrl,
-          adminNotes: message || null,
-          status: proofImageUrl ? 'paid' : 'pending',
+          message: message || null,
+          status: 'menunggu_verifikasi',
         },
       });
 
@@ -150,14 +150,14 @@ class OrderController {
     try {
       const { status, adminNotes } = req.body;
 
-      const validStatuses = ['pending', 'paid', 'processing', 'completed', 'cancelled'];
+      const validStatuses = ['menunggu_verifikasi', 'diproses', 'selesai', 'ditolak'];
       if (!validStatuses.includes(status)) {
         return Response.error(res, `Invalid status. Must be one of: ${validStatuses.join(', ')}`, 400);
       }
 
       const data = { status };
       if (adminNotes !== undefined) data.adminNotes = adminNotes;
-      if (status === 'completed') data.completedAt = new Date();
+      if (status === 'selesai') data.completedAt = new Date();
 
       const order = await prisma.order.update({
         where: { id: req.params.id },
@@ -189,7 +189,7 @@ class OrderController {
       if (status !== undefined)       data.status       = status;
       if (adminNotes !== undefined)   data.adminNotes   = adminNotes;
       if (completedAt !== undefined)  data.completedAt  = completedAt ? new Date(completedAt) : null;
-      if (status === 'completed' && !completedAt) data.completedAt = new Date();
+      if (status === 'selesai' && !completedAt) data.completedAt = new Date();
 
       const order = await prisma.order.update({
         where: { id: req.params.id },

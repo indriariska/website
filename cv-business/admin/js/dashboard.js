@@ -56,6 +56,10 @@ function updateStats(data) {
   setText('netProfit',         formatCurrency(data.netProfit       || 0));
 
   // Order status breakdown
+  // pendingOrders → Menunggu Verifikasi
+  // processingOrders → Diproses (paidOrders + processingOrders)
+  // completedOrders → Selesai
+  // cancelledOrders → Ditolak
   setText('pendingOrders',     data.pendingOrders     || 0);
   setText('processingOrders',  data.processingOrders  || 0);
   setText('completedOrders',   data.completedOrders   || 0);
@@ -170,7 +174,18 @@ function formatDate(dateString) {
 }
 
 function statusLabel(status) {
-  const map = { pending: 'Pending', paid: 'Dibayar', processing: 'Proses', completed: 'Selesai', cancelled: 'Batal' };
+  const map = {
+    menunggu_verifikasi: 'Menunggu Verifikasi',
+    diproses:            'Diproses',
+    selesai:             'Selesai',
+    ditolak:             'Ditolak',
+    // Legacy fallbacks
+    pending:     'Menunggu Verifikasi',
+    paid:        'Diproses',
+    processing:  'Diproses',
+    completed:   'Selesai',
+    cancelled:   'Ditolak',
+  };
   return map[status] || status;
 }
 
