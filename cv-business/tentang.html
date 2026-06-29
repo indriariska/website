@@ -294,6 +294,15 @@
       grid-row: 1 / 3;
       border-radius: 24px;
     }
+    .mosaic-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.4s ease;
+      display: block;
+    }
+    .mosaic-tile:hover .mosaic-image { transform: scale(1.05); }
     .mosaic-bg {
       width: 100%; height: 100%;
       display: flex;
@@ -1051,17 +1060,17 @@
       <div class="about-mosaic fade-in-right">
         <!-- Tile besar kiri -->
         <div class="mosaic-tile">
-          <div class="mosaic-bg mosaic-bg-1">📄</div>
+          <img src="assets/tentang/CvProfesional.jpeg" alt="CV Profesional" class="mosaic-image">
           <div class="mosaic-overlay"><span>CV Profesional</span></div>
         </div>
         <!-- Tile kanan atas -->
         <div class="mosaic-tile">
-          <div class="mosaic-bg mosaic-bg-2">🌐</div>
+          <img src="assets/tentang/portofolio.jpeg" alt="Portofolio Web" class="mosaic-image">
           <div class="mosaic-overlay"><span>Portofolio Web</span></div>
         </div>
         <!-- Tile kanan bawah -->
         <div class="mosaic-tile">
-          <div class="mosaic-bg mosaic-bg-3">💼</div>
+          <img src="assets/tentang/karirimpian.jpeg" alt="Karier Impian" class="mosaic-image">
           <div class="mosaic-overlay"><span>Karier Impian</span></div>
         </div>
       </div>

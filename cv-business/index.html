@@ -1281,6 +1281,80 @@
 
 <script>
 
+// Mapping template names from Beranda to Kontak form options
+function mapTemplateToOption(templateName) {
+  if (!templateName) return null;
+  
+  var mapping = {
+    // CV Basic (6 templates)
+    'CV Basic Clean': 'CV Basic Clean',
+    'CV Basic Simple': 'CV Basic Simple',
+    'CV Basic Classic': 'CV Basic Classic',
+    'CV Basic Standard': 'CV Basic Standard',
+    'CV Basic Minimal': 'CV Basic Minimal',
+    'CV Basic Professional': 'CV Basic Professional',
+    
+    // CV Standard (6 templates)
+    'CV Modern Professional': 'CV Modern Professional',
+    'CV Clean & Minimalist': 'CV Clean & Minimalist',
+    'CV Two Column': 'CV Two Column',
+    'CV Sidebar Accent': 'CV Sidebar Accent',
+    'CV Professional Blue': 'CV Professional Blue',
+    'CV Executive Style': 'CV Executive Style',
+    
+    // CV Premium (6 templates)
+    'CV Creative Dark': 'CV Creative Dark',
+    'CV Minimal Elegant': 'CV Minimal Elegant',
+    'CV Elegant Green': 'CV Elegant Green',
+    'CV Bold & Vibrant': 'CV Bold & Vibrant',
+    'CV Gradient Modern': 'CV Gradient Modern',
+    'CV Infographic Style': 'CV Infographic Style',
+    
+    // CV Professional (6 templates)
+    'CV Luxury Gold': 'CV Luxury Gold',
+    'CV Executive Premium': 'CV Executive Premium',
+    'CV Corporate Elite': 'CV Corporate Elite',
+    'CV Designer Pro': 'CV Designer Pro',
+    'CV Tech Lead': 'CV Tech Lead',
+    'CV Consultant Expert': 'CV Consultant Expert',
+    
+    // Portfolio Basic (6 templates)
+    'Portofolio Simple Clean': 'Portofolio Simple Clean',
+    'Portofolio Minimal Start': 'Portofolio Minimal Start',
+    'Portofolio Basic Grid': 'Portofolio Basic Grid',
+    'Portofolio Clean Layout': 'Portofolio Clean Layout',
+    'Portofolio Starter': 'Portofolio Starter',
+    'Portofolio Entry Level': 'Portofolio Entry Level',
+    
+    // Portfolio Standard (6 templates)
+    'Portofolio Ocean Blue': 'Portofolio Ocean Blue',
+    'Portofolio Forest Green': 'Portofolio Forest Green',
+    'Portofolio Warm Amber': 'Portofolio Warm Amber',
+    'Portofolio Royal Purple': 'Portofolio Royal Purple',
+    'Portofolio Modern Dark': 'Portofolio Modern Dark',
+    'Portofolio Light Clean': 'Portofolio Light Clean',
+    
+    // Portfolio Premium (6 templates)
+    'Portofolio Creative Pro': 'Portofolio Creative Pro',
+    'Portofolio Interactive': 'Portofolio Interactive',
+    'Portofolio Gallery Style': 'Portofolio Gallery Style',
+    'Portofolio Bold Design': 'Portofolio Bold Design',
+    'Portofolio Gradient Flow': 'Portofolio Gradient Flow',
+    'Portofolio Minimal Premium': 'Portofolio Minimal Premium',
+    
+    // Portfolio Professional (6 templates)
+    'Portofolio Agency Elite': 'Portofolio Agency Elite',
+    'Portofolio Corporate Pro': 'Portofolio Corporate Pro',
+    'Portofolio Expert Showcase': 'Portofolio Expert Showcase',
+    'Portofolio Luxury Brand': 'Portofolio Luxury Brand',
+    'Portofolio Award Winning': 'Portofolio Award Winning',
+    'Portofolio Master Class': 'Portofolio Master Class'
+  };
+  
+  // Return mapped value or original template name
+  return mapping[templateName] || templateName;
+}
+
 // Template Detail Modal for Beranda
 
 function initTemplateDetailModal() {
@@ -1301,66 +1375,90 @@ function initTemplateDetailModal() {
 
       e.stopPropagation();
 
-      const templateId = this.dataset.template;
+      
+      // Get data from parent img element
+      const templateCard = this.closest('.template-card');
+      const imgElement = templateCard.querySelector('.template-preview-image');
 
-      const packageName = this.dataset.package;
-
-      const price = this.dataset.price;
+      if (!imgElement) return;
 
       
+      // Extract all data from img attributes
+      const fullImage = imgElement.dataset.fullImage;
+      const templateId = imgElement.dataset.template;
+      const packageName = imgElement.dataset.package;
+      const price = imgElement.dataset.price;
+      const title = imgElement.dataset.title;
+      const desc = imgElement.dataset.desc;
+      const type = imgElement.dataset.type;
+      const category = imgElement.dataset.category;
 
-      // Get template data from templates object (defined in script.js)
-
+      
+      // Get template data from templates object for features
+      let features = [];
       if (typeof templates !== 'undefined' && templates[templateId]) {
-
-        const template = templates[templateId];
-
-        
-
-        // Update modal content
-
-        document.getElementById('templateDetailName').textContent = template.title;
-
-        document.getElementById('templateDetailDesc').textContent = template.description;
-
-        document.getElementById('templateDetailType').textContent = template.type;
-
-        document.getElementById('templateDetailCategory').textContent = template.package;
-
-        document.getElementById('templateDetailPrice').textContent = 'Rp' + parseInt(price).toLocaleString('id-ID');
-
-        
-
-        // Update preview class
-
-        const preview = document.getElementById('templateDetailPreview');
-
-        preview.className = 'template-detail-preview-inner ' + template.previewClass;
-
-        
-
-        // Update order button href
-
-        const orderBtn = document.getElementById('templateDetailOrderBtn');
-
-        orderBtn.href = `kontak.html?paket=${encodeURIComponent(template.type + ' ' + template.package)}&harga=${price}`;
-
-        
-
-        // Update features
-
-        const featuresList = document.getElementById('templateDetailFeatures');
-
-        featuresList.innerHTML = template.features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('');
-
+        features = templates[templateId].features || [];
+      }
+      
+      // Provide default features if none found
+      if (features.length === 0) {
+        const isPortfolio = type === 'Portofolio';
+        if (isPortfolio) {
+          features = [
+            'Desain responsif (HP & laptop)',
+            'Animasi modern & interaktif',
+            'Optimasi kecepatan loading',
+            'Deploy ke hosting gratis'
+          ];
+        } else {
+          features = [
+            'Format ATS-friendly',
+            'File PDF & Word editable',
+            'Revisi hingga puas',
+            'Konsultasi konten gratis'
+          ];
+        }
       }
 
       
+      // Update modal header and image
+      document.getElementById('templateDetailTitle').textContent = title;
+      document.getElementById('templateDetailPreviewImage').src = fullImage;
+      document.getElementById('templateDetailPreviewImage').alt = title;
 
+      
+      // Update modal info
+      document.getElementById('templateDetailType').textContent = type;
+      document.getElementById('templateDetailCategory').textContent = category;
+      document.getElementById('templateDetailName').textContent = title;
+      document.getElementById('templateDetailDesc').textContent = desc;
+      document.getElementById('templateDetailPrice').textContent = 'Rp' + parseInt(price).toLocaleString('id-ID');
+
+      
+      // Update features list
+      const featuresList = document.getElementById('templateDetailFeatures');
+      if (features.length > 0) {
+        featuresList.innerHTML = features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('');
+      }
+
+      
+      // Update order button - send template name with mapping
+      const mappedTemplate = mapTemplateToOption ? mapTemplateToOption(title) : title;
+      const orderBtn = document.getElementById('templateDetailOrderBtn');
+      orderBtn.href = `kontak.html?template=${encodeURIComponent(mappedTemplate)}&harga=${price}`;
+
+      
+      // Setup fullscreen button
+      const viewFullBtn = document.getElementById('btnViewFullTemplate');
+      if (viewFullBtn) {
+        viewFullBtn.onclick = function() {
+          openFullPreview(fullImage, title);
+        };
+      }
+
+      
       // Show modal
-
       modal.classList.add('active');
-
       document.body.style.overflow = 'hidden';
 
     });
@@ -1368,9 +1466,7 @@ function initTemplateDetailModal() {
   });
 
   
-
   // Close modal when clicking outside
-
   modal.addEventListener('click', function(e) {
 
     if (e.target === modal) {
@@ -1397,6 +1493,25 @@ function closeTemplateDetailModal() {
 
   }
 
+}
+
+
+// Open fullscreen preview
+function openFullPreview(imageUrl, imageName) {
+  // Open image in new tab or use full preview modal if available
+  const fullPreviewModal = document.getElementById('fullPreviewModal');
+  if (fullPreviewModal) {
+    const fullPreviewImage = fullPreviewModal.querySelector('img');
+    if (fullPreviewImage) {
+      fullPreviewImage.src = imageUrl;
+      fullPreviewImage.alt = imageName;
+      fullPreviewModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  } else {
+    // Fallback: open in new tab
+    window.open(imageUrl, '_blank');
+  }
 }
 
 
