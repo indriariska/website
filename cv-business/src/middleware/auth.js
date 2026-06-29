@@ -36,4 +36,13 @@ const adminOnly = (req, res, next) => {
   next();
 };
 
-module.exports = { auth, adminOnly };
+// Staff and Admin both get access (operational routes)
+const staffOrAdmin = (req, res, next) => {
+  const allowed = ['admin', 'super_admin', 'staff'];
+  if (!allowed.includes(req.user.role)) {
+    return Response.error(res, 'Access denied.', 403);
+  }
+  next();
+};
+
+module.exports = { auth, adminOnly, staffOrAdmin };
