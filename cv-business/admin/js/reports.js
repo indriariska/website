@@ -65,28 +65,28 @@ function updateReportStats() {
 
   switch (period) {
     case 'daily':
-      revenue = reportData.revenueToday || 0;
-      grossProfit = 0;
-      expenses = 0;
-      netProfit = revenue - expenses;
+      revenue     = reportData.revenueToday || 0;
+      expenses    = 0;
+      grossProfit = revenue;
+      netProfit   = revenue - expenses;
       break;
     case 'monthly':
-      revenue = reportData.monthlyRevenue || 0;
-      expenses = reportData.monthlyExpenses || 0;
-      grossProfit = reportData.monthlyProfitData?.reduce((a, b) => a + b, 0) || 0;
-      netProfit = grossProfit - expenses;
+      revenue     = reportData.monthlyRevenue   || 0;
+      expenses    = reportData.monthlyExpenses  || 0;
+      grossProfit = reportData.monthlyProfit    || revenue;
+      netProfit   = reportData.netProfit        || (grossProfit - expenses);
       break;
-    default:
-      revenue = reportData.totalRevenue || 0;
-      expenses = reportData.monthlyExpenses || 0;
-      grossProfit = reportData.grossProfit || 0;
-      netProfit = grossProfit - expenses;
+    default: // all time
+      revenue     = reportData.totalRevenue || 0;
+      expenses    = reportData.monthlyExpenses || 0;
+      grossProfit = reportData.grossProfit  || revenue;
+      netProfit   = grossProfit - expenses;
   }
 
-  document.getElementById('reportRevenue').textContent = formatCurrency(revenue);
+  document.getElementById('reportRevenue').textContent    = formatCurrency(revenue);
   document.getElementById('reportGrossProfit').textContent = formatCurrency(grossProfit);
-  document.getElementById('reportExpenses').textContent = formatCurrency(expenses);
-  document.getElementById('reportNetProfit').textContent = formatCurrency(netProfit);
+  document.getElementById('reportExpenses').textContent   = formatCurrency(expenses);
+  document.getElementById('reportNetProfit').textContent  = formatCurrency(netProfit);
 }
 
 function updateReportCharts() {
@@ -206,60 +206,56 @@ function calculateGrowthRate(data) {
 }
 
 function updateReportTables() {
-  // Best Selling Products
+  // Top Services (replaces "Best Selling Products")
   const bestSellingTable = document.getElementById('bestSellingTable');
-  if (reportData.bestSellingProducts && reportData.bestSellingProducts.length > 0) {
-    bestSellingTable.innerHTML = reportData.bestSellingProducts.map(product => `
+  if (reportData.topServices && reportData.topServices.length > 0) {
+    bestSellingTable.innerHTML = reportData.topServices.map(s => `
       <tr>
-        <td>${product.name}</td>
-        <td>${product.category}</td>
-        <td>${product.totalSold || 0}</td>
-        <td>${formatCurrency(product.totalRevenue || 0)}</td>
+        <td>${escHtml(s.serviceType)}</td>
+        <td>${s.totalOrders}</td>
+        <td>${formatCurrency(s.totalRevenue)}</td>
+        <td>${formatCurrency(s.totalOrders > 0 ? Math.round(s.totalRevenue / s.totalOrders) : 0)}</td>
       </tr>
     `).join('');
   } else {
-    bestSellingTable.innerHTML = '<tr><td colspan="4" class="loading">No data available</td></tr>';
+    bestSellingTable.innerHTML = '<tr><td colspan="4" class="loading">Belum ada data</td></tr>';
   }
 
-  // Best Customers
+  // Top Customers (from latest orders)
   const bestCustomersTable = document.getElementById('bestCustomersTable');
-  if (reportData.latestOrders) {
-    const customerSpending = {};
+  if (reportData.latestOrders && reportData.latestOrders.length > 0) {
+    // Aggregate by email
+    const byEmail = {};
     reportData.latestOrders.forEach(order => {
-      if (order.customer) {
-        const customerId = order.customer.id;
-        if (!customerSpending[customerId]) {
-          customerSpending[customerId] = {
-            name: order.customer.name,
-            phone: order.customer.phone,
-            orders: 0,
-            spending: 0,
-          };
-        }
-        customerSpending[customerId].orders++;
-        customerSpending[customerId].spending += order.totalPrice;
+      const key = order.customerEmail || order.customerName;
+      if (!byEmail[key]) {
+        byEmail[key] = {
+          name: order.customerName,
+          whatsapp: order.customerWhatsapp,
+          orders: 0,
+          spending: 0,
+        };
       }
+      byEmail[key].orders++;
+      byEmail[key].spending += order.price;
     });
 
-    const sortedCustomers = Object.values(customerSpending)
-      .sort((a, b) => b.spending - a.spending)
-      .slice(0, 10);
-
-    if (sortedCustomers.length > 0) {
-      bestCustomersTable.innerHTML = sortedCustomers.map(customer => `
-        <tr>
-          <td>${customer.name}</td>
-          <td>${customer.phone}</td>
-          <td>${customer.orders}</td>
-          <td>${formatCurrency(customer.spending)}</td>
-        </tr>
-      `).join('');
-    } else {
-      bestCustomersTable.innerHTML = '<tr><td colspan="4" class="loading">No data available</td></tr>';
-    }
+    const sorted = Object.values(byEmail).sort((a, b) => b.spending - a.spending).slice(0, 10);
+    bestCustomersTable.innerHTML = sorted.map(c => `
+      <tr>
+        <td>${escHtml(c.name)}</td>
+        <td>${escHtml(c.whatsapp || '–')}</td>
+        <td>${c.orders}</td>
+        <td>${formatCurrency(c.spending)}</td>
+      </tr>
+    `).join('');
   } else {
-    bestCustomersTable.innerHTML = '<tr><td colspan="4" class="loading">No data available</td></tr>';
+    bestCustomersTable.innerHTML = '<tr><td colspan="4" class="loading">Belum ada data</td></tr>';
   }
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function exportReport(format) {

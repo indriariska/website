@@ -1,74 +1,88 @@
+/**
+ * CVPro Studio — Express Server
+ * Service-based CV & Portfolio business backend.
+ */
 require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
+const express  = require('express');
+const cors     = require('cors');
+const helmet   = require('helmet');
 const rateLimit = require('express-rate-limit');
-const path = require('path');
+const path     = require('path');
+const fs       = require('fs');
 
 const errorHandler = require('./src/middleware/errorHandler');
-const notFound = require('./src/middleware/notFound');
+const notFound     = require('./src/middleware/notFound');
 
-const authRoutes = require('./src/routes/authRoutes');
-const customerRoutes = require('./src/routes/customerRoutes');
-const productRoutes = require('./src/routes/productRoutes');
-const orderRoutes = require('./src/routes/orderRoutes');
-const expenseRoutes = require('./src/routes/expenseRoutes');
-const settingsRoutes = require('./src/routes/settingsRoutes');
+const authRoutes      = require('./src/routes/authRoutes');
+const orderRoutes     = require('./src/routes/orderRoutes');
+const expenseRoutes   = require('./src/routes/expenseRoutes');
+const settingsRoutes  = require('./src/routes/settingsRoutes');
 const dashboardRoutes = require('./src/routes/dashboardRoutes');
 
-const app = express();
+const app  = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(helmet());
+// ── Ensure uploads directory exists ──────────────────────────────
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
+// ── Security & parsing ────────────────────────────────────────────
+app.use(helmet({
+  // Allow inline scripts/styles for the admin panel
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// ── Static file serving ───────────────────────────────────────────
+app.use('/uploads', express.static(uploadsDir));
 
+// ── Rate limiting ─────────────────────────────────────────────────
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: 'Too many requests from this IP, please try again later.',
+  max: 200,
+  message: { success: false, message: 'Too many requests. Please try again later.' },
 });
 app.use('/api/', limiter);
 
-app.get('/', (req, res) => {
+// ── API routes ────────────────────────────────────────────────────
+app.use('/api/auth',      authRoutes);
+app.use('/api/orders',    orderRoutes);
+app.use('/api/expenses',  expenseRoutes);
+app.use('/api/settings',  settingsRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+
+// Health check
+app.get('/api/health', (req, res) => {
   res.json({
-    message: 'Store Management API',
-    version: '1.0.0',
+    success: true,
+    message: 'CVPro Studio API is running',
+    version: '2.0.0',
+    timestamp: new Date().toISOString(),
     endpoints: {
-      auth: '/api/auth',
-      customers: '/api/customers',
-      products: '/api/products',
-      orders: '/api/orders',
-      expenses: '/api/expenses',
-      settings: '/api/settings',
+      auth:      '/api/auth',
+      orders:    '/api/orders',
+      expenses:  '/api/expenses',
+      settings:  '/api/settings',
       dashboard: '/api/dashboard',
     },
   });
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/customers', customerRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/expenses', expenseRoutes);
-app.use('/api/settings', settingsRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-
-// Serve admin static files
+// ── Serve admin & customer-facing static files ───────────────────
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
-
-// Serve customer website static files
 app.use(express.static(path.join(__dirname, '.')));
 
+// ── Error handlers ────────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`\nCVPro Studio API running on port ${PORT}`);
+  console.log(`Environment : ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Health check: http://localhost:${PORT}/api/health\n`);
 });
 
 module.exports = app;

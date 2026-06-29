@@ -93,6 +93,27 @@ class AuthController {
       next(error);
     }
   }
+
+  static async changePassword(req, res, next) {
+    try {
+      const { newPassword } = req.body;
+
+      if (!newPassword || newPassword.length < 6) {
+        return Response.error(res, 'Password must be at least 6 characters', 400);
+      }
+
+      const hashedPassword = await Bcrypt.hash(newPassword);
+
+      await prisma.user.update({
+        where: { id: req.user.id },
+        data: { password: hashedPassword },
+      });
+
+      return Response.success(res, null, 'Password updated successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = AuthController;

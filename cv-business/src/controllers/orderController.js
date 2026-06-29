@@ -1,24 +1,51 @@
+/**
+ * CVPro Studio — Order Controller
+ * Handles service orders submitted by customers via kontak.html.
+ * No product inventory, no orderItems — pure service business.
+ */
 const Response = require('../utils/response');
 const prisma = require('../config/database');
+const path = require('path');
+const multer = require('multer');
 
+// ── Multer setup for payment proof uploads ──────────────────────
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => {
+    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, 'proof-' + unique + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif|webp|pdf/;
+    const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+    const mime = allowed.test(file.mimetype);
+    if (ext && mime) return cb(null, true);
+    cb(new Error('Only image or PDF files are allowed'));
+  },
+});
+
+// Export the multer middleware so orderRoutes.js can use it
+const uploadProof = upload.single('proofImage');
+
+// ── Controller ──────────────────────────────────────────────────
 class OrderController {
+  /**
+   * GET /api/orders
+   * List all orders (admin only). Supports ?status= filter.
+   */
   static async getAllOrders(req, res, next) {
     try {
       const { status } = req.query;
-
       const where = {};
       if (status) where.status = status;
 
       const orders = await prisma.order.findMany({
         where,
-        include: {
-          customer: true,
-          orderItems: {
-            include: {
-              product: true,
-            },
-          },
-        },
         orderBy: { createdAt: 'desc' },
       });
 
@@ -28,77 +55,84 @@ class OrderController {
     }
   }
 
+  /**
+   * GET /api/orders/stats
+   * Order statistics (admin only).
+   */
+  static async getOrdersStats(req, res, next) {
+    try {
+      const [total, pending, paid, processing, completed, cancelled] = await Promise.all([
+        prisma.order.count(),
+        prisma.order.count({ where: { status: 'pending' } }),
+        prisma.order.count({ where: { status: 'paid' } }),
+        prisma.order.count({ where: { status: 'processing' } }),
+        prisma.order.count({ where: { status: 'completed' } }),
+        prisma.order.count({ where: { status: 'cancelled' } }),
+      ]);
+
+      const orders = await prisma.order.findMany({ select: { price: true } });
+      const totalRevenue = orders.reduce((sum, o) => sum + o.price, 0);
+
+      return Response.success(res, {
+        total, pending, paid, processing, completed, cancelled, totalRevenue,
+      }, 'Order statistics retrieved');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * GET /api/orders/:id
+   * Single order detail (admin only).
+   */
   static async getOrderById(req, res, next) {
     try {
-      const { id } = req.params;
-
-      const order = await prisma.order.findUnique({
-        where: { id },
-        include: {
-          customer: true,
-          orderItems: {
-            include: {
-              product: true,
-            },
-          },
-        },
-      });
-
-      if (!order) {
-        return Response.error(res, 'Order not found', 404);
-      }
-
+      const order = await prisma.order.findUnique({ where: { id: req.params.id } });
+      if (!order) return Response.error(res, 'Order not found', 404);
       return Response.success(res, order, 'Order retrieved successfully');
     } catch (error) {
       next(error);
     }
   }
 
+  /**
+   * POST /api/orders
+   * Create a new order from the customer order form.
+   * Accepts multipart/form-data (with optional proofImage file)
+   * OR application/json.
+   */
   static async createOrder(req, res, next) {
     try {
-      const { customerId, orderItems, paymentMethod } = req.body;
+      const {
+        customerName,
+        customerEmail,
+        customerWhatsapp,
+        serviceType,
+        package: pkg,
+        price,
+        paymentMethod,
+        message,        // stored in adminNotes initially
+      } = req.body;
 
-      let totalCost = 0;
-      let totalPrice = 0;
-
-      for (const item of orderItems) {
-        const product = await prisma.product.findUnique({
-          where: { id: item.productId },
-        });
-
-        if (!product) {
-          return Response.error(res, `Product with id ${item.productId} not found`, 404);
-        }
-
-        totalCost += product.purchasePrice * item.quantity;
-        totalPrice += product.sellingPrice * item.quantity;
+      // Basic required-field validation
+      if (!customerName || !customerEmail || !customerWhatsapp || !serviceType || !paymentMethod) {
+        return Response.error(res, 'Missing required fields: customerName, customerEmail, customerWhatsapp, serviceType, paymentMethod', 400);
       }
 
-      const profit = totalPrice - totalCost;
+      const proofImageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
       const order = await prisma.order.create({
         data: {
-          customerId,
-          totalPrice,
-          totalCost,
-          profit,
+          customerName,
+          customerEmail,
+          customerWhatsapp,
+          serviceType,
+          package: pkg || null,
+          price: parseInt(String(price).replace(/[^0-9]/g, '')) || 0,
           paymentMethod,
-          status: 'pending',
-          orderItems: {
-            create: orderItems.map(item => ({
-              productId: item.productId,
-              quantity: item.quantity,
-              price: item.price,
-            })),
-          },
-        },
-        include: {
-          customer: true,
-          orderItems: {
-            include: {
-              product: true,
-            },
-          },
+          proofImageUrl,
+          adminNotes: message || null,
+          status: proofImageUrl ? 'paid' : 'pending',
         },
       });
 
@@ -108,22 +142,26 @@ class OrderController {
     }
   }
 
+  /**
+   * PUT /api/orders/:id/status
+   * Update order status (admin only).
+   */
   static async updateOrderStatus(req, res, next) {
     try {
-      const { id } = req.params;
-      const { status } = req.body;
+      const { status, adminNotes } = req.body;
+
+      const validStatuses = ['pending', 'paid', 'processing', 'completed', 'cancelled'];
+      if (!validStatuses.includes(status)) {
+        return Response.error(res, `Invalid status. Must be one of: ${validStatuses.join(', ')}`, 400);
+      }
+
+      const data = { status };
+      if (adminNotes !== undefined) data.adminNotes = adminNotes;
+      if (status === 'completed') data.completedAt = new Date();
 
       const order = await prisma.order.update({
-        where: { id },
-        data: { status },
-        include: {
-          customer: true,
-          orderItems: {
-            include: {
-              product: true,
-            },
-          },
-        },
+        where: { id: req.params.id },
+        data,
       });
 
       return Response.success(res, order, 'Order status updated successfully');
@@ -132,45 +170,50 @@ class OrderController {
     }
   }
 
-  static async deleteOrder(req, res, next) {
+  /**
+   * PUT /api/orders/:id
+   * Full update of an order (admin only — e.g. add notes, correct price).
+   */
+  static async updateOrder(req, res, next) {
     try {
-      const { id } = req.params;
+      const {
+        serviceType, package: pkg, price, paymentMethod,
+        status, adminNotes, completedAt,
+      } = req.body;
 
-      await prisma.order.delete({
-        where: { id },
+      const data = {};
+      if (serviceType !== undefined)  data.serviceType  = serviceType;
+      if (pkg !== undefined)          data.package      = pkg;
+      if (price !== undefined)        data.price        = parseInt(String(price).replace(/[^0-9]/g, '')) || 0;
+      if (paymentMethod !== undefined) data.paymentMethod = paymentMethod;
+      if (status !== undefined)       data.status       = status;
+      if (adminNotes !== undefined)   data.adminNotes   = adminNotes;
+      if (completedAt !== undefined)  data.completedAt  = completedAt ? new Date(completedAt) : null;
+      if (status === 'completed' && !completedAt) data.completedAt = new Date();
+
+      const order = await prisma.order.update({
+        where: { id: req.params.id },
+        data,
       });
 
-      return Response.success(res, null, 'Order deleted successfully');
+      return Response.success(res, order, 'Order updated successfully');
     } catch (error) {
       next(error);
     }
   }
 
-  static async getOrdersStats(req, res, next) {
+  /**
+   * DELETE /api/orders/:id
+   * Delete an order (admin only).
+   */
+  static async deleteOrder(req, res, next) {
     try {
-      const totalOrders = await prisma.order.count();
-      const pendingOrders = await prisma.order.count({ where: { status: 'pending' } });
-      const completedOrders = await prisma.order.count({ where: { status: 'completed' } });
-      const cancelledOrders = await prisma.order.count({ where: { status: 'cancelled' } });
-
-      const orders = await prisma.order.findMany();
-      const totalRevenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
-      const totalProfit = orders.reduce((sum, order) => sum + order.profit, 0);
-
-      const stats = {
-        totalOrders,
-        pendingOrders,
-        completedOrders,
-        cancelledOrders,
-        totalRevenue,
-        totalProfit,
-      };
-
-      return Response.success(res, stats, 'Orders statistics retrieved successfully');
+      await prisma.order.delete({ where: { id: req.params.id } });
+      return Response.success(res, null, 'Order deleted successfully');
     } catch (error) {
       next(error);
     }
   }
 }
 
-module.exports = OrderController;
+module.exports = { OrderController, uploadProof };

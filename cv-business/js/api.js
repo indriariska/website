@@ -120,4 +120,5 @@ class API {
   }
 }
 
-module.exports = API;
+// Browser-compatible — no module.exports
+window.API = API;

@@ -1,183 +1,167 @@
+/**
+ * CVPro Studio — Dashboard Controller
+ * All statistics are derived from service Orders and Expenses.
+ * No product / inventory logic.
+ */
 const Response = require('../utils/response');
 const prisma = require('../config/database');
 
 class DashboardController {
   static async getStats(req, res, next) {
     try {
-      const now = new Date();
+      const now   = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-      // Total Orders
-      const totalOrders = await prisma.order.count();
-
-      // Orders Today
-      const ordersToday = await prisma.order.count({
-        where: {
-          createdAt: {
-            gte: today,
-          },
-        },
-      });
-
-      // Orders This Month
-      const ordersThisMonth = await prisma.order.count({
-        where: {
-          createdAt: {
-            gte: monthStart,
-          },
-        },
-      });
-
-      // Total Revenue
-      const orders = await prisma.order.findMany();
-      const totalRevenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
-
-      // Revenue Today
-      const todayOrders = await prisma.order.findMany({
-        where: {
-          createdAt: {
-            gte: today,
-          },
-        },
-      });
-      const revenueToday = todayOrders.reduce((sum, order) => sum + order.totalPrice, 0);
-
-      // Monthly Revenue
-      const monthOrders = await prisma.order.findMany({
-        where: {
-          createdAt: {
-            gte: monthStart,
-          },
-        },
-      });
-      const monthlyRevenue = monthOrders.reduce((sum, order) => sum + order.totalPrice, 0);
-
-      // Monthly Expenses
-      const monthExpenses = await prisma.expense.findMany({
-        where: {
-          createdAt: {
-            gte: monthStart,
-          },
-        },
-      });
-      const monthlyExpenses = monthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
-
-      // Gross Profit
-      const grossProfit = orders.reduce((sum, order) => sum + order.profit, 0);
-
-      // Net Profit (Monthly)
-      const monthlyProfit = monthOrders.reduce((sum, order) => sum + order.profit, 0);
-      const netProfit = monthlyProfit - monthlyExpenses;
-
-      // Total Customers
-      const totalCustomers = await prisma.customer.count();
-
-      // Total Products
-      const totalProducts = await prisma.product.count();
-
-      // Low Stock Products (stock < 10)
-      const lowStockProducts = await prisma.product.findMany({
-        where: {
-          stock: {
-            lt: 10,
-          },
-        },
-        orderBy: {
-          stock: 'asc',
-        },
-        take: 5,
-      });
-
-      // Latest Orders
-      const latestOrders = await prisma.order.findMany({
-        take: 5,
-        orderBy: {
-          createdAt: 'desc',
-        },
-        include: {
-          customer: true,
-        },
-      });
-
-      // Best Selling Products
-      const orderItems = await prisma.orderItem.groupBy({
-        by: ['productId'],
-        _sum: {
-          quantity: true,
-        },
-        orderBy: {
-          _sum: {
-            quantity: 'desc',
-          },
-        },
-        take: 5,
-      });
-
-      const bestSellingProducts = await Promise.all(
-        orderItems.map(async (item) => {
-          const product = await prisma.product.findUnique({
-            where: { id: item.productId },
-          });
-          const totalRevenue = await prisma.orderItem.aggregate({
-            where: { productId: item.productId },
-            _sum: { price: true },
-          });
-          return {
-            ...product,
-            totalSold: item._sum.quantity,
-            totalRevenue: totalRevenue._sum.price || 0,
-          };
-        })
-      );
-
-      // Monthly Data for Charts (last 12 months)
-      const monthlyRevenueData = [];
-      const monthlyProfitData = [];
-      const monthlyOrdersData = [];
-
-      for (let i = 11; i >= 0; i--) {
-        const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
-
-        const monthOrders = await prisma.order.findMany({
-          where: {
-            createdAt: {
-              gte: monthDate,
-              lte: monthEnd,
-            },
-          },
-        });
-
-        const monthRevenue = monthOrders.reduce((sum, order) => sum + order.totalPrice, 0);
-        const monthProfit = monthOrders.reduce((sum, order) => sum + order.profit, 0);
-
-        monthlyRevenueData.push(monthRevenue);
-        monthlyProfitData.push(monthProfit);
-        monthlyOrdersData.push(monthOrders.length);
-      }
-
-      const stats = {
+      // ── Order counts ────────────────────────────────────────
+      const [
         totalOrders,
+        pendingOrders,
+        paidOrders,
+        processingOrders,
+        completedOrders,
+        cancelledOrders,
         ordersToday,
         ordersThisMonth,
+      ] = await Promise.all([
+        prisma.order.count(),
+        prisma.order.count({ where: { status: 'pending' } }),
+        prisma.order.count({ where: { status: 'paid' } }),
+        prisma.order.count({ where: { status: 'processing' } }),
+        prisma.order.count({ where: { status: 'completed' } }),
+        prisma.order.count({ where: { status: 'cancelled' } }),
+        prisma.order.count({ where: { createdAt: { gte: today } } }),
+        prisma.order.count({ where: { createdAt: { gte: monthStart } } }),
+      ]);
+
+      // ── Revenue (all time) ───────────────────────────────────
+      const allOrders = await prisma.order.findMany({
+        select: { price: true, status: true },
+      });
+      const totalRevenue = allOrders.reduce((s, o) => s + o.price, 0);
+
+      // ── Revenue today ────────────────────────────────────────
+      const todayOrderRows = await prisma.order.findMany({
+        where: { createdAt: { gte: today } },
+        select: { price: true },
+      });
+      const revenueToday = todayOrderRows.reduce((s, o) => s + o.price, 0);
+
+      // ── Revenue this month ───────────────────────────────────
+      const monthOrderRows = await prisma.order.findMany({
+        where: { createdAt: { gte: monthStart } },
+        select: { price: true },
+      });
+      const monthlyRevenue = monthOrderRows.reduce((s, o) => s + o.price, 0);
+
+      // ── Expenses this month ──────────────────────────────────
+      const monthExpenseRows = await prisma.expense.findMany({
+        where: { createdAt: { gte: monthStart } },
+        select: { amount: true },
+      });
+      const monthlyExpenses = monthExpenseRows.reduce((s, e) => s + e.amount, 0);
+
+      // ── Profit calculations ──────────────────────────────────
+      // For a service business, revenue = gross profit (no COGS).
+      // Net profit = revenue - operational expenses.
+      const grossProfit    = totalRevenue;
+      const monthlyProfit  = monthlyRevenue;
+      const netProfit      = monthlyRevenue - monthlyExpenses;
+
+      // ── Unique customers (by email) ──────────────────────────
+      const uniqueEmails = await prisma.order.groupBy({
+        by: ['customerEmail'],
+      });
+      const totalCustomers = uniqueEmails.length;
+
+      // ── Latest 5 orders ──────────────────────────────────────
+      const latestOrders = await prisma.order.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          customerName: true,
+          serviceType: true,
+          price: true,
+          status: true,
+          paymentMethod: true,
+          createdAt: true,
+        },
+      });
+
+      // ── Top 5 services by order count ────────────────────────
+      const serviceGroups = await prisma.order.groupBy({
+        by: ['serviceType'],
+        _count: { serviceType: true },
+        _sum:   { price: true },
+        orderBy: { _count: { serviceType: 'desc' } },
+        take: 5,
+      });
+
+      const topServices = serviceGroups.map(g => ({
+        serviceType:  g.serviceType,
+        totalOrders:  g._count.serviceType,
+        totalRevenue: g._sum.price || 0,
+      }));
+
+      // ── Monthly chart data (last 12 months) ─────────────────
+      const monthlyRevenueData = [];
+      const monthlyProfitData  = [];
+      const monthlyOrdersData  = [];
+
+      for (let i = 11; i >= 0; i--) {
+        const mStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const mEnd   = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59, 999);
+
+        const mOrders = await prisma.order.findMany({
+          where: { createdAt: { gte: mStart, lte: mEnd } },
+          select: { price: true },
+        });
+        const mExpenses = await prisma.expense.findMany({
+          where: { createdAt: { gte: mStart, lte: mEnd } },
+          select: { amount: true },
+        });
+
+        const mRevenue  = mOrders.reduce((s, o) => s + o.price, 0);
+        const mExpTotal = mExpenses.reduce((s, e) => s + e.amount, 0);
+        const mProfit   = mRevenue - mExpTotal;
+
+        monthlyRevenueData.push(mRevenue);
+        monthlyProfitData.push(mProfit);
+        monthlyOrdersData.push(mOrders.length);
+      }
+
+      // ── Response payload ─────────────────────────────────────
+      return Response.success(res, {
+        // Counts
+        totalOrders,
+        pendingOrders,
+        paidOrders,
+        processingOrders,
+        completedOrders,
+        cancelledOrders,
+        ordersToday,
+        ordersThisMonth,
+        totalCustomers,
+
+        // Revenue / profit
         totalRevenue,
         revenueToday,
         monthlyRevenue,
         monthlyExpenses,
         grossProfit,
+        monthlyProfit,
         netProfit,
-        totalCustomers,
-        totalProducts,
-        lowStockProducts,
+
+        // Tables
         latestOrders,
-        bestSellingProducts,
+        topServices,
+
+        // Chart arrays (12 months, oldest → newest)
         monthlyRevenueData,
         monthlyProfitData,
         monthlyOrdersData,
-      };
-
-      return Response.success(res, stats, 'Dashboard statistics retrieved successfully');
+      }, 'Dashboard statistics retrieved successfully');
     } catch (error) {
       next(error);
     }

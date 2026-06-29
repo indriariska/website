@@ -1,20 +1,17 @@
+/**
+ * CVPro Studio — Admin Settings Page
+ */
 document.addEventListener('DOMContentLoaded', function () {
   const token = localStorage.getItem('adminToken');
-  const user = JSON.parse(localStorage.getItem('adminUser') || '{}');
-  
-  if (!token) {
-    window.location.href = '/admin/login.html';
-    return;
-  }
+  const user  = JSON.parse(localStorage.getItem('adminUser') || '{}');
 
-  document.getElementById('userName').textContent = user.name || 'Admin';
+  if (!token) { window.location.href = '/admin/login.html'; return; }
+
+  document.getElementById('userName').textContent = user.name  || 'Admin';
   document.getElementById('userRole').textContent = user.role === 'admin' ? 'Administrator' : 'Staff';
 
-  const menuToggle = document.getElementById('menuToggle');
-  const sidebar = document.getElementById('sidebar');
-  
-  menuToggle.addEventListener('click', function () {
-    sidebar.classList.toggle('open');
+  document.getElementById('menuToggle').addEventListener('click', function () {
+    document.getElementById('sidebar').classList.toggle('open');
   });
 
   document.getElementById('logoutBtn').addEventListener('click', function () {
@@ -25,129 +22,121 @@ document.addEventListener('DOMContentLoaded', function () {
 
   loadSettings();
 
-  // Store settings
   document.getElementById('saveStoreSettingsBtn').addEventListener('click', saveStoreSettings);
-  
-  // Account settings
   document.getElementById('saveAccountSettingsBtn').addEventListener('click', saveAccountSettings);
-  
+
   // Logo preview
-  document.getElementById('storeLogo').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
+  const logoInput = document.getElementById('storeLogo');
+  if (logoInput) {
+    logoInput.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById('logoPreview').innerHTML = `<img src="${e.target.result}" alt="Logo Preview">`;
+      reader.onload = ev => {
+        document.getElementById('logoPreview').innerHTML = `<img src="${ev.target.result}" alt="Logo Preview" style="max-height:80px">`;
       };
       reader.readAsDataURL(file);
-    }
-  });
+    });
+  }
 });
 
 async function loadSettings() {
   try {
-    // Load store settings
     const response = await AdminAPI.getSettings();
-    
-    if (response.success) {
-      const settings = response.data;
-      document.getElementById('storeName').value = settings.storeName || '';
-      document.getElementById('storePhone').value = settings.phone || '';
-      document.getElementById('storeAddress').value = settings.address || '';
-      
-      if (settings.logo) {
-        document.getElementById('logoPreview').innerHTML = `<img src="${settings.logo}" alt="Current Logo">`;
-      }
+    if (!response.success) return;
+    const s = response.data;
+
+    setVal('storeName',    s.businessName);
+    setVal('ownerName',    s.ownerName);
+    setVal('storePhone',   s.phone);
+    setVal('storeWhatsapp', s.whatsapp);
+    setVal('storeEmail',   s.email);
+    setVal('storeAddress', s.address);
+    setVal('storeInstagram', s.instagram);
+
+    if (s.logo) {
+      document.getElementById('logoPreview').innerHTML =
+        `<img src="${s.logo}" alt="Logo" style="max-height:80px">`;
     }
-    
-    // Load account info
+
+    // Load account info from localStorage
     const user = JSON.parse(localStorage.getItem('adminUser') || '{}');
-    document.getElementById('currentName').value = user.name || '';
-    document.getElementById('currentEmail').value = user.email || '';
+    setVal('currentName',  user.name);
+    setVal('currentEmail', user.email);
   } catch (error) {
     console.error('Failed to load settings:', error);
-    showToast('Failed to load settings', 'error');
+    showToast('Gagal memuat pengaturan', 'error');
   }
 }
 
+function setVal(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.value = value || '';
+}
+
 async function saveStoreSettings() {
-  const storeName = document.getElementById('storeName').value;
-  const phone = document.getElementById('storePhone').value;
-  const address = document.getElementById('storeAddress').value;
-  const logoFile = document.getElementById('storeLogo').files[0];
+  const businessName = document.getElementById('storeName').value;
+  if (!businessName) { showToast('Nama bisnis wajib diisi', 'error'); return; }
 
-  if (!storeName) {
-    showToast('Store name is required', 'error');
-    return;
-  }
-
-  const settingsData = {
-    storeName,
-    phone,
-    address,
+  const data = {
+    businessName,
+    ownerName:  document.getElementById('ownerName').value,
+    phone:      document.getElementById('storePhone').value,
+    whatsapp:   document.getElementById('storeWhatsapp').value,
+    email:      document.getElementById('storeEmail').value,
+    address:    document.getElementById('storeAddress').value,
+    instagram:  document.getElementById('storeInstagram').value,
   };
+
+  const logoFile = document.getElementById('storeLogo').files[0];
 
   try {
     let response;
     if (logoFile) {
       const formData = new FormData();
-      Object.keys(settingsData).forEach(key => {
-        formData.append(key, settingsData[key]);
-      });
+      Object.keys(data).forEach(k => formData.append(k, data[k]));
       formData.append('logo', logoFile);
-      response = await AdminAPI.upload('/settings', formData);
+      response = await AdminAPI.uploadSettings(formData);
     } else {
-      response = await AdminAPI.updateSettings(settingsData);
+      response = await AdminAPI.updateSettings(data);
     }
 
     if (response.success) {
-      showToast('Store settings saved successfully', 'success');
+      showToast('Pengaturan berhasil disimpan', 'success');
       loadSettings();
     }
   } catch (error) {
-    console.error('Failed to save store settings:', error);
-    showToast('Failed to save store settings', 'error');
+    console.error('Failed to save settings:', error);
+    showToast('Gagal menyimpan pengaturan', 'error');
   }
 }
 
 async function saveAccountSettings() {
-  const newPassword = document.getElementById('newPassword').value;
+  const newPassword     = document.getElementById('newPassword').value;
   const confirmPassword = document.getElementById('confirmPassword').value;
 
-  if (newPassword && newPassword !== confirmPassword) {
-    showToast('Passwords do not match', 'error');
-    return;
-  }
-
-  if (newPassword && newPassword.length < 6) {
-    showToast('Password must be at least 6 characters', 'error');
-    return;
-  }
-
-  if (!newPassword) {
-    showToast('Please enter a new password or leave blank to keep current', 'warning');
-    return;
-  }
+  if (!newPassword) { showToast('Masukkan password baru', 'warning'); return; }
+  if (newPassword.length < 6) { showToast('Password minimal 6 karakter', 'error'); return; }
+  if (newPassword !== confirmPassword) { showToast('Password tidak cocok', 'error'); return; }
 
   try {
-    // Note: This would require a backend endpoint to update password
-    // For now, we'll show a message
-    showToast('Password update requires backend endpoint', 'warning');
+    const response = await AdminAPI.post('/auth/change-password', { newPassword });
+    if (response.success) {
+      showToast('Password berhasil diperbarui', 'success');
+      document.getElementById('newPassword').value     = '';
+      document.getElementById('confirmPassword').value = '';
+    }
   } catch (error) {
     console.error('Failed to update password:', error);
-    showToast('Failed to update password', 'error');
+    showToast('Gagal memperbarui password', 'error');
   }
 }
 
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
-  const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
-  
+  if (!toast) return;
+  const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-exclamation-triangle';
   toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
-  toast.className = `toast ${type}`;
-  toast.classList.add('show');
-
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
+  toast.className = `toast ${type} show`;
+  setTimeout(() => toast.classList.remove('show'), 3500);
 }

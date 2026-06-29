@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// CVPro Studio — Prisma Schema
+// Service-based business model (CV & Portfolio ordering)
 
 generator client {
   provider = "prisma-client-js"
@@ -10,6 +10,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─────────────────────────────────────────────
+//  Admin Users
+// ─────────────────────────────────────────────
 model User {
   id        String   @id @default(uuid())
   name      String
@@ -22,71 +25,45 @@ model User {
   @@map("users")
 }
 
-model Customer {
-  id        String   @id @default(uuid())
-  name      String
-  phone     String
-  address   String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  orders    Order[]
-
-  @@map("customers")
-}
-
-model Product {
-  id            String   @id @default(uuid())
-  name          String
-  description   String?  @db.Text
-  category      String
-  image         String?
-  stock         Int      @default(0)
-  purchasePrice Int      @map("purchase_price")
-  sellingPrice  Int      @map("selling_price")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-
-  orderItems    OrderItem[]
-
-  @@map("products")
-}
-
+// ─────────────────────────────────────────────
+//  Service Orders (from customer website)
+// ─────────────────────────────────────────────
 model Order {
-  id            String      @id @default(uuid())
-  customerId    String      @map("customer_id")
-  customer      Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  totalPrice    Int         @map("total_price")
-  totalCost     Int         @map("total_cost")
-  profit        Int
-  status        String      @default("pending") // pending, completed, cancelled
-  paymentMethod String      @map("payment_method") // cash, transfer, e-wallet
-  createdAt     DateTime    @default(now()) @map("created_at")
-  updatedAt     DateTime    @updatedAt @map("updated_at")
+  id              String    @id @default(uuid())
 
-  orderItems    OrderItem[]
+  // Customer info (captured directly from form)
+  customerName    String    @map("customer_name")
+  customerEmail   String    @map("customer_email")
+  customerWhatsapp String   @map("customer_whatsapp")
+
+  // Service info
+  serviceType     String    @map("service_type")  // e.g. "CV Basic Clean"
+  package         String?   // Basic | Standard | Premium | Professional
+  price           Int       @default(0)
+
+  // Payment
+  paymentMethod   String    @map("payment_method")  // BCA | BSI | BRI | Mandiri | DANA | GoPay
+  proofImageUrl   String?   @map("proof_image_url")
+
+  // Order management
+  status          String    @default("pending")   // pending | paid | processing | completed | cancelled
+  adminNotes      String?   @map("admin_notes") @db.Text
+  completedAt     DateTime? @map("completed_at")
+
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
 
   @@map("orders")
 }
 
-model OrderItem {
-  id        String   @id @default(uuid())
-  orderId   String   @map("order_id")
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId String   @map("product_id")
-  product   Product  @relation(fields: [productId], references: [id])
-  quantity  Int
-  price     Int
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("order_items")
-}
-
+// ─────────────────────────────────────────────
+//  Expenses (operational costs)
+// ─────────────────────────────────────────────
 model Expense {
   id          String   @id @default(uuid())
   title       String
   amount      Int
+  category    String?  @default("Operasional")
   description String?  @db.Text
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -94,12 +71,28 @@ model Expense {
   @@map("expenses")
 }
 
+// ─────────────────────────────────────────────
+//  Business Settings
+// ─────────────────────────────────────────────
 model Setting {
-  id        String   @id @default(uuid())
-  storeName String   @map("store_name")
-  phone     String?
-  address   String?
-  logo      String?
+  id           String  @id @default(uuid())
+  businessName String  @map("business_name")
+  ownerName    String? @map("owner_name")
+  phone        String?
+  whatsapp     String?
+  email        String?
+  address      String?
+  instagram    String?
+  logo         String?
+
+  // Payment account info (stored as JSON strings)
+  paymentBca     String? @map("payment_bca")
+  paymentBsi     String? @map("payment_bsi")
+  paymentBri     String? @map("payment_bri")
+  paymentMandiri String? @map("payment_mandiri")
+  paymentDana    String? @map("payment_dana")
+  paymentGopay   String? @map("payment_gopay")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
