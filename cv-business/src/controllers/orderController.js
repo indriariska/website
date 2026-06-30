@@ -6,35 +6,41 @@
 const Response = require('../utils/response');
 const prisma = require('../config/database');
 const path = require('path');
+const fs   = require('fs');
 const multer = require('multer');
 
-// ── Multer setup for payment proof uploads ──────────────────────
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
+// ── Ensure upload directories exist ─────────────────────────────
+const uploadsDir  = path.join(process.cwd(), 'uploads');
+const deliveryDir = path.join(uploadsDir, 'delivery');
+if (!fs.existsSync(uploadsDir))  fs.mkdirSync(uploadsDir,  { recursive: true });
+if (!fs.existsSync(deliveryDir)) fs.mkdirSync(deliveryDir, { recursive: true });
+
+// ── Multer setup for payment proof uploads ───────────────────────
+const proofStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => {
     const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, 'proof-' + unique + path.extname(file.originalname));
   },
 });
 
-const upload = multer({
-  storage,
+const proofUpload = multer({
+  storage: proofStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
   fileFilter: (req, file, cb) => {
     const allowed = /jpeg|jpg|png|gif|webp|pdf/;
-    const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+    const ext  = allowed.test(path.extname(file.originalname).toLowerCase());
     const mime = allowed.test(file.mimetype);
     if (ext && mime) return cb(null, true);
     cb(new Error('Only image or PDF files are allowed'));
   },
 });
 
-// Export the multer middleware so orderRoutes.js can use it
-const uploadProof = upload.single('proofImage');
+const uploadProof = proofUpload.single('proofImage');
 
-// ── Multer for delivery files (PDF, DOCX, ZIP, etc.) ─────────────
+// ── Multer setup for delivery files (PDF, DOCX, ZIP, etc.) ───────
 const deliveryStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
+  destination: (req, file, cb) => cb(null, deliveryDir),
   filename: (req, file, cb) => {
     const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, 'delivery-' + unique + path.extname(file.originalname));
@@ -43,16 +49,17 @@ const deliveryStorage = multer.diskStorage({
 
 const deliveryUpload = multer({
   storage: deliveryStorage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB for delivery files
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
   fileFilter: (req, file, cb) => {
-    const allowedExts = /pdf|docx?|xlsx?|pptx?|zip|rar|7z|png|jpg|jpeg|gif|webp/;
-    const ext = allowedExts.test(path.extname(file.originalname).toLowerCase());
-    if (ext) return cb(null, true);
-    cb(new Error('File type not allowed'));
+    // Allow any reasonable document / image / archive
+    const allowedExts = /\.(pdf|docx?|xlsx?|pptx?|zip|rar|7z|png|jpg|jpeg|gif|webp)$/i;
+    if (allowedExts.test(path.extname(file.originalname))) return cb(null, true);
+    cb(new Error('File type not allowed. Allowed: PDF, DOC, DOCX, XLS, ZIP, PNG, JPG'));
   },
 });
 
-const uploadDelivery = deliveryUpload.single('deliveryFile');
+// Field name MUST be "file" — matches FormData.append('file', ...)
+const uploadDelivery = deliveryUpload.single('file');
 
 // ── Controller ──────────────────────────────────────────────────
 class OrderController {
@@ -270,26 +277,102 @@ class OrderController {
 
   /**
    * POST /api/orders/:id/delivery
-   * Upload a delivery file for an order (admin/staff).
-   * Returns the file URL; frontend then calls PUT /status to save it.
+   * Upload delivery file (admin/staff).
+   *
+   * Accepts multipart/form-data with field "file" (actual file upload).
+   * Optionally accepts "label" text field for the file label.
+   * Also handles bulk save: "downloadFiles" JSON string (no actual file) for URL-only entries.
+   *
+   * On success:
+   *   - Saves file to uploads/delivery/
+   *   - Sets downloadUrl  = /uploads/delivery/<filename>
+   *   - Sets downloadFiles = JSON array of { label, url }
+   *   - Sets status       = "selesai"
+   *   - Sets completedAt  = now
    */
   static async uploadDeliveryFile(req, res, next) {
     try {
-      // Verify the order exists first
+      console.log('[delivery] POST /api/orders/' + req.params.id + '/delivery called');
+      console.log('[delivery] req.file =', req.file ? req.file.originalname : 'none');
+      console.log('[delivery] req.body =', req.body);
+
+      // 1. Verify the order exists
       const order = await prisma.order.findUnique({ where: { id: req.params.id } });
       if (!order) {
+        console.log('[delivery] Order not found:', req.params.id);
         return Response.error(res, 'Order not found', 404);
       }
 
-      if (!req.file) {
-        return Response.error(res, 'No file uploaded', 400);
+      // 2. Determine file URL
+      let primaryUrl  = null;
+      let primaryName = null;
+
+      if (req.file) {
+        // Real file uploaded via multipart field "file"
+        primaryUrl  = '/uploads/delivery/' + req.file.filename;
+        primaryName = req.file.originalname;
+        console.log('[delivery] File saved:', primaryUrl);
       }
 
-      const fileUrl = `/uploads/${req.file.filename}`;
-      const fileName = req.file.originalname;
+      // 3. Build the final downloadFiles array
+      //    Priority: if req.body.downloadFiles JSON array sent → use it (bulk URL save)
+      //              else if real file → build single-entry array
+      //              else → error
+      let finalFiles = [];
 
-      return Response.success(res, { fileUrl, fileName }, 'File uploaded successfully');
+      if (req.body && req.body.downloadFiles) {
+        // Bulk save path: admin sent JSON array of { label, url } entries
+        try {
+          const parsed = JSON.parse(req.body.downloadFiles);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            finalFiles = parsed;
+            primaryUrl = primaryUrl || parsed[0].url; // prefer uploaded file URL
+            console.log('[delivery] Bulk save mode:', finalFiles.length, 'files');
+          }
+        } catch (e) {
+          console.log('[delivery] Failed to parse downloadFiles JSON:', e.message);
+        }
+      }
+
+      if (req.file) {
+        // Prepend or append the uploaded file entry
+        const label = (req.body && req.body.label && req.body.label.trim())
+          ? req.body.label.trim()
+          : primaryName;
+        const uploadedEntry = { label, url: primaryUrl };
+
+        // If this file isn't already in the array, add it
+        const alreadyIn = finalFiles.some(f => f.url === primaryUrl);
+        if (!alreadyIn) {
+          finalFiles = [uploadedEntry, ...finalFiles];
+        }
+      }
+
+      if (finalFiles.length === 0) {
+        return Response.error(res, 'Tidak ada file yang diupload. Pilih file terlebih dahulu.', 400);
+      }
+
+      // 4. Persist to database — single atomic update
+      const updated = await prisma.order.update({
+        where: { id: req.params.id },
+        data: {
+          downloadUrl:   primaryUrl,
+          downloadFiles: JSON.stringify(finalFiles),
+          status:        'selesai',
+          completedAt:   new Date(),
+        },
+      });
+
+      console.log('[delivery] Order updated. status=selesai, downloadUrl=', primaryUrl);
+
+      return Response.success(res, {
+        fileUrl:       primaryUrl,
+        fileName:      primaryName,
+        downloadFiles: finalFiles,
+        order:         updated,
+      }, 'File berhasil diupload dan pesanan ditandai selesai');
     } catch (error) {
+      console.error('[delivery] Error:', error);
       next(error);
     }
   }

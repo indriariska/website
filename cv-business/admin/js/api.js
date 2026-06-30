@@ -79,9 +79,17 @@ class AdminAPI {
   static async updateOrder(id, data)          { return this.put(`/orders/${id}`, data); }
   static async deleteOrder(id)                { return this.delete(`/orders/${id}`); }
   static async getOrderStats()                { return this.get('/orders/stats'); }
-  static async uploadDeliveryFile(id, file) {
-    const formData = new FormData();
-    formData.append('deliveryFile', file);
+  static async uploadDeliveryFile(id, fileOrFormData) {
+    // fileOrFormData can be:
+    //   - a File object  → wrap in FormData with field "file"
+    //   - a FormData already built by caller → use as-is
+    let formData;
+    if (fileOrFormData instanceof FormData) {
+      formData = fileOrFormData;
+    } else {
+      formData = new FormData();
+      formData.append('file', fileOrFormData);
+    }
     return this.upload(`/orders/${id}/delivery`, formData);
   }
 

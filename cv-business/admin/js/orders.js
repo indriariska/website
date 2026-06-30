@@ -364,16 +364,24 @@ let _pendingOrderId = null;
 
 window.addDownloadFile = function(orderId) {
   if (_pendingOrderId !== orderId) { _pendingFiles = []; _pendingOrderId = orderId; }
-  const label = document.getElementById(`fileLabelInput_${orderId}`)?.value.trim();
-  const url   = document.getElementById(`fileUrlInput_${orderId}`)?.value.trim();
+
+  // Read URL first before any clearing
+  const urlEl   = document.getElementById(`fileUrlInput_${orderId}`);
+  const labelEl = document.getElementById(`fileLabelInput_${orderId}`);
+
+  const url   = urlEl   ? urlEl.value.trim()   : '';
+  const label = labelEl ? labelEl.value.trim() : '';
+
   if (!url) { showToast('URL file wajib diisi', 'error'); return; }
+
   _pendingFiles.push({ label: label || url, url });
-  if (document.getElementById(`fileLabelInput_${orderId}`))
-    document.getElementById(`fileLabelInput_${orderId}`).value = '';
-  if (document.getElementById(`fileUrlInput_${orderId}`))
-    document.getElementById(`fileUrlInput_${orderId}`).value   = '';
+
+  // Clear inputs after reading
+  if (urlEl)   urlEl.value   = '';
+  if (labelEl) labelEl.value = '';
+
   refreshPendingList(orderId);
-  showToast('File ditambahkan', 'success');
+  showToast('URL ditambahkan ke daftar', 'success');
 };
 
 window.removeDownloadFile = function(idx) {
@@ -407,7 +415,7 @@ function refreshPendingList(orderId) {
   ).join('');
 }
 
-// ── Upload file to server then add to pending list ────────────────
+// ── Upload file to server, save to DB, set status selesai ────────
 window.uploadAndAddFile = async function(orderId) {
   if (_pendingOrderId !== orderId) { _pendingFiles = []; _pendingOrderId = orderId; }
 
@@ -421,28 +429,33 @@ window.uploadAndAddFile = async function(orderId) {
   }
 
   const file  = filePicker.files[0];
-  const label = (labelInput?.value.trim()) || file.name;
+  const label = (labelInput && labelInput.value.trim()) ? labelInput.value.trim() : file.name;
 
-  // Disable button while uploading
   if (uploadBtn) {
     uploadBtn.disabled = true;
     uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengupload...';
   }
 
   try {
-    const res = await AdminAPI.uploadDeliveryFile(orderId, file);
+    // Build FormData — field name MUST be "file" to match multer config
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('label', label);
+
+    // uploadDeliveryFile accepts FormData directly
+    const res = await AdminAPI.uploadDeliveryFile(orderId, formData);
 
     if (!res.success) throw new Error(res.message || 'Upload gagal');
 
-    // Add to pending list
-    _pendingFiles.push({ label, url: res.data.fileUrl });
+    showToast(`File "${label}" diupload — status → Selesai`, 'success');
 
     // Clear inputs
     filePicker.value = '';
     if (labelInput) labelInput.value = '';
 
-    refreshPendingList(orderId);
-    showToast(`File "${label}" berhasil diupload`, 'success');
+    // Close modal and refresh the orders table (DB already updated)
+    closeModal();
+    loadOrders();
   } catch (err) {
     console.error('uploadAndAddFile error:', err);
     showToast('Upload gagal: ' + err.message, 'error');
@@ -467,17 +480,18 @@ window.saveDownloadFiles = async function(orderId) {
   if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...'; }
 
   try {
-    // Single PUT /orders/:id/status call — staffOrAdmin accessible.
-    // Controller handles downloadFiles, downloadUrl, completedAt in one shot.
+    // All entries in _pendingFiles are URLs (not uploaded files).
+    // Use PUT /orders/:id/status which accepts downloadFiles + downloadUrl in JSON body.
+    // This is the staffOrAdmin-accessible endpoint.
     const res = await AdminAPI.updateOrderStatus(orderId, 'selesai', undefined, {
       downloadFiles: JSON.stringify(_pendingFiles),
-      downloadUrl:   _pendingFiles[0]?.url || null,
+      downloadUrl:   _pendingFiles[0].url,
     });
 
     if (res.success) {
-      showToast(`${_pendingFiles.length} file disimpan — status diubah ke Selesai`, 'success');
-      _pendingFiles    = [];
-      _pendingOrderId  = null;
+      showToast(`${_pendingFiles.length} file disimpan — status → Selesai`, 'success');
+      _pendingFiles   = [];
+      _pendingOrderId = null;
       closeModal();
       loadOrders();
     } else {
