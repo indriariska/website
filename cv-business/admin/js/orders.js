@@ -278,19 +278,38 @@ async function viewOrder(id) {
             Upload file CV, Portofolio, atau Cover Letter. Pelanggan bisa download setelah status <strong>Selesai</strong>.
           </p>
           <div style="display:flex;flex-direction:column;gap:10px">
+
+            <div style="background:#f9fafb;border:1.5px dashed #c4b5fd;border-radius:10px;padding:14px 16px">
+              <p style="font-size:0.8rem;font-weight:600;color:#7c3aed;margin-bottom:10px"><i class="fas fa-file-upload"></i> Upload File Langsung</p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <input type="text" id="fileLabelInput_${o.id}" placeholder="Label (cth: CV PDF, Cover Letter)"
+                  style="flex:1;min-width:140px;padding:8px 12px;border:1px solid #e5e7eb;border-radius:8px;font-family:inherit;font-size:0.85rem;outline:none">
+                <input type="file" id="filePickerInput_${o.id}" accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.png,.jpg,.jpeg"
+                  style="flex:2;min-width:180px;font-size:0.83rem;font-family:inherit">
+                <button onclick="uploadAndAddFile('${o.id}')" class="btn-primary" style="font-size:0.82rem;padding:8px 14px" id="uploadFileBtn_${o.id}">
+                  <i class="fas fa-upload"></i> Upload & Tambah
+                </button>
+              </div>
+              <p style="font-size:0.75rem;color:#9ca3af;margin-top:6px">PDF, DOCX, ZIP, PNG, JPG — maks. 50MB</p>
+            </div>
+
+            <div style="position:relative;text-align:center;color:#9ca3af;font-size:0.78rem;padding:4px 0">
+              <span style="background:#fff;padding:0 10px">atau tempel URL manual</span>
+              <hr style="position:absolute;top:50%;left:0;right:0;border:none;border-top:1px solid #e5e7eb;z-index:-1">
+            </div>
+
             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-              <input type="text" id="fileLabelInput_${o.id}" placeholder="Label (cth: CV PDF, Cover Letter)" 
-                style="flex:1;min-width:160px;padding:8px 12px;border:1px solid #e5e7eb;border-radius:8px;font-family:inherit;font-size:0.85rem;outline:none">
               <input type="text" id="fileUrlInput_${o.id}" placeholder="URL file (misal: /uploads/file.pdf)"
                 style="flex:2;min-width:200px;padding:8px 12px;border:1px solid #e5e7eb;border-radius:8px;font-family:inherit;font-size:0.85rem;outline:none">
-              <button onclick="addDownloadFile('${o.id}')" class="btn-primary" style="font-size:0.82rem;padding:8px 14px">
-                <i class="fas fa-plus"></i> Tambah
+              <button onclick="addDownloadFile('${o.id}')" class="btn-secondary" style="font-size:0.82rem;padding:8px 14px">
+                <i class="fas fa-plus"></i> Tambah URL
               </button>
             </div>
+
             <div id="downloadFilesList_${o.id}" style="font-size:0.82rem;color:#6b7280">
               ${buildDownloadFilesList(o)}
             </div>
-            <button onclick="saveDownloadFiles('${o.id}')" class="btn-primary" style="font-size:0.82rem;padding:8px 16px;align-self:flex-start">
+            <button onclick="saveDownloadFiles('${o.id}')" class="btn-primary" style="font-size:0.82rem;padding:8px 16px;align-self:flex-start" id="saveFilesBtn_${o.id}">
               <i class="fas fa-save"></i> Simpan File & Set Selesai
             </button>
           </div>
@@ -312,7 +331,7 @@ async function viewOrder(id) {
   }
 }
 
-// ── Download files list builder ───────────────────────────────────
+// ── Download files list builder (existing files already on order) ─
 function buildDownloadFilesList(order) {
   const files = [];
   if (order.downloadFiles) {
@@ -324,16 +343,19 @@ function buildDownloadFilesList(order) {
   if (order.downloadUrl && files.length === 0) {
     files.push({ label: 'File Hasil', url: order.downloadUrl });
   }
-  if (files.length === 0) return '<em>Belum ada file</em>';
-  return files.map((f, i) =>
-    `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-      <i class="fas fa-file" style="color:#7c3aed"></i>
-      <span>${escHtml(f.label || f.url)}</span>
-      <button onclick="removeDownloadFile(${i})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:0.8rem" title="Hapus">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>`
-  ).join('');
+  if (files.length === 0) return '<em style="color:#9ca3af">Belum ada file</em>';
+  return files.map((f, i) => {
+    const src = f.url.startsWith('http') ? f.url : 'http://localhost:3000' + f.url;
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;
+        background:#f5f3ff;padding:7px 10px;border-radius:8px">
+      <i class="fas fa-file-alt" style="color:#7c3aed;flex-shrink:0"></i>
+      <span style="flex:1;word-break:break-all">${escHtml(f.label || f.url)}</span>
+      <a href="${escHtml(src)}" target="_blank"
+         style="color:#7c3aed;font-size:0.78rem;text-decoration:none;flex-shrink:0" title="Preview">
+        <i class="fas fa-external-link-alt"></i>
+      </a>
+    </div>`;
+  }).join('');
 }
 
 // ── Manage pending download files (in-memory before save) ─────────
@@ -346,43 +368,125 @@ window.addDownloadFile = function(orderId) {
   const url   = document.getElementById(`fileUrlInput_${orderId}`)?.value.trim();
   if (!url) { showToast('URL file wajib diisi', 'error'); return; }
   _pendingFiles.push({ label: label || url, url });
-  document.getElementById(`fileLabelInput_${orderId}`).value = '';
-  document.getElementById(`fileUrlInput_${orderId}`).value   = '';
-  document.getElementById(`downloadFilesList_${orderId}`).innerHTML =
-    _pendingFiles.map((f,i) =>
-      `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <i class="fas fa-file" style="color:#7c3aed"></i>
-        <span>${escHtml(f.label)}</span>
-        <button onclick="_pendingFiles.splice(${i},1);window.addDownloadFile('${orderId}')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:0.8rem">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>`
-    ).join('') || '<em>Belum ada file</em>';
+  if (document.getElementById(`fileLabelInput_${orderId}`))
+    document.getElementById(`fileLabelInput_${orderId}`).value = '';
+  if (document.getElementById(`fileUrlInput_${orderId}`))
+    document.getElementById(`fileUrlInput_${orderId}`).value   = '';
+  refreshPendingList(orderId);
   showToast('File ditambahkan', 'success');
 };
 
-window.removeDownloadFile = function(idx) { _pendingFiles.splice(idx, 1); };
+window.removeDownloadFile = function(idx) {
+  _pendingFiles.splice(idx, 1);
+  // Re-render list after removal (use current orderId)
+  if (_pendingOrderId) refreshPendingList(_pendingOrderId);
+};
+
+// ── Refresh the in-UI pending files list ──────────────────────────
+function refreshPendingList(orderId) {
+  const listEl = document.getElementById(`downloadFilesList_${orderId}`);
+  if (!listEl) return;
+  if (_pendingFiles.length === 0) {
+    listEl.innerHTML = '<em style="color:#9ca3af">Belum ada file ditambahkan</em>';
+    return;
+  }
+  listEl.innerHTML = _pendingFiles.map((f, i) =>
+    `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;
+       background:#f5f3ff;padding:7px 10px;border-radius:8px">
+      <i class="fas fa-file-alt" style="color:#7c3aed;flex-shrink:0"></i>
+      <span style="flex:1;word-break:break-all">${escHtml(f.label)}</span>
+      <a href="${escHtml(f.url.startsWith('http') ? f.url : 'http://localhost:3000' + f.url)}"
+         target="_blank" style="color:#7c3aed;font-size:0.78rem;text-decoration:none;flex-shrink:0"
+         title="Preview">
+        <i class="fas fa-external-link-alt"></i>
+      </a>
+      <button onclick="window.removeDownloadFile(${i})"
+        style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:0.85rem;flex-shrink:0"
+        title="Hapus"><i class="fas fa-times"></i></button>
+    </div>`
+  ).join('');
+}
+
+// ── Upload file to server then add to pending list ────────────────
+window.uploadAndAddFile = async function(orderId) {
+  if (_pendingOrderId !== orderId) { _pendingFiles = []; _pendingOrderId = orderId; }
+
+  const filePicker = document.getElementById(`filePickerInput_${orderId}`);
+  const labelInput = document.getElementById(`fileLabelInput_${orderId}`);
+  const uploadBtn  = document.getElementById(`uploadFileBtn_${orderId}`);
+
+  if (!filePicker || !filePicker.files || filePicker.files.length === 0) {
+    showToast('Pilih file terlebih dahulu', 'error');
+    return;
+  }
+
+  const file  = filePicker.files[0];
+  const label = (labelInput?.value.trim()) || file.name;
+
+  // Disable button while uploading
+  if (uploadBtn) {
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengupload...';
+  }
+
+  try {
+    const res = await AdminAPI.uploadDeliveryFile(orderId, file);
+
+    if (!res.success) throw new Error(res.message || 'Upload gagal');
+
+    // Add to pending list
+    _pendingFiles.push({ label, url: res.data.fileUrl });
+
+    // Clear inputs
+    filePicker.value = '';
+    if (labelInput) labelInput.value = '';
+
+    refreshPendingList(orderId);
+    showToast(`File "${label}" berhasil diupload`, 'success');
+  } catch (err) {
+    console.error('uploadAndAddFile error:', err);
+    showToast('Upload gagal: ' + err.message, 'error');
+  } finally {
+    if (uploadBtn) {
+      uploadBtn.disabled = false;
+      uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload & Tambah';
+    }
+  }
+};
 
 window.saveDownloadFiles = async function(orderId) {
   if (_pendingOrderId !== orderId) _pendingFiles = [];
-  if (_pendingFiles.length === 0) { showToast('Tambahkan minimal 1 file', 'error'); return; }
+  if (_pendingFiles.length === 0) { showToast('Tambahkan minimal 1 file terlebih dahulu', 'error'); return; }
+
+  if (!orderId || orderId === 'undefined' || orderId === 'null') {
+    showToast('ID pesanan tidak valid', 'error');
+    return;
+  }
+
+  const saveBtn = document.getElementById(`saveFilesBtn_${orderId}`);
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...'; }
 
   try {
-    const response = await AdminAPI.updateOrderStatus(orderId, 'selesai', undefined);
-    // Update with files via full update endpoint
-    const updateRes = await AdminAPI.updateOrder(orderId, {
-      status: 'selesai',
+    // Single PUT /orders/:id/status call — staffOrAdmin accessible.
+    // Controller handles downloadFiles, downloadUrl, completedAt in one shot.
+    const res = await AdminAPI.updateOrderStatus(orderId, 'selesai', undefined, {
       downloadFiles: JSON.stringify(_pendingFiles),
-      downloadUrl: _pendingFiles[0]?.url || undefined,
+      downloadUrl:   _pendingFiles[0]?.url || null,
     });
-    if (updateRes.success) {
-      showToast(`${_pendingFiles.length} file disimpan, status → Selesai`, 'success');
-      _pendingFiles = [];
+
+    if (res.success) {
+      showToast(`${_pendingFiles.length} file disimpan — status diubah ke Selesai`, 'success');
+      _pendingFiles    = [];
+      _pendingOrderId  = null;
       closeModal();
       loadOrders();
+    } else {
+      throw new Error(res.message || 'Gagal menyimpan');
     }
   } catch (err) {
+    console.error('saveDownloadFiles error:', err);
     showToast('Gagal menyimpan: ' + err.message, 'error');
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan File & Set Selesai'; }
   }
 };
 

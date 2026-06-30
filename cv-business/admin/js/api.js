@@ -73,12 +73,17 @@ class AdminAPI {
     return this.get('/orders' + (qs ? '?' + qs : ''));
   }
   static async getOrder(id)                   { return this.get(`/orders/${id}`); }
-  static async updateOrderStatus(id, status, adminNotes) {
-    return this.put(`/orders/${id}/status`, { status, adminNotes });
+  static async updateOrderStatus(id, status, adminNotes, extra = {}) {
+    return this.put(`/orders/${id}/status`, { status, adminNotes, ...extra });
   }
   static async updateOrder(id, data)          { return this.put(`/orders/${id}`, data); }
   static async deleteOrder(id)                { return this.delete(`/orders/${id}`); }
   static async getOrderStats()                { return this.get('/orders/stats'); }
+  static async uploadDeliveryFile(id, file) {
+    const formData = new FormData();
+    formData.append('deliveryFile', file);
+    return this.upload(`/orders/${id}/delivery`, formData);
+  }
 
   // ── Expenses ──────────────────────────────────────────────────
   static async getExpenses()                  { return this.get('/expenses'); }
