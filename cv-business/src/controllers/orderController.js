@@ -32,6 +32,28 @@ const upload = multer({
 // Export the multer middleware so orderRoutes.js can use it
 const uploadProof = upload.single('proofImage');
 
+// ── Multer for delivery files (PDF, DOCX, ZIP, etc.) ─────────────
+const deliveryStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => {
+    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, 'delivery-' + unique + path.extname(file.originalname));
+  },
+});
+
+const deliveryUpload = multer({
+  storage: deliveryStorage,
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB for delivery files
+  fileFilter: (req, file, cb) => {
+    const allowedExts = /pdf|docx?|xlsx?|pptx?|zip|rar|7z|png|jpg|jpeg|gif|webp/;
+    const ext = allowedExts.test(path.extname(file.originalname).toLowerCase());
+    if (ext) return cb(null, true);
+    cb(new Error('File type not allowed'));
+  },
+});
+
+const uploadDelivery = deliveryUpload.single('deliveryFile');
+
 // ── Controller ──────────────────────────────────────────────────
 class OrderController {
   /**
@@ -245,6 +267,32 @@ class OrderController {
       next(error);
     }
   }
+
+  /**
+   * POST /api/orders/:id/delivery
+   * Upload a delivery file for an order (admin/staff).
+   * Returns the file URL; frontend then calls PUT /status to save it.
+   */
+  static async uploadDeliveryFile(req, res, next) {
+    try {
+      // Verify the order exists first
+      const order = await prisma.order.findUnique({ where: { id: req.params.id } });
+      if (!order) {
+        return Response.error(res, 'Order not found', 404);
+      }
+
+      if (!req.file) {
+        return Response.error(res, 'No file uploaded', 400);
+      }
+
+      const fileUrl = `/uploads/${req.file.filename}`;
+      const fileName = req.file.originalname;
+
+      return Response.success(res, { fileUrl, fileName }, 'File uploaded successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
-module.exports = { OrderController, uploadProof };
+module.exports = { OrderController, uploadProof, uploadDelivery };
