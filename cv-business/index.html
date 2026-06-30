@@ -464,7 +464,7 @@
       <!-- Portofolio Standard -->
       <div class="template-card fade-in delay-4">
         <div class="template-thumb">
-          <img src="assets/images/p1.png" alt="Portofolio Ocean Blue Preview" class="template-preview-image" data-full-image="assets/images/gambar7.png" data-template="porto-standard-1" data-package="Standard" data-price="199000" data-title="Portofolio Ocean Blue" data-desc="Website portofolio dengan tema biru laut yang profesional. Cocok untuk developer." data-type="Portofolio" data-category="Standard">
+          <img src="assets/images/p10.png" alt="Portofolio Ocean Blue Preview" class="template-preview-image" data-full-image="assets/images/p10.png" data-template="porto-standard-1" data-package="Standard" data-price="199000" data-title="Portofolio Ocean Blue" data-desc="Website portofolio dengan tema biru laut yang profesional. Cocok untuk developer." data-type="Portofolio" data-category="Standard" data-video="assets/images/vidio10.mp4">
           <span class="template-type-badge">Portofolio</span>
           <span class="template-category-badge" style="background:#3b82f6">Standard</span>
           <div class="template-overlay">
@@ -485,17 +485,18 @@
       <!-- Portofolio Premium (Video) -->
       <div class="template-card fade-in delay-5">
         <div class="template-thumb">
-          <img src="assets/images/gambar8.png"
+          <img src="assets/images/p11.png"
      alt="Portofolio Creative Pro Preview"
      class="template-preview-image"
-     data-full-image="assets/images/gambar8.png"
+     data-full-image="assets/images/p11.png"
      data-template="porto-premium-1"
      data-package="Premium"
      data-price="499000"
      data-title="Portofolio Creative Pro"
      data-desc="Website portofolio kreatif premium dengan animasi modern."
      data-type="Portofolio"
-     data-category="Premium">
+     data-category="Premium"
+     data-video="assets/images/vidio11.mp4">
           <span class="template-type-badge">Portofolio</span>
           <span class="template-category-badge" style="background:#f59e0b">Premium</span>
           <div class="template-overlay">
@@ -516,17 +517,18 @@
       <!-- Portofolio Professional (Video) -->
       <div class="template-card fade-in delay-6">
         <div class="template-thumb">
-          <img src="assets/images/gambar9.png"
+          <img src="assets/images/p12.png"
      alt="Portofolio Agency Elite Preview"
      class="template-preview-image"
-     data-full-image="assets/images/gambar9.png"
+     data-full-image="assets/images/p12.png"
      data-template="porto-professional-1"
      data-package="Professional"
      data-price="799000"
      data-title="Portofolio Agency Elite"
      data-desc="Website portofolio kelas agency dengan desain profesional."
      data-type="Portofolio"
-     data-category="Professional">
+     data-category="Professional"
+     data-video="assets/images/vidio12.mp4">
           <span class="template-type-badge">Portofolio</span>
           <span class="template-category-badge" style="background:#7c3aed">Professional</span>
           <div class="template-overlay">
@@ -1402,6 +1404,7 @@ function initTemplateDetailModal() {
       const desc = imgElement.dataset.desc;
       const type = imgElement.dataset.type;
       const category = imgElement.dataset.category;
+      const videoPath = imgElement.dataset.video;
 
       
       // Get template data from templates object for features
@@ -1449,11 +1452,16 @@ function initTemplateDetailModal() {
         if (videoWrapper) videoWrapper.style.display = 'block';
         if (previewWrapper) previewWrapper.style.display = 'none';
         if (videoElement) {
-          var videoPath = 'assets/images/vidio1.mp4';
+          // Gunakan video dari data-video attribute, atau fallback ke vidio1.mp4
+          var finalVideoPath = videoPath || 'assets/images/vidio1.mp4';
+          
+          // Sesuaikan path jika dalam subdirectory /projek/
           if (window.location.pathname.includes('/projek/')) {
-            videoPath = '../assets/images/vidio1.mp4';
+            var videoFile = finalVideoPath.split('/').pop();
+            finalVideoPath = '../assets/images/' + videoFile;
           }
-          videoElement.src = videoPath;
+          
+          videoElement.src = finalVideoPath;
           videoElement.play().catch(function(e) { console.log('Autoplay blocked:', e); });
         }
         // Sembunyikan tombol fullscreen untuk Portofolio
@@ -1822,7 +1830,7 @@ document.querySelector("form").addEventListener("submit", function(e) {
 </script>
 
 <!-- ============================================
-     MODAL TEMPLATE PREVIEW
+     MODAL TEMPLATE PREVIEW (LEGACY)
      ============================================ -->
 <div class="modal" id="templateModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-content">
@@ -1852,6 +1860,84 @@ document.querySelector("form").addEventListener("submit", function(e) {
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ============================================
+     MODAL TEMPLATE DETAIL (FOR BERANDA)
+     ============================================ -->
+<div class="modal" id="templateDetailModal" role="dialog" aria-modal="true" aria-labelledby="templateDetailTitle">
+  <div class="modal-content modal-content-large">
+    <div class="modal-header">
+      <h3 id="templateDetailTitle">Detail Template</h3>
+      <button class="modal-close" onclick="closeTemplateDetailModal()" aria-label="Tutup"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="template-detail-grid">
+        <!-- Preview Section -->
+        <div class="template-detail-preview">
+          <!-- PORTFOLIO VIDEO -->
+          <div class="template-detail-video-wrapper" id="templateDetailVideoWrapper" style="display:none;">
+            <video id="templateDetailVideo" controls autoplay muted playsinline style="width:100%;border-radius:12px;"></video>
+          </div>
+          
+          <!-- CV PREVIEW IMAGE -->
+          <div class="template-detail-preview-wrapper" id="templateDetailPreviewWrapper">
+            <img src="" alt="Template Preview" class="template-detail-preview-image" id="templateDetailPreviewImage">
+            <div class="template-detail-preview-overlay">
+              <button class="btn-view-full" id="btnViewFullTemplate">
+                <i class="fas fa-expand"></i> Klik untuk lihat penuh
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="template-detail-info">
+          <div class="template-detail-badges">
+            <span class="template-type-badge" id="templateDetailType">CV</span>
+            <span class="template-category-badge" id="templateDetailCategory">Basic</span>
+          </div>
+          <h4 id="templateDetailName">Nama Template</h4>
+          <p id="templateDetailDesc">Deskripsi template akan muncul di sini.</p>
+          
+          <div class="template-detail-features">
+            <h5 style="margin-top:20px;margin-bottom:12px;font-size:0.9rem;font-weight:600;color:var(--dark)">Fitur Unggulan:</h5>
+            <ul id="templateDetailFeatures" style="list-style:none;padding:0;margin:0;">
+              <li style="display:flex;align-items:flex-start;gap:8px;font-size:0.86rem;color:#6b7280;margin-bottom:7px">
+                <i class="fas fa-check-circle" style="color:#7c3aed;flex-shrink:0;margin-top:2px"></i>Loading...
+              </li>
+            </ul>
+          </div>
+
+          <div class="template-detail-price-section" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+            <div style="font-size:0.85rem;color:var(--gray);margin-bottom:6px">Harga</div>
+            <div id="templateDetailPrice" style="font-size:1.5rem;font-weight:700;color:var(--primary)">Rp0</div>
+          </div>
+
+          <div class="template-detail-actions" style="display:flex;flex-direction:column;gap:12px;width:100%;margin-top:24px;">
+            <a href="kontak.html" class="btn-primary" id="templateDetailOrderBtn" style="text-decoration:none;padding:12px 22px;border-radius:50px;font-size:0.88rem;display:flex;align-items:center;justify-content:center;gap:8px;width:100%">
+              <i class="fas fa-paper-plane"></i> Pesan Template Ini
+            </a>
+            <button class="btn-outline" onclick="closeTemplateDetailModal()" style="padding:12px 22px;border-radius:50px;font-size:0.88rem;width:100%;display:flex;align-items:center;justify-content:center;gap:8px">
+              <i class="fas fa-times"></i> Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function closeTemplateDetailModal() {
+  const modal = document.getElementById('templateDetailModal');
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+</script>
   </div>
 </div>
 

@@ -74,7 +74,8 @@ function getDataFromBtn(btn) {
       package:    img.dataset.package   || img.dataset.paket || 'Basic',
       price:      img.dataset.price     || '99000',
       previewSrc: img.src               || '',
-      fullSrc:    img.dataset.fullImage || img.src || ''
+      fullSrc:    img.dataset.fullImage || img.src || '',
+      video:      img.dataset.video     || ''
     };
   }
 
@@ -91,7 +92,8 @@ function getDataFromBtn(btn) {
     package:    card.dataset.package  || 'Basic',
     price:      priceEl,
     previewSrc: '',
-    fullSrc:    ''
+    fullSrc:    '',
+    video:      ''
   };
 }
 
@@ -151,10 +153,12 @@ function openDetail(data) {
     if (imgWrapEl) imgWrapEl.style.display = 'none';
     if (videoWrapEl) videoWrapEl.style.display = 'block';
     if (videoEl) {
-      // START PORTFOLIO VIDEO - Deteksi path video berdasarkan lokasi HTML
-      var videoPath = 'assets/images/vidio1.mp4';
+      // START PORTFOLIO VIDEO
+      var videoPath = data.video || 'assets/images/vidio1.mp4';
       if (window.location.pathname.includes('/projek/')) {
-        videoPath = '../assets/images/vidio1.mp4';
+        // Ekstrak nama file video dan buat path relative
+        var videoFile = videoPath.split('/').pop();
+        videoPath = '../assets/images/' + videoFile;
       }
       videoEl.src = videoPath;
       // END PORTFOLIO VIDEO
