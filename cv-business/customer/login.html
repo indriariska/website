@@ -139,7 +139,15 @@
       if (res.success) {
         CustomerAuth.saveSession(res.data.token, res.data.customer);
         showAlert('Login berhasil! Mengalihkan...', 'success');
-        setTimeout(() => window.location.replace('dashboard.html'), 800);
+
+        // Redirect back to original page if set
+        const params = new URLSearchParams(window.location.search);
+        const redirectTo = params.get('redirect') || localStorage.getItem('cvpro_after_login');
+        localStorage.removeItem('cvpro_after_login');
+
+        setTimeout(() => {
+          window.location.replace(redirectTo || 'dashboard.html');
+        }, 800);
       } else {
         showAlert(res.message || 'Login gagal');
       }

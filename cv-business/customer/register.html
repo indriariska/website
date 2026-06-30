@@ -180,8 +180,16 @@
 
       if (res.success) {
         CustomerAuth.saveSession(res.data.token, res.data.customer);
-        showAlert('Pendaftaran berhasil! Mengalihkan ke Dashboard...', 'success');
-        setTimeout(() => window.location.replace('dashboard.html'), 1000);
+        showAlert('Pendaftaran berhasil! Mengalihkan...', 'success');
+
+        // Redirect back to original page if set
+        const params = new URLSearchParams(window.location.search);
+        const redirectTo = params.get('redirect') || localStorage.getItem('cvpro_after_login');
+        localStorage.removeItem('cvpro_after_login');
+
+        setTimeout(() => {
+          window.location.replace(redirectTo || 'dashboard.html');
+        }, 1000);
       } else {
         showAlert(res.message || 'Pendaftaran gagal');
       }
