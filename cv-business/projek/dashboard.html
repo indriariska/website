@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – CVPro Studio Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo"><i class="fas fa-file-alt"></i></div>
+        <h2>CVPro Studio</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/admin/dashboard.html" class="nav-item active">
+          <i class="fas fa-chart-line"></i><span>Dashboard</span>
+        </a>
+        <a href="/admin/orders.html" class="nav-item">
+          <i class="fas fa-shopping-bag"></i><span>Pesanan</span>
+        </a>
+        <a href="/admin/expenses.html" class="nav-item">
+          <i class="fas fa-receipt"></i><span>Pengeluaran</span>
+        </a>
+        <a href="/admin/reports.html" class="nav-item">
+          <i class="fas fa-chart-bar"></i><span>Laporan</span>
+        </a>
+        <a href="/admin/settings.html" class="nav-item">
+          <i class="fas fa-cog"></i><span>Pengaturan</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <div class="top-bar-right">
+          <div class="user-info">
+            <span class="user-name" id="userName">Admin</span>
+            <span class="user-role" id="userRole">Administrator</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="page-header">
+          <h1>Dashboard</h1>
+          <p class="subtitle">Ringkasan performa bisnis CVPro Studio</p>
+        </div>
+
+        <!-- Primary Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon revenue"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="stat-content">
+              <h3>Total Pendapatan</h3>
+              <p class="stat-value" id="totalRevenue">Rp 0</p>
+              <span class="stat-period">Semua waktu</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orders"><i class="fas fa-shopping-bag"></i></div>
+            <div class="stat-content">
+              <h3>Total Pesanan</h3>
+              <p class="stat-value" id="totalOrders">0</p>
+              <span class="stat-period">Semua waktu</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon profit"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-content">
+              <h3>Total Profit</h3>
+              <p class="stat-value" id="grossProfit">Rp 0</p>
+              <span class="stat-period">Semua waktu</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon customers"><i class="fas fa-users"></i></div>
+            <div class="stat-content">
+              <h3>Total Pelanggan</h3>
+              <p class="stat-value" id="totalCustomers">0</p>
+              <span class="stat-period">Unik berdasar email</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secondary Stats -->
+        <div class="stats-grid secondary">
+          <div class="stat-card small">
+            <div class="stat-content">
+              <h3>Pesanan Hari Ini</h3>
+              <p class="stat-value" id="ordersToday">0</p>
+            </div>
+          </div>
+          <div class="stat-card small">
+            <div class="stat-content">
+              <h3>Pendapatan Hari Ini</h3>
+              <p class="stat-value" id="revenueToday">Rp 0</p>
+            </div>
+          </div>
+          <div class="stat-card small">
+            <div class="stat-content">
+              <h3>Pendapatan Bulan Ini</h3>
+              <p class="stat-value" id="monthlyRevenue">Rp 0</p>
+            </div>
+          </div>
+          <div class="stat-card small">
+            <div class="stat-content">
+              <h3>Pengeluaran Bulan Ini</h3>
+              <p class="stat-value" id="monthlyExpenses">Rp 0</p>
+            </div>
+          </div>
+          <div class="stat-card small">
+            <div class="stat-content">
+              <h3>Net Profit Bulan Ini</h3>
+              <p class="stat-value" id="netProfit">Rp 0</p>
+            </div>
+          </div>
+          <div class="stat-card small">
+            <div class="stat-content">
+              <h3>Pesanan Selesai</h3>
+              <p class="stat-value" id="completedOrders">0</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Status Breakdown -->
+        <div class="stats-grid secondary">
+          <div class="stat-card small">
+            <div class="stat-content">
+              <h3>Menunggu Verifikasi</h3>
+              <p class="stat-value" id="pendingOrders" style="color:#f59e0b">0</p>
+            </div>
+          </div>
+          <div class="stat-card small">
+            <div class="stat-content">
+              <h3>Sedang Diproses</h3>
+              <p class="stat-value" id="processingOrders" style="color:#3b82f6">0</p>
+            </div>
+          </div>
+          <div class="stat-card small">
+            <div class="stat-content">
+              <h3>Ditolak</h3>
+              <p class="stat-value" id="cancelledOrders" style="color:#ef4444">0</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-section">
+          <div class="chart-card">
+            <div class="chart-header"><h3>Pendapatan Bulanan</h3></div>
+            <canvas id="revenueChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><h3>Profit Bulanan</h3></div>
+            <canvas id="profitChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card full-width">
+          <div class="chart-header"><h3>Pesanan per Bulan</h3></div>
+          <canvas id="ordersChart"></canvas>
+        </div>
+
+        <!-- Tables -->
+        <div class="tables-section">
+          <!-- Latest Orders -->
+          <div class="table-card">
+            <div class="table-header">
+              <h3>Pesanan Terbaru</h3>
+              <a href="/admin/orders.html" class="view-all">Lihat Semua</a>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Pelanggan</th>
+                    <th>Layanan</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Tanggal</th>
+                  </tr>
+                </thead>
+                <tbody id="latestOrdersTable">
+                  <tr><td colspan="6" class="loading">Memuat...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Top Services -->
+          <div class="table-card">
+            <div class="table-header">
+              <h3>Layanan Terlaris</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Layanan</th>
+                    <th>Pesanan</th>
+                    <th>Pendapatan</th>
+                  </tr>
+                </thead>
+                <tbody id="topServicesTable">
+                  <tr><td colspan="3" class="loading">Memuat...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div><!-- /content -->
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

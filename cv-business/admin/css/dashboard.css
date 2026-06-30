@@ -407,14 +407,39 @@ body {
   color: #d97706;
 }
 
+.status-badge.verifikasi_pembayaran {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.status-badge.pembayaran_terverifikasi {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-badge.antrian {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
 .status-badge.diproses {
   background: #dbeafe;
   color: #1d4ed8;
 }
 
+.status-badge.revisi {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
 .status-badge.selesai {
   background: #d1fae5;
   color: #059669;
+}
+
+.status-badge.dibatalkan {
+  background: #f3f4f6;
+  color: #6b7280;
 }
 
 .status-badge.ditolak {

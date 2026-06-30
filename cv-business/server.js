@@ -18,6 +18,7 @@ const orderRoutes     = require('./src/routes/orderRoutes');
 const expenseRoutes   = require('./src/routes/expenseRoutes');
 const settingsRoutes  = require('./src/routes/settingsRoutes');
 const dashboardRoutes = require('./src/routes/dashboardRoutes');
+const customerRoutes  = require('./src/routes/customerRoutes');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -53,6 +54,7 @@ app.use('/api/orders',    orderRoutes);
 app.use('/api/expenses',  expenseRoutes);
 app.use('/api/settings',  settingsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/customer',  customerRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -67,12 +69,14 @@ app.get('/api/health', (req, res) => {
       expenses:  '/api/expenses',
       settings:  '/api/settings',
       dashboard: '/api/dashboard',
+      customer:  '/api/customer',
     },
   });
 });
 
 // ── Serve admin & customer-facing static files ───────────────────
-app.use('/admin', express.static(path.join(__dirname, 'admin')));
+app.use('/admin',    express.static(path.join(__dirname, 'admin')));
+app.use('/customer', express.static(path.join(__dirname, 'customer')));
 app.use(express.static(path.join(__dirname, '.')));
 
 // ── Error handlers ────────────────────────────────────────────────

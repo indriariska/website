@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengaturan – CVPro Studio Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo"><i class="fas fa-file-alt"></i></div>
+        <h2>CVPro Studio</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/admin/dashboard.html" class="nav-item">
+          <i class="fas fa-chart-line"></i><span>Dashboard</span>
+        </a>
+        <a href="/admin/orders.html" class="nav-item">
+          <i class="fas fa-shopping-bag"></i><span>Pesanan</span>
+        </a>
+        <a href="/admin/expenses.html" class="nav-item">
+          <i class="fas fa-receipt"></i><span>Pengeluaran</span>
+        </a>
+        <a href="/admin/reports.html" class="nav-item">
+          <i class="fas fa-chart-bar"></i><span>Laporan</span>
+        </a>
+        <a href="/admin/settings.html" class="nav-item active">
+          <i class="fas fa-cog"></i><span>Pengaturan</span>
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button class="logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="top-bar-right">
+          <div class="user-info">
+            <span class="user-name" id="userName">Admin</span>
+            <span class="user-role" id="userRole">Administrator</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Settings Content -->
+      <div class="content">
+        <div class="page-header">
+          <h1>Pengaturan</h1>
+          <p class="subtitle">Konfigurasi bisnis CVPro Studio</p>
+        </div>
+
+        <div class="settings-container">
+          <!-- Store Settings -->
+          <div class="settings-section">
+            <h2><i class="fas fa-file-alt"></i> Informasi Bisnis</h2>
+            <form id="storeSettingsForm" class="form-grid">
+              <div class="form-group">
+                <label for="storeName">Nama Bisnis *</label>
+                <input type="text" id="storeName" required placeholder="CVPro Studio">
+              </div>
+              <div class="form-group">
+                <label for="ownerName">Nama Pemilik</label>
+                <input type="text" id="ownerName" placeholder="Indri Ariska">
+              </div>
+              <div class="form-group">
+                <label for="storePhone">Nomor Telepon</label>
+                <input type="text" id="storePhone" placeholder="+62 83830094365">
+              </div>
+              <div class="form-group">
+                <label for="storeWhatsapp">WhatsApp (format: 628xxx)</label>
+                <input type="text" id="storeWhatsapp" placeholder="6283122172584">
+              </div>
+              <div class="form-group">
+                <label for="storeEmail">Email</label>
+                <input type="email" id="storeEmail" placeholder="indriariska469@gmail.com">
+              </div>
+              <div class="form-group">
+                <label for="storeInstagram">Instagram</label>
+                <input type="text" id="storeInstagram" placeholder="ftryy.z.a_">
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="storeAddress">Alamat</label>
+                <textarea id="storeAddress" rows="2" placeholder="Indonesia"></textarea>
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="storeLogo">Logo Bisnis</label>
+                <input type="file" id="storeLogo" accept="image/*">
+                <div id="logoPreview" class="logo-preview"></div>
+              </div>
+            </form>
+            <div class="form-actions">
+              <button class="btn-primary" id="saveStoreSettingsBtn">
+                <i class="fas fa-save"></i> Simpan Pengaturan
+              </button>
+            </div>
+          </div>
+
+          <!-- Account Settings -->
+          <div class="settings-section">
+            <h2><i class="fas fa-user"></i> Pengaturan Akun</h2>
+            <form id="accountSettingsForm" class="form-grid">
+              <div class="form-group">
+                <label for="currentName">Nama</label>
+                <input type="text" id="currentName" disabled>
+              </div>
+              <div class="form-group">
+                <label for="currentEmail">Email</label>
+                <input type="email" id="currentEmail" disabled>
+              </div>
+              <div class="form-group">
+                <label for="newPassword">Password Baru</label>
+                <input type="password" id="newPassword" placeholder="Minimal 6 karakter">
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword">Konfirmasi Password</label>
+                <input type="password" id="confirmPassword" placeholder="Ulangi password baru">
+              </div>
+            </form>
+            <div class="form-actions">
+              <button class="btn-primary" id="saveAccountSettingsBtn">
+                <i class="fas fa-save"></i> Perbarui Password
+              </button>
+            </div>
+          </div>
+
+          <!-- Database Info -->
+          <div class="settings-section">
+            <h2><i class="fas fa-database"></i> Database Information</h2>
+            <div class="info-grid">
+              <div class="info-item">
+                <label>Database Name</label>
+                <span>cvpro_studio</span>
+              </div>
+              <div class="info-item">
+                <label>Database Type</label>
+                <span>PostgreSQL</span>
+              </div>
+              <div class="info-item">
+                <label>ORM</label>
+                <span>Prisma</span>
+              </div>
+              <div class="info-item">
+                <label>Environment</label>
+                <span>Development</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>

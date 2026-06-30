@@ -111,7 +111,7 @@ class OrderController {
         package: pkg,
         price,
         paymentMethod,
-        message,        // stored in adminNotes initially
+        message,
       } = req.body;
 
       // Basic required-field validation
@@ -121,8 +121,22 @@ class OrderController {
 
       const proofImageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
+      // If a customer token is present in the header, link the order to that customer
+      let customerId = null;
+      try {
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const JWT = require('../utils/jwt');
+          const decoded = JWT.verifyToken(authHeader.substring(7));
+          if (decoded.type === 'customer') {
+            customerId = decoded.id;
+          }
+        }
+      } catch (_) { /* no customer token — guest order, that's fine */ }
+
       const order = await prisma.order.create({
         data: {
+          customerId,
           customerName,
           customerEmail,
           customerWhatsapp,
@@ -144,19 +158,33 @@ class OrderController {
 
   /**
    * PUT /api/orders/:id/status
-   * Update order status (admin only).
+   * Update order status (admin/staff).
    */
   static async updateOrderStatus(req, res, next) {
     try {
-      const { status, adminNotes } = req.body;
+      const { status, adminNotes, downloadUrl, downloadFiles } = req.body;
 
-      const validStatuses = ['menunggu_verifikasi', 'diproses', 'selesai', 'ditolak'];
+      const validStatuses = [
+        'menunggu_verifikasi',
+        'verifikasi_pembayaran',
+        'pembayaran_terverifikasi',
+        'antrian',
+        'diproses',
+        'revisi',
+        'selesai',
+        'dibatalkan',
+        'ditolak',
+      ];
       if (!validStatuses.includes(status)) {
         return Response.error(res, `Invalid status. Must be one of: ${validStatuses.join(', ')}`, 400);
       }
 
       const data = { status };
-      if (adminNotes !== undefined) data.adminNotes = adminNotes;
+      if (adminNotes   !== undefined) data.adminNotes   = adminNotes;
+      if (downloadUrl  !== undefined) data.downloadUrl  = downloadUrl;
+      if (downloadFiles !== undefined) data.downloadFiles = typeof downloadFiles === 'string'
+        ? downloadFiles
+        : JSON.stringify(downloadFiles);
       if (status === 'selesai') data.completedAt = new Date();
 
       const order = await prisma.order.update({
@@ -178,17 +206,20 @@ class OrderController {
     try {
       const {
         serviceType, package: pkg, price, paymentMethod,
-        status, adminNotes, completedAt,
+        status, adminNotes, completedAt, downloadUrl, downloadFiles,
       } = req.body;
 
       const data = {};
-      if (serviceType !== undefined)  data.serviceType  = serviceType;
-      if (pkg !== undefined)          data.package      = pkg;
-      if (price !== undefined)        data.price        = parseInt(String(price).replace(/[^0-9]/g, '')) || 0;
+      if (serviceType !== undefined)   data.serviceType   = serviceType;
+      if (pkg !== undefined)           data.package       = pkg;
+      if (price !== undefined)         data.price         = parseInt(String(price).replace(/[^0-9]/g, '')) || 0;
       if (paymentMethod !== undefined) data.paymentMethod = paymentMethod;
-      if (status !== undefined)       data.status       = status;
-      if (adminNotes !== undefined)   data.adminNotes   = adminNotes;
-      if (completedAt !== undefined)  data.completedAt  = completedAt ? new Date(completedAt) : null;
+      if (status !== undefined)        data.status        = status;
+      if (adminNotes !== undefined)    data.adminNotes    = adminNotes;
+      if (downloadUrl !== undefined)   data.downloadUrl   = downloadUrl;
+      if (downloadFiles !== undefined) data.downloadFiles = typeof downloadFiles === 'string'
+        ? downloadFiles : JSON.stringify(downloadFiles);
+      if (completedAt !== undefined)   data.completedAt   = completedAt ? new Date(completedAt) : null;
       if (status === 'selesai' && !completedAt) data.completedAt = new Date();
 
       const order = await prisma.order.update({

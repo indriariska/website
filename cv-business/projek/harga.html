@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harga – CVPro Studio</title>
+  <meta name="description" content="Paket harga jasa pembuatan CV dan portofolio profesional yang terjangkau. Mulai dari 99rb saja!" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- API Script -->
+  <script src="js/api.js"></script>
+  <script src="js/script-data.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-logo">CV<span>Pro</span> Studio</a>
+      <ul class="nav-links">
+        <li><a href="index.html"    class="nav-link">Beranda</a></li>
+        <li><a href="tentang.html"  class="nav-link">Tentang</a></li>
+        <li><a href="layanan.html"  class="nav-link">Layanan</a></li>
+        <li><a href="template.html" class="nav-link">Template</a></li>
+        <li><a href="harga.html"    class="nav-link">Harga</a></li>
+        <li><a href="kontak.html"   class="nav-link">Kontak</a></li>
+        <li><a href="kontak.html"   class="nav-link nav-cta">Pesan Sekarang</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close">&times;</button>
+  <a href="index.html"    class="nav-link">Beranda</a>
+  <a href="tentang.html"  class="nav-link">Tentang</a>
+  <a href="layanan.html"  class="nav-link">Layanan</a>
+  <a href="template.html" class="nav-link">Template</a>
+  <a href="harga.html"    class="nav-link">Harga</a>
+  <a href="kontak.html"   class="nav-link">Kontak</a>
+  <a href="kontak.html"   class="btn-primary" style="margin-top:8px">Pesan Sekarang</a>
+</div>
+
+<!-- PAGE HEADER -->
+<section class="page-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html">Beranda</a>
+      <span>/</span>
+      <span class="current">Harga</span>
+    </div>
+    <h1>Paket <span>Harga</span></h1>
+    <p>Investasi terbaik untuk karier impianmu. Harga transparan tanpa biaya tersembunyi.</p>
+  </div>
+</section>
+
+<!-- ============================================
+     PRICING SECTION
+     ============================================ -->
+<section class="harga-section">
+  <div class="container">
+    <h2 class="section-title fade-in">Pilih Paket Terbaik</h2>
+    <p class="section-subtitle fade-in">Semua paket termasuk revisi gratis dan dukungan penuh dari tim kami</p>
+
+    <!-- SECTION 1: TEMPLATE CV -->
+    <div class="pricing-section-header fade-in">
+      <h3><i class="fas fa-file-alt" style="color:var(--primary)"></i> Template CV</h3>
+      <p>Pilih paket CV sesuai kebutuhan kariermu</p>
+    </div>
+
+    <div class="pricing-grid">
+
+      <!-- CV BASIC -->
+      <div class="pricing-card fade-in delay-1">
+        <span class="pricing-name">CV Basic</span>
+        <div class="pricing-price">
+          <span class="currency">Rp</span>
+          <span class="amount">99rb</span>
+        </div>
+        <p class="pricing-desc">Ideal untuk fresh graduate dan pencari kerja pemula</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check-circle"></i> 1 CV Profesional</li>
+          <li><i class="fas fa-check-circle"></i> Pilih dari 6 template</li>
+          <li><i class="fas fa-check-circle"></i> ATS-friendly format</li>
+          <li><i class="fas fa-check-circle"></i> File PDF</li>
+          <li><i class="fas fa-check-circle"></i> 2x Revisi gratis</li>
+          <li><i class="fas fa-check-circle"></i> Selesai 24 jam</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> File Word editable</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Optimasi LinkedIn</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Portofolio website</li>
+        </ul>
+        <a href="kontak.html?paket=CV%20Basic&harga=99000" class="btn-outline">Pilih CV Basic</a>
+        <a href="template.html?type=CV&package=Basic" class="btn-link" style="display:block;text-align:center;margin-top:12px;font-size:0.9rem;color:var(--primary);text-decoration:none"><i class="fas fa-eye"></i> Lihat Template</a>
+      </div>
+
+      <!-- CV STANDARD (Highlight) -->
+      <div class="pricing-card popular fade-in delay-2">
+        <div class="popular-badge">⭐ Paling Populer</div>
+        <span class="pricing-name">CV Standard</span>
+        <div class="pricing-price">
+          <span class="currency">Rp</span>
+          <span class="amount">199rb</span>
+        </div>
+        <p class="pricing-desc">Solusi terbaik untuk profesional yang ingin tampil menonjol</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check-circle"></i> 1 CV Profesional</li>
+          <li><i class="fas fa-check-circle"></i> Pilih dari 6 template</li>
+          <li><i class="fas fa-check-circle"></i> ATS-friendly format</li>
+          <li><i class="fas fa-check-circle"></i> File PDF + Word editable</li>
+          <li><i class="fas fa-check-circle"></i> Revisi tidak terbatas</li>
+          <li><i class="fas fa-check-circle"></i> Selesai 12 jam</li>
+          <li><i class="fas fa-check-circle"></i> Optimasi LinkedIn</li>
+          <li><i class="fas fa-check-circle"></i> Cover letter</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Portofolio website</li>
+        </ul>
+        <a href="kontak.html?paket=CV%20Standard&harga=199000" class="btn-primary">Pilih CV Standard</a>
+        <a href="template.html?type=CV&package=Standard" class="btn-link" style="display:block;text-align:center;margin-top:12px;font-size:0.9rem;color:var(--primary);text-decoration:none"><i class="fas fa-eye"></i> Lihat Template</a>
+      </div>
+
+      <!-- CV PREMIUM -->
+      <div class="pricing-card fade-in delay-3">
+        <span class="pricing-name">CV Premium</span>
+        <div class="pricing-price">
+          <span class="currency">Rp</span>
+          <span class="amount">499rb</span>
+        </div>
+        <p class="pricing-desc">Paket lengkap untuk personal branding yang kuat dan profesional</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check-circle"></i> 1 CV Profesional</li>
+          <li><i class="fas fa-check-circle"></i> Pilih dari 6 template</li>
+          <li><i class="fas fa-check-circle"></i> ATS-friendly format</li>
+          <li><i class="fas fa-check-circle"></i> File PDF + Word editable</li>
+          <li><i class="fas fa-check-circle"></i> Revisi tidak terbatas</li>
+          <li><i class="fas fa-check-circle"></i> Selesai 6 jam (ekspres)</li>
+          <li><i class="fas fa-check-circle"></i> Optimasi LinkedIn penuh</li>
+          <li><i class="fas fa-check-circle"></i> Cover letter & portfolio PDF</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Portofolio website</li>
+        </ul>
+        <a href="kontak.html?paket=CV%20Premium&harga=499000" class="btn-outline">Pilih CV Premium</a>
+        <a href="template.html?type=CV&package=Premium" class="btn-link" style="display:block;text-align:center;margin-top:12px;font-size:0.9rem;color:var(--primary);text-decoration:none"><i class="fas fa-eye"></i> Lihat Template</a>
+      </div>
+
+      <!-- CV PROFESSIONAL -->
+      <div class="pricing-card fade-in delay-4">
+        <span class="pricing-name">CV Professional</span>
+        <div class="pricing-price">
+          <span class="currency">Rp</span>
+          <span class="amount">799rb</span>
+        </div>
+        <p class="pricing-desc">Paket eksklusif untuk eksekutif dan profesional senior</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check-circle"></i> CV Profesional Premium</li>
+          <li><i class="fas fa-check-circle"></i> Pilih dari 6 template premium</li>
+          <li><i class="fas fa-check-circle"></i> ATS-friendly format</li>
+          <li><i class="fas fa-check-circle"></i> File PDF + Word editable</li>
+          <li><i class="fas fa-check-circle"></i> Revisi tidak terbatas VIP</li>
+          <li><i class="fas fa-check-circle"></i> Selesai 4 jam (prioritas)</li>
+          <li><i class="fas fa-check-circle"></i> Optimasi LinkedIn penuh</li>
+          <li><i class="fas fa-check-circle"></i> Cover letter & portfolio PDF</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Portofolio website</li>
+        </ul>
+        <a href="kontak.html?paket=CV%20Professional&harga=799000" class="btn-outline">Pilih CV Professional</a>
+        <a href="template.html?type=CV&package=Professional" class="btn-link" style="display:block;text-align:center;margin-top:12px;font-size:0.9rem;color:var(--primary);text-decoration:none"><i class="fas fa-eye"></i> Lihat Template</a>
+      </div>
+
+    </div>
+
+    <!-- SECTION 2: TEMPLATE PORTOFOLIO -->
+    <div class="pricing-section-header fade-in" style="margin-top:60px">
+      <h3><i class="fas fa-globe" style="color:var(--primary)"></i> Template Portofolio</h3>
+      <p>Tampilkan karya terbaikmu dengan portofolio profesional</p>
+    </div>
+
+    <div class="pricing-grid">
+
+      <!-- PORTOFOLIO BASIC -->
+      <div class="pricing-card fade-in delay-1">
+        <span class="pricing-name">Portofolio Basic</span>
+        <div class="pricing-price">
+          <span class="currency">Rp</span>
+          <span class="amount">99rb</span>
+        </div>
+        <p class="pricing-desc">Ideal untuk pemula yang ingin mulai membangun portofolio</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check-circle"></i> 1 Portofolio Website</li>
+          <li><i class="fas fa-check-circle"></i> Pilih dari 6 template</li>
+          <li><i class="fas fa-check-circle"></i> Desain responsif</li>
+          <li><i class="fas fa-check-circle"></i> File HTML/CSS</li>
+          <li><i class="fas fa-check-circle"></i> 2x Revisi gratis</li>
+          <li><i class="fas fa-check-circle"></i> Selesai 24 jam</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> File editable</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Custom domain</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Hosting gratis</li>
+        </ul>
+        <a href="kontak.html?paket=Portofolio%20Basic&harga=99000" class="btn-outline">Pilih Portofolio Basic</a>
+        <a href="template.html?type=Portofolio&package=Basic" class="btn-link" style="display:block;text-align:center;margin-top:12px;font-size:0.9rem;color:var(--primary);text-decoration:none"><i class="fas fa-eye"></i> Lihat Template</a>
+      </div>
+
+      <!-- PORTOFOLIO STANDARD -->
+      <div class="pricing-card popular fade-in delay-2">
+        <div class="popular-badge">⭐ Paling Populer</div>
+        <span class="pricing-name">Portofolio Standard</span>
+        <div class="pricing-price">
+          <span class="currency">Rp</span>
+          <span class="amount">199rb</span>
+        </div>
+        <p class="pricing-desc">Solusi terbaik untuk profesional kreatif</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check-circle"></i> 1 Portofolio Website</li>
+          <li><i class="fas fa-check-circle"></i> Pilih dari 6 template</li>
+          <li><i class="fas fa-check-circle"></i> Desain responsif</li>
+          <li><i class="fas fa-check-circle"></i> File HTML/CSS editable</li>
+          <li><i class="fas fa-check-circle"></i> Revisi tidak terbatas</li>
+          <li><i class="fas fa-check-circle"></i> Selesai 12 jam</li>
+          <li><i class="fas fa-check-circle"></i> SEO basic</li>
+          <li><i class="fas fa-check-circle"></i> Contact form</li>
+          <li class="disabled"><i class="fas fa-times-circle"></i> Custom domain</li>
+        </ul>
+        <a href="kontak.html?paket=Portofolio%20Standard&harga=199000" class="btn-primary">Pilih Portofolio Standard</a>
+        <a href="template.html?type=Portofolio&package=Standard" class="btn-link" style="display:block;text-align:center;margin-top:12px;font-size:0.9rem;color:var(--primary);text-decoration:none"><i class="fas fa-eye"></i> Lihat Template</a>
+      </div>
+
+      <!-- PORTOFOLIO PREMIUM -->
+      <div class="pricing-card fade-in delay-3">
+        <span class="pricing-name">Portofolio Premium</span>
+        <div class="pricing-price">
+          <span class="currency">Rp</span>
+          <span class="amount">499rb</span>
+        </div>
+        <p class="pricing-desc">Paket lengkap untuk personal branding yang kuat</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check-circle"></i> 1 Portofolio Website</li>
+          <li><i class="fas fa-check-circle"></i> Pilih dari 6 template</li>
+          <li><i class="fas fa-check-circle"></i> Desain responsif</li>
+          <li><i class="fas fa-check-circle"></i> File HTML/CSS editable</li>
+          <li><i class="fas fa-check-circle"></i> Revisi tidak terbatas</li>
+          <li><i class="fas fa-check-circle"></i> Selesai 6 jam (ekspres)</li>
+          <li><i class="fas fa-check-circle"></i> SEO penuh</li>
+          <li><i class="fas fa-check-circle"></i> Contact form + Analytics</li>
+          <li><i class="fas fa-check-circle"></i> Custom domain setup</li>
+        </ul>
+        <a href="kontak.html?paket=Portofolio%20Premium&harga=499000" class="btn-outline">Pilih Portofolio Premium</a>
+        <a href="template.html?type=Portofolio&package=Premium" class="btn-link" style="display:block;text-align:center;margin-top:12px;font-size:0.9rem;color:var(--primary);text-decoration:none"><i class="fas fa-eye"></i> Lihat Template</a>
+      </div>
+
+      <!-- PORTOFOLIO PROFESSIONAL -->
+      <div class="pricing-card fade-in delay-4">
+        <span class="pricing-name">Portofolio Professional</span>
+        <div class="pricing-price">
+          <span class="currency">Rp</span>
+          <span class="amount">799rb</span>
+        </div>
+        <p class="pricing-desc">Paket eksklusif untuk eksekutif dan profesional senior</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check-circle"></i> Portofolio Website Premium</li>
+          <li><i class="fas fa-check-circle"></i> Pilih dari 6 template premium</li>
+          <li><i class="fas fa-check-circle"></i> Desain responsif custom</li>
+          <li><i class="fas fa-check-circle"></i> File HTML/CSS editable</li>
+          <li><i class="fas fa-check-circle"></i> Revisi tidak terbatas VIP</li>
+          <li><i class="fas fa-check-circle"></i> Selesai 4 jam (prioritas)</li>
+          <li><i class="fas fa-check-circle"></i> SEO penuh + Analytics</li>
+          <li><i class="fas fa-check-circle"></i> Contact form + Blog</li>
+          <li><i class="fas fa-check-circle"></i> Custom domain + Hosting 1 tahun</li>
+        </ul>
+        <a href="kontak.html?paket=Portofolio%20Professional&harga=799000" class="btn-outline">Pilih Portofolio Professional</a>
+        <a href="template.html?type=Portofolio&package=Professional" class="btn-link" style="display:block;text-align:center;margin-top:12px;font-size:0.9rem;color:var(--primary);text-decoration:none"><i class="fas fa-eye"></i> Lihat Template</a>
+      </div>
+
+    </div>
+
+    <!-- Custom Order Note -->
+    <div style="text-align:center;margin-top:48px;padding:28px;background:var(--light);border-radius:var(--radius)" class="fade-in">
+      <p style="font-size:1rem;color:var(--dark);font-weight:600;margin-bottom:8px">
+        <i class="fas fa-headset" style="color:var(--primary)"></i>&nbsp; Butuh Paket Custom?
+      </p>
+      <p style="font-size:0.9rem;color:var(--gray);margin-bottom:20px">
+        Punya kebutuhan khusus yang tidak ada di paket di atas? Hubungi kami dan kami akan menyiapkan penawaran khusus untukmu.
+      </p>
+      <a href="https://wa.me/6283122172586?text=Halo%2C%20saya%20ingin%20tanya%20paket%20custom%20CV" target="_blank" class="btn-primary">
+        <i class="fab fa-whatsapp"></i>&nbsp; Chat Custom Order
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FAQ SECTION
+     ============================================ -->
+<section class="faq-section">
+  <div class="container">
+    <h2 class="section-title fade-in">Pertanyaan Umum</h2>
+    <p class="section-subtitle fade-in">Jawaban untuk pertanyaan yang sering ditanyakan</p>
+
+    <div class="faq-grid">
+      <div class="faq-item fade-in delay-1">
+        <div class="faq-question"><i class="fas fa-question-circle"></i> Berapa lama proses pengerjaan?</div>
+        <p class="faq-answer">Paket Basic selesai 24 jam, Standard 12 jam, dan Premium 6 jam setelah pembayaran dan data diterima.</p>
+      </div>
+
+      <div class="faq-item fade-in delay-2">
+        <div class="faq-question"><i class="fas fa-question-circle"></i> Bagaimana cara pembayaran?</div>
+        <p class="faq-answer">Kami menerima transfer bank (BCA, Mandiri, BNI), GoPay, OVO, Dana, dan QRIS. Pembayaran dilakukan setelah konfirmasi pesanan.</p>
+      </div>
+
+      <div class="faq-item fade-in delay-3">
+        <div class="faq-question"><i class="fas fa-question-circle"></i> Apa itu revisi tidak terbatas?</div>
+        <p class="faq-answer">Kami akan terus merevisi hingga kamu benar-benar puas dengan hasilnya, tanpa biaya tambahan untuk paket Standard dan Premium.</p>
+      </div>
+
+      <div class="faq-item fade-in delay-4">
+        <div class="faq-question"><i class="fas fa-question-circle"></i> Apakah bisa minta desain custom?</div>
+        <p class="faq-answer">Tentu! Kamu bisa request warna, font, dan layout khusus. Tim kami akan menyesuaikan dengan preferensimu.</p>
+      </div>
+
+      <div class="faq-item fade-in delay-1">
+        <div class="faq-question"><i class="fas fa-question-circle"></i> Format file apa yang diberikan?</div>
+        <p class="faq-answer">Paket Basic: PDF. Paket Standard & Premium: PDF + Word (.docx) editable sehingga bisa kamu update sendiri di kemudian hari.</p>
+      </div>
+
+      <div class="faq-item fade-in delay-2">
+        <div class="faq-question"><i class="fas fa-question-circle"></i> Apakah ada garansi uang kembali?</div>
+        <p class="faq-answer">Kami tidak menawarkan refund, namun kami berkomitmen penuh pada kepuasan pelanggan melalui revisi tidak terbatas hingga kamu puas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="fade-in">Investasi Terbaik untuk Kariermu</h2>
+    <p class="fade-in">Mulai dengan paket yang sesuai kebutuhan. Ribuan klien sudah buktikan hasilnya!</p>
+    <div class="cta-buttons fade-in">
+      <a href="kontak.html" class="btn-white"><i class="fas fa-paper-plane"></i>&nbsp; Pesan Sekarang</a>
+      <a href="template.html" class="btn-outline-white"><i class="fas fa-eye"></i>&nbsp; Lihat Template</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="footer-logo">CV<span>Pro</span> Studio</a>
+        <p>Jasa pembuatan CV dan portofolio profesional. Kami membantu Anda tampil percaya diri dan menonjol di mata rekruter.</p>
+        <div class="footer-social">
+          <a href="https://instagram.com/ftryy.z.a_" target="_blank" rel="noopener" class="social-btn"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-tiktok"></i></a>
+          <a href="https://wa.me/6283122172586" target="_blank" rel="noopener" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="index.html"><i class="fas fa-chevron-right fa-xs"></i> Beranda</a></li>
+          <li><a href="tentang.html"><i class="fas fa-chevron-right fa-xs"></i> Tentang Kami</a></li>
+          <li><a href="layanan.html"><i class="fas fa-chevron-right fa-xs"></i> Layanan</a></li>
+          <li><a href="template.html"><i class="fas fa-chevron-right fa-xs"></i> Template</a></li>
+          <li><a href="harga.html"><i class="fas fa-chevron-right fa-xs"></i> Harga</a></li>
+          <li><a href="kontak.html"><i class="fas fa-chevron-right fa-xs"></i> Kontak</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Layanan</h4>
+        <ul class="footer-links">
+          <li><a href="layanan.html"><i class="fas fa-chevron-right fa-xs"></i> CV ATS</a></li>
+          <li><a href="layanan.html"><i class="fas fa-chevron-right fa-xs"></i> CV Kreatif</a></li>
+          <li><a href="layanan.html"><i class="fas fa-chevron-right fa-xs"></i> Portofolio Web</a></li>
+          <li><a href="layanan.html"><i class="fas fa-chevron-right fa-xs"></i> Optimasi LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Hubungi Kami</h4>
+        <ul class="footer-links">
+          <li><a href="https://wa.me/6283122172586"><i class="fab fa-whatsapp"></i> +62 831-2217-2584</a></li>
+          <li><a href="indriariska469.@gmail.com"><i class="fas fa-envelope"></i> indriariska469.@gmail.com</a></li>
+          <li><a href="https://instagram.com/ftryy.z.a_" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> ftryy.z.a_</a></li>
+          <li><a href="#"><i class="fas fa-clock"></i> Buka 08.00–22.00 WIB</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 CVPro Studio. Hak cipta dilindungi.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Kebijakan Privasi</a>
+        <a href="#">Syarat & Ketentuan</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- WA Float -->
+<div class="wa-float">
+  <span class="wa-tooltip">Chat via WhatsApp</span>
+  <a href="https://wa.me/6283122172586?text=Halo%20CVPro%20Studio%2C%20saya%20ingin%20tanya%20harga" class="wa-btn" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>

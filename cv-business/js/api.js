@@ -3,9 +3,12 @@ const API_BASE_URL = 'http://localhost:3000/api';
 class API {
   static async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
+    // Attach customer token if present (links order to customer account)
+    const customerToken = localStorage.getItem('customerToken');
     const config = {
       headers: {
         'Content-Type': 'application/json',
+        ...(customerToken ? { Authorization: `Bearer ${customerToken}` } : {}),
         ...options.headers,
       },
       ...options,
@@ -50,9 +53,14 @@ class API {
 
   static async upload(endpoint, formData) {
     const url = `${API_BASE_URL}${endpoint}`;
+    // Attach customer token if present (so order gets linked to customer account)
+    const customerToken = localStorage.getItem('customerToken');
+    const headers = {};
+    if (customerToken) headers['Authorization'] = `Bearer ${customerToken}`;
     try {
       const response = await fetch(url, {
         method: 'POST',
+        headers,
         body: formData,
       });
       const data = await response.json();
