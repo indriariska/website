@@ -1,4 +1,4 @@
-/**
+﻿/**
  * CVPro Studio — Database Seed
  * Creates admin user, sample orders, expenses, and settings.
  */
@@ -155,7 +155,7 @@ async function main() {
       businessName: 'CVPro Studio',
       ownerName: 'Indri Ariska',
       phone: '+62 83830094365',
-      whatsapp: '6283122172586',
+      whatsapp: '6283122172584',
       email: 'indriariska469@gmail.com',
       address: 'Indonesia',
       instagram: 'ftryy.z.a_',

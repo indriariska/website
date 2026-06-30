@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – CVPro Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/customer.css" />
+  <script src="js/customerApi.js"></script>
+  <script src="js/auth.js"></script>
+</head>
+<body>
+
+<div class="customer-layout">
+
+  <!-- ── Sidebar ────────────────────────────── -->
+  <aside class="customer-sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">
+        <div class="logo-icon"><i class="fas fa-file-alt"></i></div>
+        CV<span>Pro</span> Studio
+      </div>
+      <p class="sidebar-user-name" id="sidebarUserName">Memuat...</p>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-nav-item active">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a href="orders.html" class="sidebar-nav-item">
+        <i class="fas fa-shopping-bag"></i> Pesanan Saya
+      </a>
+      <a href="profile.html" class="sidebar-nav-item">
+        <i class="fas fa-user"></i> Profil
+      </a>
+      <a href="../kontak.html" class="sidebar-nav-item">
+        <i class="fas fa-paper-plane"></i> Pesan Baru
+      </a>
+      <a href="../index.html" class="sidebar-nav-item">
+        <i class="fas fa-home"></i> Ke Website
+      </a>
+    </nav>
+    <div class="sidebar-footer-nav">
+      <button class="btn-logout" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main ───────────────────────────────── -->
+  <main class="customer-main">
+
+    <header class="customer-topbar">
+      <button class="topbar-menu-btn" id="menuToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="topbar-right">
+        <div class="topbar-user">
+          <span class="topbar-user-name" id="topbarName">–</span>
+          <span class="topbar-user-role">Pelanggan</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="customer-content">
+
+      <!-- ── Welcome banner ───────────────── -->
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h2>Halo, <span id="welcomeName">–</span>! 👋</h2>
+          <p>Selamat datang di dashboard CVPro Studio Anda</p>
+        </div>
+        <a href="../kontak.html" class="welcome-btn">
+          <i class="fas fa-plus"></i> Pesan Sekarang
+        </a>
+      </div>
+
+      <!-- ── Customer Info Card ────────────── -->
+      <div class="section-card" style="margin-bottom:24px">
+        <div class="section-card-header">
+          <h3><i class="fas fa-id-card" style="color:var(--primary);margin-right:8px"></i>Informasi Akun</h3>
+          <a href="profile.html" class="link-all">Edit Profil →</a>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+          <div class="info-field">
+            <span class="info-label"><i class="fas fa-user"></i> Nama</span>
+            <span class="info-value" id="infoName">–</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label"><i class="fas fa-envelope"></i> Email</span>
+            <span class="info-value" id="infoEmail">–</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label"><i class="fab fa-whatsapp"></i> WhatsApp</span>
+            <span class="info-value" id="infoPhone">–</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Order Stats ────────────────────── -->
+      <div class="customer-stats">
+        <div class="c-stat-card">
+          <div class="c-stat-icon total"><i class="fas fa-shopping-bag"></i></div>
+          <div class="c-stat-info">
+            <h4>Total Pesanan</h4>
+            <div class="c-stat-value" id="statTotal">–</div>
+          </div>
+        </div>
+        <div class="c-stat-card">
+          <div class="c-stat-icon pending"><i class="fas fa-hourglass-half"></i></div>
+          <div class="c-stat-info">
+            <h4>Menunggu Verifikasi</h4>
+            <div class="c-stat-value" id="statPending">–</div>
+          </div>
+        </div>
+        <div class="c-stat-card">
+          <div class="c-stat-icon progress"><i class="fas fa-cog"></i></div>
+          <div class="c-stat-info">
+            <h4>Sedang Diproses</h4>
+            <div class="c-stat-value" id="statProcessing">–</div>
+          </div>
+        </div>
+        <div class="c-stat-card">
+          <div class="c-stat-icon done"><i class="fas fa-check-circle"></i></div>
+          <div class="c-stat-info">
+            <h4>Selesai</h4>
+            <div class="c-stat-value" id="statDone">–</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Latest Order Summary ───────────── -->
+      <div class="section-card" id="latestOrderCard" style="display:none;margin-bottom:24px">
+        <div class="section-card-header">
+          <h3><i class="fas fa-receipt" style="color:var(--primary);margin-right:8px"></i>Pesanan Terakhir</h3>
+          <a href="orders.html" class="link-all">Lihat Semua →</a>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:16px">
+          <div class="info-field">
+            <span class="info-label">Layanan</span>
+            <span class="info-value" id="latestService">–</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Paket</span>
+            <span class="info-value" id="latestPackage">–</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Status Terkini</span>
+            <span id="latestStatus">–</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label">Tanggal Pesan</span>
+            <span class="info-value" id="latestDate">–</span>
+          </div>
+          <div class="info-field">
+            <span class="info-label"><i class="fas fa-calendar-check"></i> Estimasi Selesai</span>
+            <span class="info-value" id="latestEst">–</span>
+          </div>
+        </div>
+        <div>
+          <a id="latestDetailLink" href="orders.html" class="btn-sm primary">
+            <i class="fas fa-eye"></i> Lihat Detail
+          </a>
+        </div>
+      </div>
+
+      <!-- ── Latest Orders Table ───────────── -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <h3><i class="fas fa-list" style="color:var(--primary);margin-right:8px"></i>5 Pesanan Terbaru</h3>
+          <a href="orders.html" class="link-all">Lihat Semua →</a>
+        </div>
+        <div class="c-table-wrap">
+          <table class="c-table">
+            <thead>
+              <tr>
+                <th>No. Order</th>
+                <th>Layanan</th>
+                <th>Paket</th>
+                <th>Harga</th>
+                <th>Status</th>
+                <th>Tanggal</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="latestOrdersBody">
+              <tr class="empty-row"><td colspan="7">Memuat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Quick links ────────────────────── -->
+      <div class="section-card" style="margin-top:24px">
+        <div class="section-card-header">
+          <h3><i class="fas fa-bolt" style="color:var(--primary);margin-right:8px"></i>Aksi Cepat</h3>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="../kontak.html" class="btn-sm primary">
+            <i class="fas fa-plus"></i> Pesan Baru
+          </a>
+          <a href="orders.html" class="btn-sm outline">
+            <i class="fas fa-shopping-bag"></i> Semua Pesanan
+          </a>
+          <a href="profile.html" class="btn-sm outline">
+            <i class="fas fa-user"></i> Edit Profil
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /customer-content -->
+  </main>
+</div>
+
+<div class="c-toast" id="toast"></div>
+
+<style>
+/* Extra styles for dashboard info fields */
+.info-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.info-label i { margin-right: 4px; }
+.info-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1e1b4b;
+}
+.c-stat-icon.pending {
+  background: linear-gradient(135deg,#f59e0b,#d97706);
+  color: #fff;
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Helpers ───────────────────────────── */
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function fmt(v) { return 'Rp ' + (v || 0).toLocaleString('id-ID'); }
+  function fmtDate(d) {
+    return new Date(d).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+  }
+  function setText(id, v) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = v || '–';
+  }
+  function statusLabel(s) {
+    var m = {
+      menunggu_verifikasi: 'Menunggu Verifikasi',
+      diproses:  'Diproses',
+      selesai:   'Selesai',
+      ditolak:   'Ditolak',
+      pending:   'Menunggu Verifikasi',
+      completed: 'Selesai',
+      cancelled: 'Ditolak',
+    };
+    return m[s] || s;
+  }
+  function estimasiSelesai(order) {
+    if (!order) return '–';
+    if (order.status === 'selesai') return 'Sudah Selesai ✓';
+    if (order.status === 'ditolak') return 'Pesanan Ditolak';
+    // Estimate: created + 3 days for basic, 1 day for express, etc.
+    var created = new Date(order.createdAt);
+    var days = 3; // default estimate
+    var pkg = (order.package || '').toLowerCase();
+    if (pkg.includes('premium') || pkg.includes('ekspres')) days = 1;
+    else if (pkg.includes('standard')) days = 2;
+    else if (pkg.includes('professional')) days = 1;
+    var est = new Date(created.getTime() + days * 24 * 60 * 60 * 1000);
+    return fmtDate(est) + ' (±' + days + ' hari)';
+  }
+  function showToast(msg, type) {
+    var t = document.getElementById('toast');
+    t.className = 'c-toast ' + (type || 'info') + ' show';
+    t.innerHTML = '<i class="fas fa-info-circle"></i><span>' + esc(msg) + '</span>';
+    setTimeout(function () { t.classList.remove('show'); }, 3500);
+  }
+
+  /* ── Populate from session cache ───────── */
+  var cust = window._customer || {};
+  setText('sidebarUserName', cust.name);
+  setText('topbarName',      cust.name);
+  setText('welcomeName',     cust.name ? cust.name.split(' ')[0] : '–');
+  setText('infoName',        cust.name);
+  setText('infoEmail',       cust.email);
+  setText('infoPhone',       cust.phone || 'Belum diisi');
+
+  /* ── Sidebar / logout ───────────────────── */
+  document.getElementById('menuToggle').addEventListener('click', function () {
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+  document.getElementById('logoutBtn').addEventListener('click', async function () {
+    try { await CustomerAPI.logout(); } catch (_) {}
+    CustomerAuth.clearSession();
+    window.location.replace('login.html');
+  });
+
+  /* ── Load dashboard data from API ───────── */
+  async function load() {
+    try {
+      var res = await CustomerAPI.getDashboard();
+      if (!res.success) { showToast('Gagal memuat dashboard', 'error'); return; }
+      var d = res.data;
+
+      /* Refresh account info from live data */
+      if (d.customer) {
+        setText('infoName',  d.customer.name);
+        setText('infoEmail', d.customer.email);
+        setText('infoPhone', d.customer.phone || 'Belum diisi');
+        setText('sidebarUserName', d.customer.name);
+        setText('topbarName',      d.customer.name);
+        setText('welcomeName',     d.customer.name ? d.customer.name.split(' ')[0] : '–');
+      }
+
+      /* Stats */
+      setText('statTotal',      d.totalOrders);
+      setText('statPending',    d.pendingOrders);
+      setText('statProcessing', d.processingOrders);
+      setText('statDone',       d.completedOrders);
+
+      /* Latest order summary */
+      var lo = d.latestOrder;
+      if (lo) {
+        document.getElementById('latestOrderCard').style.display = '';
+        setText('latestService', lo.serviceType);
+        setText('latestPackage', lo.package || '–');
+        setText('latestDate',    fmtDate(lo.createdAt));
+        setText('latestEst',     estimasiSelesai(lo));
+
+        var statusEl = document.getElementById('latestStatus');
+        statusEl.innerHTML = '<span class="badge ' + esc(lo.status) + '">' + statusLabel(lo.status) + '</span>';
+
+        var detailLink = document.getElementById('latestDetailLink');
+        detailLink.href = 'order-detail.html?id=' + encodeURIComponent(lo.id);
+      }
+
+      /* Latest 5 orders in table */
+      var ordRes = await CustomerAPI.getOrders();
+      var tbody  = document.getElementById('latestOrdersBody');
+      var rows   = (ordRes.data || []).slice(0, 5);
+
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Belum ada pesanan. ' +
+          '<a href="../kontak.html" style="color:var(--primary)">Pesan sekarang!</a></td></tr>';
+      } else {
+        tbody.innerHTML = rows.map(function (o) {
+          var num = '#' + o.id.substring(0, 8).toUpperCase();
+          return '<tr>' +
+            '<td><code>' + esc(num) + '</code></td>' +
+            '<td>' + esc(o.serviceType) + '</td>' +
+            '<td>' + esc(o.package || '–') + '</td>' +
+            '<td style="font-weight:600;color:var(--primary)">' + fmt(o.price) + '</td>' +
+            '<td><span class="badge ' + esc(o.status) + '">' + statusLabel(o.status) + '</span></td>' +
+            '<td>' + fmtDate(o.createdAt) + '</td>' +
+            '<td>' +
+              '<a href="order-detail.html?id=' + encodeURIComponent(o.id) + '" class="btn-sm outline">' +
+                '<i class="fas fa-eye"></i> Detail' +
+              '</a>' +
+            '</td>' +
+          '</tr>';
+        }).join('');
+      }
+
+    } catch (err) {
+      showToast('Gagal memuat data: ' + err.message, 'error');
+    }
+  }
+
+  load();
+
+})();
+</script>
+
+</body>
+</html>

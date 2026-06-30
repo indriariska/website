@@ -78,6 +78,7 @@ model Order {
   downloadFiles   String?   @map("download_files")      // JSON: [{label,url},...] for multiple files
   revisionNote    String?   @map("revision_note") @db.Text  // customer's revision request text
   revisionFileUrl String?   @map("revision_file_url")   // optional file attached to revision
+  revisionStatus  String?   @default("none") @map("revision_status") // none | requested | in_review | approved | done
   completedAt     DateTime? @map("completed_at")
 
   createdAt       DateTime  @default(now()) @map("created_at")

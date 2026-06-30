@@ -1,4 +1,4 @@
-/**
+﻿/**
  * CVPro Studio — Admin Orders Page
  * Full status set + download file upload + revision display.
  */
@@ -113,7 +113,12 @@ function renderOrders(orders) {
       <td>${escHtml(order.paymentMethod)}</td>
       <td>
         <span class="status-badge ${order.status}">${statusLabel(order.status)}</span>
-        ${order.revisionNote ? '<br><small style="color:#f59e0b;font-size:11px"><i class="fas fa-edit"></i> Ada Revisi</small>' : ''}
+        ${order.revisionNote ? '<br><small style="color:#f59e0b;font-size:11px"><i class="fas fa-edit"></i> ' +
+          (order.revisionStatus === 'requested' ? '⚠ Butuh Tindakan Revisi' :
+           order.revisionStatus === 'in_review'  ? 'Revisi Direview'        :
+           order.revisionStatus === 'approved'   ? 'Revisi Disetujui'       :
+           order.revisionStatus === 'done'        ? 'Revisi Selesai'         :
+           'Ada Revisi') + '</small>' : ''}
       </td>
       <td>${formatDate(order.createdAt)}</td>
       <td>
@@ -137,7 +142,7 @@ async function viewOrder(id) {
 
     let proofHtml = '<em style="color:#9ca3af">Belum ada bukti pembayaran</em>';
     if (o.proofImageUrl) {
-      const imgSrc = o.proofImageUrl.startsWith('http') ? o.proofImageUrl : 'http://localhost:3000' + o.proofImageUrl;
+      const imgSrc = o.proofImageUrl.startsWith('http') ? o.proofImageUrl : o.proofImageUrl;
       proofHtml = `
         <a href="${escHtml(imgSrc)}" target="_blank">
           <img src="${escHtml(imgSrc)}" alt="Bukti Pembayaran"
@@ -155,7 +160,7 @@ async function viewOrder(id) {
         if (Array.isArray(files) && files.length > 0) {
           downloadFilesHtml = '<div style="margin-top:8px">' +
             files.map(f => {
-              const src = f.url.startsWith('http') ? f.url : 'http://localhost:3000' + f.url;
+              const src = f.url.startsWith('http') ? f.url : f.url;
               return `<a href="${escHtml(src)}" target="_blank" class="btn-secondary" style="margin-right:6px;margin-bottom:6px;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;font-size:0.82rem">
                 <i class="fas fa-download"></i> ${escHtml(f.label || 'Download')}
               </a>`;
@@ -164,7 +169,7 @@ async function viewOrder(id) {
       } catch(_) {}
     }
     if (!downloadFilesHtml && o.downloadUrl) {
-      const src = o.downloadUrl.startsWith('http') ? o.downloadUrl : 'http://localhost:3000' + o.downloadUrl;
+      const src = o.downloadUrl.startsWith('http') ? o.downloadUrl : o.downloadUrl;
       downloadFilesHtml = `<a href="${escHtml(src)}" target="_blank" class="btn-secondary" style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;font-size:0.82rem">
         <i class="fas fa-download"></i> Download Hasil
       </a>`;
@@ -174,13 +179,43 @@ async function viewOrder(id) {
     let revisionHtml = '';
     if (o.revisionNote) {
       const revFileSrc = o.revisionFileUrl
-        ? `<a href="${o.revisionFileUrl.startsWith('http') ? o.revisionFileUrl : 'http://localhost:3000' + o.revisionFileUrl}" target="_blank" style="color:#7c3aed;font-size:0.82rem"><i class="fas fa-paperclip"></i> Lihat File Revisi</a>`
+        ? `<a href="${o.revisionFileUrl}" target="_blank" style="color:#7c3aed;font-size:0.82rem"><i class="fas fa-paperclip"></i> Lihat File Revisi</a>`
         : '';
+      const revStatusMap = {
+        requested:  { label: 'Diminta',     color: '#f59e0b', bg: '#fffbeb' },
+        in_review:  { label: 'Sedang Direview', color: '#3b82f6', bg: '#eff6ff' },
+        approved:   { label: 'Disetujui',   color: '#10b981', bg: '#ecfdf5' },
+        done:       { label: 'Selesai',      color: '#7c3aed', bg: '#f5f3ff' },
+      };
+      const revSt = revStatusMap[o.revisionStatus] || { label: o.revisionStatus || '–', color: '#6b7280', bg: '#f9fafb' };
       revisionHtml = `
         <div class="detail-section" style="border-left:3px solid #f59e0b;padding-left:12px">
-          <h3 style="color:#d97706"><i class="fas fa-edit"></i> Permintaan Revisi dari Pelanggan</h3>
+          <h3 style="color:#d97706;display:flex;align-items:center;gap:10px">
+            <i class="fas fa-edit"></i> Permintaan Revisi dari Pelanggan
+            <span style="font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:50px;
+              color:${revSt.color};background:${revSt.bg};border:1px solid ${revSt.color}30">
+              ${escHtml(revSt.label)}
+            </span>
+          </h3>
           <p style="white-space:pre-wrap;font-size:0.9rem;color:#374151;background:#fffbeb;padding:12px;border-radius:8px;margin-top:8px">${escHtml(o.revisionNote)}</p>
           ${revFileSrc}
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+            <button onclick="setRevisionStatus('${o.id}','in_review')"
+              style="font-size:0.78rem;padding:5px 12px;border-radius:8px;border:1px solid #3b82f6;
+                     color:#3b82f6;background:#fff;cursor:pointer">
+              <i class="fas fa-search"></i> Sedang Direview
+            </button>
+            <button onclick="setRevisionStatus('${o.id}','approved')"
+              style="font-size:0.78rem;padding:5px 12px;border-radius:8px;border:1px solid #10b981;
+                     color:#10b981;background:#fff;cursor:pointer">
+              <i class="fas fa-check"></i> Setujui Revisi
+            </button>
+            <button onclick="setRevisionStatus('${o.id}','done')"
+              style="font-size:0.78rem;padding:5px 12px;border-radius:8px;border:1px solid #7c3aed;
+                     color:#7c3aed;background:#fff;cursor:pointer">
+              <i class="fas fa-flag-checkered"></i> Revisi Selesai
+            </button>
+          </div>
         </div>`;
     }
 
@@ -315,9 +350,17 @@ async function viewOrder(id) {
           </div>
         </div>
 
-        <div style="display:flex;gap:10px;margin-top:16px">
-          <a href="https://wa.me/${o.customerWhatsapp.replace(/\D/g,'')}" target="_blank" class="btn-secondary">
-            <i class="fab fa-whatsapp"></i> Hubungi WA
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center">
+          <a href="https://wa.me/${escHtml(o.customerWhatsapp.replace(/\D/g,''))}" target="_blank" rel="noopener"
+             style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:50px;
+                    background:#25d366;color:#fff;font-size:0.88rem;font-weight:600;text-decoration:none">
+            <i class="fab fa-whatsapp"></i> Chat Customer
+          </a>
+          <a href="${escHtml(o.whatsappLink || generateAdminWaLink(o))}" target="_blank" rel="noopener"
+             style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:50px;
+                    background:#fff;color:#25d366;border:2px solid #25d366;font-size:0.88rem;
+                    font-weight:600;text-decoration:none">
+            <i class="fab fa-whatsapp"></i> Kirim Info Order via WA
           </a>
         </div>
 
@@ -345,7 +388,7 @@ function buildDownloadFilesList(order) {
   }
   if (files.length === 0) return '<em style="color:#9ca3af">Belum ada file</em>';
   return files.map((f, i) => {
-    const src = f.url.startsWith('http') ? f.url : 'http://localhost:3000' + f.url;
+    const src = f.url.startsWith('http') ? f.url : f.url;
     return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;
         background:#f5f3ff;padding:7px 10px;border-radius:8px">
       <i class="fas fa-file-alt" style="color:#7c3aed;flex-shrink:0"></i>
@@ -403,7 +446,7 @@ function refreshPendingList(orderId) {
        background:#f5f3ff;padding:7px 10px;border-radius:8px">
       <i class="fas fa-file-alt" style="color:#7c3aed;flex-shrink:0"></i>
       <span style="flex:1;word-break:break-all">${escHtml(f.label)}</span>
-      <a href="${escHtml(f.url.startsWith('http') ? f.url : 'http://localhost:3000' + f.url)}"
+      <a href="${escHtml(f.url)}"
          target="_blank" style="color:#7c3aed;font-size:0.78rem;text-decoration:none;flex-shrink:0"
          title="Preview">
         <i class="fas fa-external-link-alt"></i>
@@ -503,6 +546,41 @@ window.saveDownloadFiles = async function(orderId) {
     if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan File & Set Selesai'; }
   }
 };
+
+// ── Generate WhatsApp link for admin (frontend helper) ────────────
+function generateAdminWaLink(order) {
+  const orderId = (order.id || '').substring(0, 8).toUpperCase();
+  const text = [
+    'Halo Admin CVPro Studio,',
+    '',
+    'Info pesanan:',
+    '',
+    'Order ID : ' + orderId,
+    'Nama     : ' + (order.customerName  || '–'),
+    'Layanan  : ' + (order.serviceType   || '–'),
+    'Status   : ' + statusLabel(order.status),
+    order.revisionNote ? 'Revisi   : ' + order.revisionNote : null,
+    '',
+    'Mohon ditindaklanjuti.',
+  ].filter(l => l !== null).join('\n');
+  return 'https://wa.me/6283122172584?text=' + encodeURIComponent(text);
+}
+
+// ── Update revision status only (no order status change) ─────────
+async function setRevisionStatus(orderId, revisionStatus) {
+  try {
+    // Use updateOrder (admin-only) to patch just revisionStatus
+    const response = await AdminAPI.updateOrder(orderId, { revisionStatus });
+    if (response.success) {
+      const labels = { in_review: 'Sedang Direview', approved: 'Disetujui', done: 'Selesai' };
+      showToast(`Revisi → ${labels[revisionStatus] || revisionStatus}`, 'success');
+      closeModal();
+      loadOrders();
+    }
+  } catch (error) {
+    showToast('Gagal update revisi: ' + error.message, 'error');
+  }
+}
 
 // ── Set Status ────────────────────────────────────────────────────
 async function setOrderStatus(id, newStatus) {

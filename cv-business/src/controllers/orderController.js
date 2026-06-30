@@ -3,7 +3,8 @@
  * Handles service orders submitted by customers via kontak.html.
  * No product inventory, no orderItems — pure service business.
  */
-const Response = require('../utils/response');
+const Response   = require('../utils/response');
+const { withWhatsAppLink } = require('../utils/whatsapp');
 const prisma = require('../config/database');
 const path = require('path');
 const fs   = require('fs');
@@ -78,7 +79,7 @@ class OrderController {
         orderBy: { createdAt: 'desc' },
       });
 
-      return Response.success(res, orders, 'Orders retrieved successfully');
+      return Response.success(res, orders.map(o => withWhatsAppLink(o)), 'Orders retrieved successfully');
     } catch (error) {
       next(error);
     }
@@ -118,7 +119,7 @@ class OrderController {
     try {
       const order = await prisma.order.findUnique({ where: { id: req.params.id } });
       if (!order) return Response.error(res, 'Order not found', 404);
-      return Response.success(res, order, 'Order retrieved successfully');
+      return Response.success(res, withWhatsAppLink(order), 'Order retrieved successfully');
     } catch (error) {
       next(error);
     }
@@ -188,10 +189,11 @@ class OrderController {
   /**
    * PUT /api/orders/:id/status
    * Update order status (admin/staff).
+   * Also accepts revisionStatus to track revision workflow.
    */
   static async updateOrderStatus(req, res, next) {
     try {
-      const { status, adminNotes, downloadUrl, downloadFiles } = req.body;
+      const { status, adminNotes, downloadUrl, downloadFiles, revisionStatus } = req.body;
 
       const validStatuses = [
         'menunggu_verifikasi',
@@ -209,8 +211,9 @@ class OrderController {
       }
 
       const data = { status };
-      if (adminNotes   !== undefined) data.adminNotes   = adminNotes;
-      if (downloadUrl  !== undefined) data.downloadUrl  = downloadUrl;
+      if (adminNotes    !== undefined) data.adminNotes    = adminNotes;
+      if (downloadUrl   !== undefined) data.downloadUrl   = downloadUrl;
+      if (revisionStatus !== undefined) data.revisionStatus = revisionStatus;
       if (downloadFiles !== undefined) data.downloadFiles = typeof downloadFiles === 'string'
         ? downloadFiles
         : JSON.stringify(downloadFiles);
@@ -221,7 +224,7 @@ class OrderController {
         data,
       });
 
-      return Response.success(res, order, 'Order status updated successfully');
+      return Response.success(res, withWhatsAppLink(order), 'Order status updated successfully');
     } catch (error) {
       next(error);
     }
@@ -235,17 +238,18 @@ class OrderController {
     try {
       const {
         serviceType, package: pkg, price, paymentMethod,
-        status, adminNotes, completedAt, downloadUrl, downloadFiles,
+        status, adminNotes, completedAt, downloadUrl, downloadFiles, revisionStatus,
       } = req.body;
 
       const data = {};
-      if (serviceType !== undefined)   data.serviceType   = serviceType;
-      if (pkg !== undefined)           data.package       = pkg;
-      if (price !== undefined)         data.price         = parseInt(String(price).replace(/[^0-9]/g, '')) || 0;
-      if (paymentMethod !== undefined) data.paymentMethod = paymentMethod;
-      if (status !== undefined)        data.status        = status;
-      if (adminNotes !== undefined)    data.adminNotes    = adminNotes;
-      if (downloadUrl !== undefined)   data.downloadUrl   = downloadUrl;
+      if (serviceType    !== undefined) data.serviceType    = serviceType;
+      if (pkg            !== undefined) data.package        = pkg;
+      if (price          !== undefined) data.price          = parseInt(String(price).replace(/[^0-9]/g, '')) || 0;
+      if (paymentMethod  !== undefined) data.paymentMethod  = paymentMethod;
+      if (status         !== undefined) data.status         = status;
+      if (adminNotes     !== undefined) data.adminNotes     = adminNotes;
+      if (downloadUrl    !== undefined) data.downloadUrl    = downloadUrl;
+      if (revisionStatus !== undefined) data.revisionStatus = revisionStatus;
       if (downloadFiles !== undefined) data.downloadFiles = typeof downloadFiles === 'string'
         ? downloadFiles : JSON.stringify(downloadFiles);
       if (completedAt !== undefined)   data.completedAt   = completedAt ? new Date(completedAt) : null;
@@ -256,7 +260,7 @@ class OrderController {
         data,
       });
 
-      return Response.success(res, order, 'Order updated successfully');
+      return Response.success(res, withWhatsAppLink(order), 'Order updated successfully');
     } catch (error) {
       next(error);
     }
@@ -270,6 +274,63 @@ class OrderController {
     try {
       await prisma.order.delete({ where: { id: req.params.id } });
       return Response.success(res, null, 'Order deleted successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/orders/:id/revision
+   * Submit a revision request for an order.
+   * PUBLIC — accessible by the order owner (customer token optional)
+   * or any logged-in customer/admin.
+   *
+   * Body: { revisionMessage, revisionFileUrl? }
+   *
+   * - Maps revisionMessage → revisionNote field (same DB column, aliased)
+   * - Sets revisionStatus = "requested"
+   * - Sets order status   = "revisi" (signals admin that work is needed)
+   * - Returns whatsappLink so frontend can offer direct WA escalation
+   */
+  static async submitOrderRevision(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { revisionMessage, revisionFileUrl } = req.body;
+
+      if (!revisionMessage || String(revisionMessage).trim().length < 5) {
+        return Response.error(res, 'revisionMessage wajib diisi (minimal 5 karakter)', 400);
+      }
+
+      // Verify order exists
+      const order = await prisma.order.findUnique({ where: { id } });
+      if (!order) return Response.error(res, 'Order not found', 404);
+
+      // Only allow revision for active orders (not cancelled/rejected)
+      const blocked = ['dibatalkan', 'ditolak'];
+      if (blocked.includes(order.status)) {
+        return Response.error(res, 'Revisi tidak bisa diajukan untuk pesanan yang sudah dibatalkan/ditolak', 400);
+      }
+
+      const updatedOrder = await prisma.order.update({
+        where: { id },
+        data: {
+          revisionNote:    String(revisionMessage).trim(),  // maps to existing DB column
+          revisionStatus:  'requested',
+          revisionFileUrl: revisionFileUrl || null,
+          status:          'revisi',
+        },
+      });
+
+      const { generateWhatsAppLink } = require('../utils/whatsapp');
+      const waLink = generateWhatsAppLink(updatedOrder, updatedOrder.revisionNote);
+
+      return Response.success(res, {
+        orderId:        updatedOrder.id,
+        revisionMessage: updatedOrder.revisionNote,
+        revisionStatus:  updatedOrder.revisionStatus,
+        whatsappLink:    waLink,
+        order:           withWhatsAppLink(updatedOrder),
+      }, 'Revision request submitted successfully');
     } catch (error) {
       next(error);
     }

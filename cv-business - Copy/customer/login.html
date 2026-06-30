@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login – CVPro Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/customer.css" />
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-card">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <a href="../index.html">CV<span>Pro</span> Studio</a>
+      <p>Portal Pelanggan</p>
+    </div>
+
+    <h1 class="auth-title">Selamat Datang Kembali</h1>
+    <p class="auth-subtitle">Masuk ke akun Anda untuk melihat pesanan</p>
+
+    <!-- Alert box -->
+    <div class="auth-alert" id="alertBox">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="alertMsg"></span>
+    </div>
+
+    <!-- Form -->
+    <form id="loginForm" novalidate>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-icon-wrap">
+          <i class="fas fa-envelope field-icon"></i>
+          <input type="email" id="email" class="form-control" placeholder="contoh@email.com" autocomplete="email" />
+        </div>
+        <span class="field-error" id="emailErr">Email tidak valid</span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-icon-wrap">
+          <i class="fas fa-lock field-icon"></i>
+          <input type="password" id="password" class="form-control" placeholder="Masukkan password" autocomplete="current-password" />
+        </div>
+        <span class="field-error" id="passwordErr">Password wajib diisi</span>
+      </div>
+
+      <button type="submit" class="btn-auth" id="loginBtn">
+        <i class="fas fa-sign-in-alt"></i>
+        Masuk
+      </button>
+
+    </form>
+
+    <p class="auth-footer">
+      Belum punya akun?
+      <a href="register.html">Daftar Sekarang</a>
+    </p>
+
+    <p class="auth-footer" style="margin-top:10px">
+      <a href="../index.html"><i class="fas fa-arrow-left"></i> Kembali ke Website</a>
+    </p>
+
+  </div>
+</div>
+
+<script src="js/customerApi.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // Already logged in → go to dashboard
+  if (CustomerAuth.isLoggedIn()) {
+    window.location.replace('dashboard.html');
+    return;
+  }
+
+  const form       = document.getElementById('loginForm');
+  const emailInput = document.getElementById('email');
+  const passInput  = document.getElementById('password');
+  const loginBtn   = document.getElementById('loginBtn');
+  const alertBox   = document.getElementById('alertBox');
+  const alertMsg   = document.getElementById('alertMsg');
+
+  function showAlert(msg, type = 'error') {
+    alertMsg.textContent = msg;
+    alertBox.className   = `auth-alert ${type} show`;
+  }
+
+  function hideAlert() {
+    alertBox.classList.remove('show');
+  }
+
+  function setErr(id, show) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('show', show);
+  }
+
+  function validate() {
+    const email = emailInput.value.trim();
+    const pass  = passInput.value;
+    let ok = true;
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    setErr('emailErr',    !emailOk);
+    if (!emailOk) ok = false;
+
+    setErr('passwordErr', !pass);
+    if (!pass) ok = false;
+
+    if (!emailOk) emailInput.classList.add('error');
+    else          emailInput.classList.remove('error');
+    if (!pass)    passInput.classList.add('error');
+    else          passInput.classList.remove('error');
+
+    return ok;
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    hideAlert();
+    if (!validate()) return;
+
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Masuk...';
+
+    try {
+      const res = await CustomerAPI.login({
+        email:    emailInput.value.trim(),
+        password: passInput.value,
+      });
+
+      if (res.success) {
+        CustomerAuth.saveSession(res.data.token, res.data.customer);
+        showAlert('Login berhasil! Mengalihkan...', 'success');
+
+        // Redirect back to original page if set
+        const params = new URLSearchParams(window.location.search);
+        const redirectTo = params.get('redirect') || localStorage.getItem('cvpro_after_login');
+        localStorage.removeItem('cvpro_after_login');
+
+        setTimeout(() => {
+          window.location.replace(redirectTo || 'dashboard.html');
+        }, 800);
+      } else {
+        showAlert(res.message || 'Login gagal');
+      }
+    } catch (err) {
+      showAlert(err.message || 'Email atau password salah');
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+    }
+  });
+
+  // Live clear errors
+  [emailInput, passInput].forEach(function (el) {
+    el.addEventListener('input', function () {
+      el.classList.remove('error');
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>

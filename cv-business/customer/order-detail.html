@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -150,6 +150,12 @@
           <a href="orders.html" class="btn-sm outline"><i class="fas fa-arrow-left"></i> Kembali</a>
           <button class="btn-sm outline" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
           <a href="../kontak.html" class="btn-sm primary"><i class="fas fa-plus"></i> Pesan Baru</a>
+          <a id="waConsultBtn" href="#" target="_blank" rel="noopener"
+             style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:50px;
+                    background:#25d366;color:#fff;font-family:'Poppins',sans-serif;font-size:0.88rem;
+                    font-weight:600;text-decoration:none;">
+            <i class="fab fa-whatsapp"></i> Konsultasi Admin
+          </a>
         </div>
       </div>
     </div>
@@ -191,7 +197,7 @@
 (function(){
 'use strict';
 
-var BASE = 'http://localhost:3000';
+var BASE = '';
 var cust = window._customer || {};
 var el   = function(id){ return document.getElementById(id); };
 var orderId = new URLSearchParams(window.location.search).get('id');
@@ -414,6 +420,24 @@ async function loadDetail(silent){
     /* Timeline */
     el('timelineContainer').innerHTML = buildTimeline(o);
 
+    /* WhatsApp consultation button — always available, message pre-filled with order info */
+    var waBtn = el('waConsultBtn');
+    if(waBtn){
+      var waText = [
+        'Halo Admin CVPro Studio,',
+        '',
+        'Saya ingin konsultasi mengenai pesanan saya.',
+        '',
+        'Order ID  : ' + o.id.substring(0,8).toUpperCase(),
+        'Nama      : ' + (o.customerName || cust.name || '–'),
+        'Layanan   : ' + (o.serviceType || '–'),
+        'Status    : ' + statusLabel(o.status),
+        '',
+        'Mohon bantuan admin. Terima kasih.',
+      ].join('\n');
+      waBtn.href = 'https://wa.me/6283122172584?text=' + encodeURIComponent(waText);
+    }
+
     /* Last refreshed */
     el('autoRefreshNote').style.display='';
     el('lastRefreshed').textContent = 'Terakhir diperbarui: '+fmtDT(new Date().toISOString());
@@ -465,6 +489,26 @@ el('revisionForm').addEventListener('submit', async function(e){
       showToast('Revisi berhasil dikirim!','success');
       el('revisionNote').value = '';
       if(fileInput) fileInput.value='';
+
+      // Show WhatsApp follow-up button if API returned whatsappLink
+      if(res.data && res.data.whatsappLink){
+        var waBtn = el('revisionWaBtn');
+        if(!waBtn){
+          waBtn = document.createElement('a');
+          waBtn.id = 'revisionWaBtn';
+          waBtn.target = '_blank';
+          waBtn.rel = 'noopener';
+          waBtn.className = 'btn-sm';
+          waBtn.style.cssText = 'display:inline-flex;align-items:center;gap:8px;margin-top:12px;'+
+            'background:#25d366;color:#fff;border-radius:50px;padding:10px 20px;'+
+            'font-weight:600;font-size:0.88rem;text-decoration:none;';
+          waBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Lanjutkan di WhatsApp';
+          el('revisionForm').insertAdjacentElement('afterend', waBtn);
+        }
+        waBtn.href = res.data.whatsappLink;
+        waBtn.style.display = 'inline-flex';
+      }
+
       loadDetail(true); // refresh without hiding content
     } else {
       showToast(res.message||'Gagal mengirim revisi','error');

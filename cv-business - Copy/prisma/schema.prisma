@@ -1,0 +1,130 @@
+// CVPro Studio — Prisma Schema
+// Service-based business model (CV & Portfolio ordering)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+//  Admin Users
+// ─────────────────────────────────────────────
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("admin") // admin, staff
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────
+//  Customer Accounts (website users)
+// ─────────────────────────────────────────────
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  orders    Order[]
+
+  @@map("customers")
+}
+
+// ─────────────────────────────────────────────
+//  Service Orders (from customer website)
+// ─────────────────────────────────────────────
+model Order {
+  id              String    @id @default(uuid())
+
+  // Linked customer account (optional — guest orders still work)
+  customerId      String?   @map("customer_id")
+  customer        Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  // Customer info (captured directly from form)
+  customerName    String    @map("customer_name")
+  customerEmail   String    @map("customer_email")
+  customerWhatsapp String   @map("customer_whatsapp")
+
+  // Service info
+  serviceType     String    @map("service_type")  // e.g. "CV Basic Clean"
+  package         String?   // Basic | Standard | Premium | Professional
+  price           Int       @default(0)
+
+  // Payment
+  paymentMethod   String    @map("payment_method")  // BCA | BSI | BRI | Mandiri | DANA | GoPay
+  proofImageUrl   String?   @map("proof_image_url")
+
+  // Customer message
+  message         String?   @db.Text
+
+  // Order management
+  // Statuses: menunggu_verifikasi | verifikasi_pembayaran | pembayaran_terverifikasi |
+  //           antrian | diproses | revisi | selesai | dibatalkan | ditolak
+  status          String    @default("menunggu_verifikasi")
+  adminNotes      String?   @map("admin_notes") @db.Text
+  downloadUrl     String?   @map("download_url")        // single file (legacy)
+  downloadFiles   String?   @map("download_files")      // JSON: [{label,url},...] for multiple files
+  revisionNote    String?   @map("revision_note") @db.Text  // customer's revision request text
+  revisionFileUrl String?   @map("revision_file_url")   // optional file attached to revision
+  completedAt     DateTime? @map("completed_at")
+
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@map("orders")
+}
+
+// ─────────────────────────────────────────────
+//  Expenses (operational costs)
+// ─────────────────────────────────────────────
+model Expense {
+  id          String   @id @default(uuid())
+  title       String
+  amount      Int
+  category    String?  @default("Operasional")
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("expenses")
+}
+
+// ─────────────────────────────────────────────
+//  Business Settings
+// ─────────────────────────────────────────────
+model Setting {
+  id           String  @id @default(uuid())
+  businessName String  @map("business_name")
+  ownerName    String? @map("owner_name")
+  phone        String?
+  whatsapp     String?
+  email        String?
+  address      String?
+  instagram    String?
+  logo         String?
+
+  // Payment account info (stored as JSON strings)
+  paymentBca     String? @map("payment_bca")
+  paymentBsi     String? @map("payment_bsi")
+  paymentBri     String? @map("payment_bri")
+  paymentMandiri String? @map("payment_mandiri")
+  paymentDana    String? @map("payment_dana")
+  paymentGopay   String? @map("payment_gopay")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}

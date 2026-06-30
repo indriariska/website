@@ -160,13 +160,21 @@ class CustomerAuthController {
       const updated = await prisma.order.update({
         where: { id: req.params.id },
         data: {
-          revisionNote: revisionNote.trim(),
+          revisionNote:    revisionNote.trim(),
           revisionFileUrl: revisionFileUrl || null,
-          status: 'revisi',
+          revisionStatus:  'requested',
+          status:          'revisi',
         },
       });
 
-      return Response.success(res, updated, 'Revision submitted successfully');
+      const { generateWhatsAppLink } = require('../utils/whatsapp');
+      const whatsappLink = generateWhatsAppLink(updated, updated.revisionNote);
+
+      return Response.success(res, {
+        ...updated,
+        revisionMessage: updated.revisionNote, // aliased for spec compatibility
+        whatsappLink,
+      }, 'Revision submitted successfully');
     } catch (error) {
       next(error);
     }

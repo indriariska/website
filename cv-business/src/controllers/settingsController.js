@@ -1,4 +1,4 @@
-/**
+﻿/**
  * CVPro Studio — Settings Controller
  * Manages business settings including payment account details.
  */
@@ -10,7 +10,7 @@ const DEFAULT_SETTINGS = {
   businessName: 'CVPro Studio',
   ownerName: 'Indri Ariska',
   phone: '+62 83830094365',
-  whatsapp: '6283122172586',
+  whatsapp: '6283122172584',
   email: 'indriariska469@gmail.com',
   address: 'Indonesia',
   instagram: 'ftryy.z.a_',

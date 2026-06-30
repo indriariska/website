@@ -6,6 +6,9 @@ const { auth, adminOnly, staffOrAdmin } = require('../middleware/auth');
 // Public — customer website submits orders here
 router.post('/', uploadProof, OrderController.createOrder);
 
+// Public — customer can submit a revision request (also accepts customer JWT, no admin JWT needed)
+router.post('/:id/revision', OrderController.submitOrderRevision);
+
 // Staff + Admin: read orders and update status (operational)
 router.get('/',              auth, staffOrAdmin, OrderController.getAllOrders);
 router.get('/stats',         auth, staffOrAdmin, OrderController.getOrdersStats);
