@@ -474,6 +474,8 @@
   /* ----------------------------------------------------------
      AUTO-FILL DARI URL PARAMS
      ---------------------------------------------------------- */
+  var hargaFromURLFlag = false; // Track if harga came from URL (service-level)
+
   function initAutoFill() {
     var params   = new URLSearchParams(window.location.search);
     var tmplSel  = document.getElementById('template');
@@ -485,23 +487,24 @@
     var hargaParam   = params.get('harga');
     var paketParam   = params.get('paket');
 
+    /* Harga parameter check FIRST - set flag if present */
+    if (hargaParam && hargaParam !== '0' && hargaParam !== 'null') {
+      hargaFromURLFlag = true;
+      var n = parseInt(hargaParam);
+      if (hargaInp && n > 0) hargaInp.value = fmtRp(n);
+    }
+
     /* Template - dengan mapping untuk template spesifik */
     if (tmplParam) {
       // Map template name to option value
       var mappedTemplate = mapTemplateToOption(tmplParam);
       var m = selectExact(tmplSel, mappedTemplate);
-      if (m) updateHargaFromOption(m);
+      if (m && !hargaFromURLFlag) updateHargaFromOption(m); // Only update harga if NOT from URL
     } else if (layananParam) {
       // Map layanan name to option value
       var mappedLayanan = mapTemplateToOption(layananParam);
       var mL = selectExact(tmplSel, mappedLayanan);
-      if (mL) updateHargaFromOption(mL);
-    }
-
-    /* Harga override */
-    if (hargaParam && hargaParam !== '0' && hargaParam !== 'null') {
-      var n = parseInt(hargaParam);
-      if (hargaInp && n > 0) hargaInp.value = fmtRp(n);
+      if (mL && !hargaFromURLFlag) updateHargaFromOption(mL); // Only update harga if NOT from URL
     }
 
     /* Paket */
@@ -538,7 +541,10 @@
     var tmplSel = document.getElementById('template');
     if (tmplSel) {
       tmplSel.addEventListener('change', function () {
-        updateHargaFromOption(this.options[this.selectedIndex]);
+        // Only update harga if it wasn't set from URL (service-level pricing)
+        if (!hargaFromURLFlag) {
+          updateHargaFromOption(this.options[this.selectedIndex]);
+        }
       });
     }
 
