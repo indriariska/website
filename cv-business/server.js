@@ -23,9 +23,11 @@ const customerRoutes  = require('./src/routes/customerRoutes');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// ── Ensure uploads directory exists ──────────────────────────────
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+// ── Ensure uploads directories exist ─────────────────────────────
+const uploadsDir  = path.join(__dirname, 'uploads');
+const deliveryDir = path.join(__dirname, 'uploads', 'delivery');
+if (!fs.existsSync(uploadsDir))  fs.mkdirSync(uploadsDir,  { recursive: true });
+if (!fs.existsSync(deliveryDir)) fs.mkdirSync(deliveryDir, { recursive: true });
 
 // ── Security & parsing ────────────────────────────────────────────
 app.use(helmet({
