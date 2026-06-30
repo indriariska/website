@@ -107,6 +107,15 @@ function buildURL(data) {
    4. MODAL MANAGEMENT
    ---------------------------------------------------------- */
 function closeAll() {
+  // START PORTFOLIO VIDEO
+  // Pause dan reset video saat modal ditutup
+  var videoEl = document.querySelector('#tpDetailVideo');
+  if (videoEl) {
+    videoEl.pause();
+    videoEl.currentTime = 0;
+  }
+  // END PORTFOLIO VIDEO
+  
   document.querySelectorAll('.tp-modal').forEach(function(m) {
     m.classList.remove('tp-modal--open');
     m.setAttribute('aria-hidden', 'true');
@@ -130,18 +139,48 @@ function openDetail(data) {
   var m = document.getElementById('tpDetailModal');
   if (!m) return;
 
-  /* Gambar preview dengan fallback SVG */
-  var imgEl = m.querySelector('#tpDetailImg');
-  var wrapEl = m.querySelector('#tpDetailImgWrap');
-  if (imgEl) {
-    imgEl.src = '';
-    imgEl.onerror = function() { this.src = makePlaceholderSVG(data); this.onerror = null; };
-    imgEl.src = data.previewSrc || makePlaceholderSVG(data);
-    imgEl.alt = data.title;
-    /* klik gambar → buka fullscreen */
-    wrapEl && (wrapEl.style.cursor = 'zoom-in');
-    imgEl.onclick = function() { openFullscreen(data); };
+  // START PORTFOLIO VIDEO
+  var isPortofolio = data.type === 'Portofolio';
+  var imgWrapEl = m.querySelector('#tpDetailImgWrap');
+  var videoWrapEl = m.querySelector('#tpDetailVideoWrap');
+  var videoEl = m.querySelector('#tpDetailVideo');
+  var fullscreenBtn = m.querySelector('#tpDetailFullscreenBtn');
+  
+  if (isPortofolio) {
+    // Tampilkan video, sembunyikan gambar
+    if (imgWrapEl) imgWrapEl.style.display = 'none';
+    if (videoWrapEl) videoWrapEl.style.display = 'block';
+    if (videoEl) {
+      // START PORTFOLIO VIDEO - Deteksi path video berdasarkan lokasi HTML
+      var videoPath = 'assets/images/vidio1.mp4';
+      if (window.location.pathname.includes('/projek/')) {
+        videoPath = '../assets/images/vidio1.mp4';
+      }
+      videoEl.src = videoPath;
+      // END PORTFOLIO VIDEO
+      videoEl.play().catch(function(e) { console.log('Autoplay blocked:', e); });
+    }
+    // Sembunyikan tombol fullscreen untuk Portofolio
+    if (fullscreenBtn) fullscreenBtn.style.display = 'none';
+  } else {
+    // Tampilkan gambar, sembunyikan video
+    if (videoWrapEl) videoWrapEl.style.display = 'none';
+    if (imgWrapEl) imgWrapEl.style.display = 'block';
+    if (fullscreenBtn) fullscreenBtn.style.display = 'block';
+    
+    /* Gambar preview dengan fallback SVG */
+    var imgEl = m.querySelector('#tpDetailImg');
+    if (imgEl) {
+      imgEl.src = '';
+      imgEl.onerror = function() { this.src = makePlaceholderSVG(data); this.onerror = null; };
+      imgEl.src = data.previewSrc || makePlaceholderSVG(data);
+      imgEl.alt = data.title;
+      /* klik gambar → buka fullscreen */
+      imgWrapEl && (imgWrapEl.style.cursor = 'zoom-in');
+      imgEl.onclick = function() { openFullscreen(data); };
+    }
   }
+  // END PORTFOLIO VIDEO
 
   /* Teks */
   setText(m, '#tpDetailTitle',    data.title);

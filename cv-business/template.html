@@ -1188,8 +1188,14 @@
     <div class="tp-modal__body">
       <div class="tp-detail-grid">
 
-        <!-- Kiri: gambar -->
+        <!-- Kiri: gambar atau video -->
         <div>
+          <!-- START PORTFOLIO VIDEO -->
+          <div class="tp-detail-video-wrap" id="tpDetailVideoWrap" style="display:none;">
+            <video id="tpDetailVideo" controls autoplay muted playsinline style="width:100%;border-radius:12px;"></video>
+          </div>
+          <!-- END PORTFOLIO VIDEO -->
+          
           <div class="tp-detail-img-wrap" id="tpDetailImgWrap">
             <img id="tpDetailImg" src="" alt="Preview" />
             <span class="tp-zoom-hint"><i class="fas fa-search-plus"></i> Klik untuk preview penuh</span>
@@ -1211,7 +1217,7 @@
           <div class="tp-price-row" id="tpDetailPrice">Rp0</div>
           <ul class="tp-fitur-list" id="tpDetailFitur"></ul>
           <div class="tp-detail-actions">
-            <a href="kontak.html" class="btn-primary" id="tpDetailOrderBtn" style="text-decoration:none;padding:12px 22px;border-radius:50px;font-size:0.88rem;display:inline-flex;align-items:center;gap:8px">
+            <a href="kontak.html" class="btn-primary" id="tpDetailOrderBtn" style="text-decoration:none;padding:12px 22px;border-radius:50px;font-size:0.88rem;display:flex;align-items:center;justify-content:center;gap:8px">
               <i class="fas fa-paper-plane"></i> Pesan Template Ini
             </a>
             <button class="tp-btn-fullscreen tp-modal__close">

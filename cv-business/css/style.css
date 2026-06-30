@@ -1971,13 +1971,15 @@ a {
 
 .template-detail-actions {
   display: flex;
+  flex-direction: column;
   gap: 12px;
-  margin-top: 8px;
+  width: 100%;
+  margin-top: 24px;
 }
 
 .template-detail-actions .btn-primary,
 .template-detail-actions .btn-outline {
-  flex: 1;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -3203,13 +3205,6 @@ textarea.form-control {
   background-clip: text;
 }
 
-.template-detail-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: auto;
-}
-
 /* Responsive Styles for Template Detail Modal */
 @media (max-width: 768px) {
   .template-detail-grid {
@@ -3550,5 +3545,67 @@ textarea.form-control {
 
   .modal-template-body {
     padding: 20px;
+  }
+}
+
+
+
+
+
+/* ============================================================
+   PORTFOLIO LAYOUT - Template Detail Modal (2-COLUMN)
+   Video besar di kiri, informasi di kanan
+   ============================================================ */
+
+/* Layout untuk Portfolio: tetap 2 kolom dengan video besar di kiri */
+.template-detail-modal-portfolio .template-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.template-detail-modal-portfolio .template-detail-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+.template-detail-modal-portfolio .template-detail-video-wrapper {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+}
+
+.template-detail-modal-portfolio #templateDetailVideo {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  object-fit: cover;
+  display: block;
+  margin: 0;
+}
+
+.template-detail-modal-portfolio .template-detail-preview-wrapper {
+  display: none;
+}
+
+.template-detail-modal-portfolio .template-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .template-detail-modal-portfolio .template-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .template-detail-modal-portfolio .template-detail-preview {
+    gap: 12px;
   }
 }

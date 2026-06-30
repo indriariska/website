@@ -464,7 +464,7 @@
       <!-- Portofolio Standard -->
       <div class="template-card fade-in delay-4">
         <div class="template-thumb">
-          <img src="assets/images/gambar1.png" alt="Portofolio Ocean Blue Preview" class="template-preview-image" data-full-image="assets/images/gambar7.png" data-template="porto-standard-1" data-package="Standard" data-price="199000" data-title="Portofolio Ocean Blue" data-desc="Website portofolio dengan tema biru laut yang profesional. Cocok untuk developer." data-type="Portofolio" data-category="Standard">
+          <img src="assets/images/p1.png" alt="Portofolio Ocean Blue Preview" class="template-preview-image" data-full-image="assets/images/gambar7.png" data-template="porto-standard-1" data-package="Standard" data-price="199000" data-title="Portofolio Ocean Blue" data-desc="Website portofolio dengan tema biru laut yang profesional. Cocok untuk developer." data-type="Portofolio" data-category="Standard">
           <span class="template-type-badge">Portofolio</span>
           <span class="template-category-badge" style="background:#3b82f6">Standard</span>
           <div class="template-overlay">
@@ -1003,6 +1003,14 @@
 
         <div class="template-detail-preview">
 
+          <!-- START PORTFOLIO VIDEO -->
+          <div class="template-detail-video-wrapper" id="templateDetailVideoWrapper" style="display:none;">
+
+            <video id="templateDetailVideo" controls autoplay muted playsinline style="width:100%;border-radius:12px;"></video>
+
+          </div>
+          <!-- END PORTFOLIO VIDEO -->
+
           <div class="template-detail-preview-wrapper" id="templateDetailPreviewWrapper">
 
             <img src="" alt="Template Preview" class="template-detail-preview-image" id="templateDetailPreviewImage">
@@ -1425,8 +1433,44 @@ function initTemplateDetailModal() {
       
       // Update modal header and image
       document.getElementById('templateDetailTitle').textContent = title;
-      document.getElementById('templateDetailPreviewImage').src = fullImage;
-      document.getElementById('templateDetailPreviewImage').alt = title;
+      
+      // START PORTFOLIO VIDEO
+      const isPortfolio = type === 'Portofolio';
+      const videoWrapper = document.getElementById('templateDetailVideoWrapper');
+      const previewWrapper = document.getElementById('templateDetailPreviewWrapper');
+      const videoElement = document.getElementById('templateDetailVideo');
+      const viewFullBtn = document.getElementById('btnViewFullTemplate');
+      
+      if (isPortfolio) {
+        // Tambah class untuk layout Portofolio
+        modal.classList.add('template-detail-modal-portfolio');
+        
+        // Tampilkan video, sembunyikan gambar
+        if (videoWrapper) videoWrapper.style.display = 'block';
+        if (previewWrapper) previewWrapper.style.display = 'none';
+        if (videoElement) {
+          var videoPath = 'assets/images/vidio1.mp4';
+          if (window.location.pathname.includes('/projek/')) {
+            videoPath = '../assets/images/vidio1.mp4';
+          }
+          videoElement.src = videoPath;
+          videoElement.play().catch(function(e) { console.log('Autoplay blocked:', e); });
+        }
+        // Sembunyikan tombol fullscreen untuk Portofolio
+        if (viewFullBtn) viewFullBtn.style.display = 'none';
+      } else {
+        // Hapus class layout Portofolio untuk CV
+        modal.classList.remove('template-detail-modal-portfolio');
+        
+        // Tampilkan gambar, sembunyikan video
+        if (videoWrapper) videoWrapper.style.display = 'none';
+        if (previewWrapper) previewWrapper.style.display = 'block';
+        if (viewFullBtn) viewFullBtn.style.display = 'block';
+        
+        document.getElementById('templateDetailPreviewImage').src = fullImage;
+        document.getElementById('templateDetailPreviewImage').alt = title;
+      }
+      // END PORTFOLIO VIDEO
 
       
       // Update modal info
@@ -1451,7 +1495,6 @@ function initTemplateDetailModal() {
 
       
       // Setup fullscreen button
-      const viewFullBtn = document.getElementById('btnViewFullTemplate');
       if (viewFullBtn) {
         viewFullBtn.onclick = function() {
           openFullPreview(fullImage, title);
@@ -1468,15 +1511,12 @@ function initTemplateDetailModal() {
   });
 
   
-  // Close modal when clicking outside
+  // Close modal when clicking outside (on the modal backdrop)
   modal.addEventListener('click', function(e) {
-
-    if (e.target === modal) {
-
+    // Hanya close jika klik di backdrop modal, bukan di modal-content
+    if (e.target === modal || e.target.closest('.modal') === modal) {
       closeTemplateDetailModal();
-
     }
-
   });
 
 }
@@ -1484,6 +1524,15 @@ function initTemplateDetailModal() {
 
 
 function closeTemplateDetailModal() {
+
+  // START PORTFOLIO VIDEO
+  // Pause dan reset video saat modal ditutup
+  const videoElement = document.getElementById('templateDetailVideo');
+  if (videoElement) {
+    videoElement.pause();
+    videoElement.currentTime = 0;
+  }
+  // END PORTFOLIO VIDEO
 
   const modal = document.getElementById('templateDetailModal');
 
