@@ -13,8 +13,15 @@ const multer = require('multer');
 // ── Ensure upload directories exist ─────────────────────────────
 const uploadsDir  = path.join(process.cwd(), 'uploads');
 const deliveryDir = path.join(uploadsDir, 'delivery');
-if (!fs.existsSync(uploadsDir))  fs.mkdirSync(uploadsDir,  { recursive: true });
-if (!fs.existsSync(deliveryDir)) fs.mkdirSync(deliveryDir, { recursive: true });
+// Guard: Vercel filesystem is read-only — skip directory creation in production.
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  try {
+    if (!fs.existsSync(uploadsDir))  fs.mkdirSync(uploadsDir,  { recursive: true });
+    if (!fs.existsSync(deliveryDir)) fs.mkdirSync(deliveryDir, { recursive: true });
+  } catch (e) {
+    console.warn('[uploads] Could not create upload directories:', e.message);
+  }
+}
 
 // ── Multer setup for payment proof uploads ───────────────────────
 const proofStorage = multer.diskStorage({
