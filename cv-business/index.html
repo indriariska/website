@@ -567,9 +567,7 @@
 
 
 <!-- ============================================
-
      TESTIMONIALS
-
      ============================================ -->
 
 <section class="testimonials">
@@ -580,102 +578,53 @@
 
     <p class="section-subtitle fade-in">Ribuan klien puas dengan hasil kerja kami. Ini cerita mereka.</p>
 
+    <!-- Dynamic feedback cards loaded from /api/feedback/public -->
+    <div class="testimonials-grid" id="testimonialsGrid">
 
-
-    <div class="testimonials-grid">
-
-      <!-- Testimoni 1 -->
-
-      <div class="testimonial-card fade-in delay-1">
-
+      <!-- Fallback static cards shown while API loads or if no published feedback exists -->
+      <div class="testimonial-card fade-in delay-1" data-static="1">
         <div class="quote-icon">"</div>
-
         <p class="testimonial-text">
-
           CV saya jadi jauh lebih menarik dan profesional. Dalam seminggu setelah kirim lamaran dengan CV baru ini, langsung dapat 3 panggilan interview. Recommended banget!
-
         </p>
-
         <div class="stars">★★★★★</div>
-
         <div class="testimonial-author">
-
           <div class="author-avatar">AR</div>
-
           <div class="author-info">
-
             <h4>Arinda Rahayu</h4>
-
             <p>Marketing Executive · Jakarta</p>
-
           </div>
-
         </div>
-
       </div>
 
-
-
-      <!-- Testimoni 2 -->
-
-      <div class="testimonial-card fade-in delay-2">
-
+      <div class="testimonial-card fade-in delay-2" data-static="1">
         <div class="quote-icon">"</div>
-
         <p class="testimonial-text">
-
           Portofolio website yang dibuat keren banget, klien-klien saya langsung terkesan. Desainnya elegan dan profesional. Sudah dapat 5 project baru dalam sebulan!
-
         </p>
-
         <div class="stars">★★★★★</div>
-
         <div class="testimonial-author">
-
           <div class="author-avatar">BW</div>
-
           <div class="author-info">
-
             <h4>Bagas Wicaksono</h4>
-
             <p>Freelance Designer · Yogyakarta</p>
-
           </div>
-
         </div>
-
       </div>
 
-
-
-      <!-- Testimoni 3 -->
-
-      <div class="testimonial-card fade-in delay-3">
-
+      <div class="testimonial-card fade-in delay-3" data-static="1">
         <div class="quote-icon">"</div>
-
         <p class="testimonial-text">
-
           Proses cepat, revisi responsif, dan hasilnya melebihi ekspektasi. CV ATS-nya berhasil lolos screening HRD perusahaan multinasional. Terima kasih CVPro Studio!
-
         </p>
-
         <div class="stars">★★★★★</div>
-
         <div class="testimonial-author">
-
           <div class="author-avatar">DS</div>
-
           <div class="author-info">
-
             <h4>Dita Sumarni</h4>
-
             <p>Software Engineer · Bandung</p>
-
           </div>
-
         </div>
-
       </div>
 
     </div>
@@ -683,6 +632,96 @@
   </div>
 
 </section>
+
+<script>
+/* ── Kata Mereka — Load published feedback from API ── */
+(function () {
+  'use strict';
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function starsHtml(n) {
+    var s = '';
+    for (var i = 1; i <= 5; i++) s += i <= n ? '★' : '☆';
+    return s;
+  }
+  function fmtDate(d) {
+    if (!d) return '';
+    try { return new Date(d).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }); }
+    catch(_) { return ''; }
+  }
+  function initials(name) {
+    var parts = String(name || '').trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return String(name || '?').substring(0, 2).toUpperCase();
+  }
+
+  function buildCard(f, delay) {
+    var replyHtml = f.adminReply
+      ? '<div style="margin-top:10px;padding:10px 14px;background:rgba(124,58,237,0.07);'
+        + 'border-radius:10px;border-left:3px solid #7c3aed;font-size:0.82rem;color:#4c1d95">'
+        + '<strong style="font-size:0.75rem;display:block;margin-bottom:4px;color:#6d28d9">'
+        + '<i class="fas fa-reply"></i> Balasan CVPro Studio</strong>'
+        + esc(f.adminReply)
+        + '</div>'
+      : '';
+    var card = document.createElement('div');
+    card.className = 'testimonial-card fade-in ' + delay;
+    card.setAttribute('data-dynamic', '1');
+    card.innerHTML =
+      '<div class="quote-icon">"</div>'
+      + '<p class="testimonial-text">' + esc(f.message) + '</p>'
+      + '<div class="stars">' + starsHtml(f.rating) + '</div>'
+      + replyHtml
+      + '<div class="testimonial-author" style="margin-top:12px">'
+        + '<div class="author-avatar">' + esc(initials(f.customerName)) + '</div>'
+        + '<div class="author-info">'
+          + '<h4>' + esc(f.customerName) + '</h4>'
+          + '<p>' + esc(f.title) + (f.publishedAt ? ' · ' + fmtDate(f.publishedAt) : '') + '</p>'
+        + '</div>'
+      + '</div>';
+    return card;
+  }
+
+  function loadTestimonials() {
+    var grid = document.getElementById('testimonialsGrid');
+    if (!grid) return;
+
+    fetch('/api/feedback/public')
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (res) {
+        if (!res.success || !Array.isArray(res.data) || res.data.length === 0) {
+          return; // no published feedback → keep static fallback cards
+        }
+
+        // Remove static fallback cards — keep any already-added dynamic ones
+        grid.querySelectorAll('[data-static]').forEach(function (c) { c.remove(); });
+        // Also remove any previously rendered dynamic cards (clean slate)
+        grid.querySelectorAll('[data-dynamic]').forEach(function (c) { c.remove(); });
+
+        var delays = ['delay-1','delay-2','delay-3','delay-4','delay-5','delay-6'];
+        res.data.forEach(function (f, i) {
+          grid.appendChild(buildCard(f, delays[i % delays.length]));
+        });
+      })
+      .catch(function (err) {
+        // Network error or JSON parse error — static fallback stays visible
+        console.log('[Testimoni] API tidak tersedia, menampilkan data statis.', err && err.message);
+      });
+  }
+
+  // Run after DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadTestimonials);
+  } else {
+    loadTestimonials();
+  }
+})();
+</script>
 
 
 

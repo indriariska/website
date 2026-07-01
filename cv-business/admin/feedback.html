@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback – CVPro Studio Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    /* Feedback-specific admin styles */
+    .rating-stars { color: #f59e0b; letter-spacing: 1px; font-size: 0.9rem; }
+    .fb-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .fb-badge.pending  { background: #fef3c7; color: #d97706; }
+    .fb-badge.replied  { background: #d1fae5; color: #065f46; }
+    .fb-badge.closed   { background: #f3f4f6; color: #6b7280; }
+    .pub-badge         { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:50px;font-size:0.72rem;font-weight:600; }
+    .pub-badge.yes     { background:#d1fae5;color:#065f46; }
+    .pub-badge.no      { background:#f3f4f6;color:#6b7280; }
+
+    .reply-box {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .reply-box label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .reply-box textarea {
+      width: 100%;
+      min-height: 90px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .reply-box textarea:focus { border-color: var(--primary); }
+    .admin-reply-display {
+      background: linear-gradient(135deg, #ede9fe22, #dbeafe22);
+      border-left: 3px solid var(--primary);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 10px;
+      font-size: 0.87rem;
+      color: var(--gray-700);
+    }
+    .admin-reply-label { font-size:0.75rem;font-weight:700;color:var(--primary);margin-bottom:5px; }
+    .detail-row { display:flex;gap:8px;margin-bottom:8px;font-size:0.88rem; }
+    .detail-row label { font-weight:600;color:var(--gray-600);min-width:100px;flex-shrink:0; }
+    .detail-msg {
+      background: var(--gray-50);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.88rem;
+      color: var(--gray-700);
+      line-height: 1.65;
+      margin-top: 4px;
+      white-space: pre-wrap;
+    }
+    .publish-box {
+      background: linear-gradient(135deg,#f0fdf4,#dcfce7);
+      border: 1.5px solid #86efac;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .publish-box .pub-info { font-size:0.88rem;color:#166534; }
+    .publish-box .pub-info strong { display:block;font-size:0.92rem;margin-bottom:3px; }
+    .status-btn-group { display:flex;gap:8px;flex-wrap:wrap;margin-top:10px; }
+    .status-btn {
+      font-size:0.78rem;padding:5px 14px;border-radius:8px;border:1.5px solid;
+      cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;background:#fff;transition:all 0.2s;
+    }
+    .status-btn:hover { opacity:0.8; }
+    .status-btn.pending { border-color:#d97706;color:#d97706; }
+    .status-btn.closed  { border-color:var(--gray-400);color:var(--gray-500); }
+    .btn-publish   { background:#16a34a;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:0.82rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .2s; }
+    .btn-unpublish { background:#dc2626;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:0.82rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .2s; }
+    .btn-publish:hover,.btn-unpublish:hover { opacity:0.85; }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo"><i class="fas fa-file-alt"></i></div>
+      <h2>CVPro Studio</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Dashboard</span></a>
+      <a href="/admin/orders.html"    class="nav-item"><i class="fas fa-shopping-bag"></i><span>Pesanan</span></a>
+      <a href="/admin/feedback.html"  class="nav-item active"><i class="fas fa-star"></i><span>Feedback</span></a>
+      <a href="/admin/expenses.html"  class="nav-item"><i class="fas fa-receipt"></i><span>Pengeluaran</span></a>
+      <a href="/admin/reports.html"   class="nav-item"><i class="fas fa-chart-bar"></i><span>Laporan</span></a>
+      <a href="/admin/settings.html"  class="nav-item"><i class="fas fa-cog"></i><span>Pengaturan</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <header class="top-bar">
+      <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+      <div class="top-bar-right">
+        <div class="user-info">
+          <span class="user-name" id="userName">Admin</span>
+          <span class="user-role" id="userRole">Administrator</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="page-header">
+        <h1>Feedback Pelanggan</h1>
+        <p class="subtitle">Kelola dan balas feedback dari pelanggan CVPro Studio</p>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filters-bar">
+        <div class="filter-group">
+          <input type="text" id="searchInput" placeholder="Cari nama, judul..." class="search-input">
+        </div>
+        <div class="filter-group">
+          <select id="statusFilter" class="filter-select">
+            <option value="">Semua Status</option>
+            <option value="pending">Menunggu</option>
+            <option value="replied">Dibalas</option>
+            <option value="closed">Selesai</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <select id="ratingFilter" class="filter-select">
+            <option value="">Semua Rating</option>
+            <option value="5">★★★★★ (5)</option>
+            <option value="4">★★★★☆ (4)</option>
+            <option value="3">★★★☆☆ (3)</option>
+            <option value="2">★★☆☆☆ (2)</option>
+            <option value="1">★☆☆☆☆ (1)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Summary stats -->
+      <div class="stats-grid" id="statsGrid" style="grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px;display:grid">
+        <div class="stat-card"><div class="stat-value" id="stTotal">–</div><div class="stat-label">Total Feedback</div></div>
+        <div class="stat-card"><div class="stat-value" id="stPending" style="color:var(--warning)">–</div><div class="stat-label">Menunggu Balasan</div></div>
+        <div class="stat-card"><div class="stat-value" id="stReplied" style="color:var(--success)">–</div><div class="stat-label">Sudah Dibalas</div></div>
+        <div class="stat-card"><div class="stat-value" id="stPublished" style="color:#16a34a">–</div><div class="stat-label">Dipublikasikan</div></div>
+        <div class="stat-card"><div class="stat-value" id="stAvg" style="color:#f59e0b">–</div><div class="stat-label">Rata-rata Rating</div></div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Pelanggan</th>
+                <th>Judul</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Publikasi</th>
+                <th>Tanggal</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="fbTable">
+              <tr><td colspan="7" class="loading">Memuat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal" id="fbModal">
+  <div class="modal-content large">
+    <div class="modal-header">
+      <h2>Detail Feedback</h2>
+      <button class="modal-close" id="closeModal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="fbModalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const token = localStorage.getItem('adminToken');
+  const user  = JSON.parse(localStorage.getItem('adminUser') || '{}');
+  if (!token) { window.location.href = '/admin/login.html'; return; }
+
+  document.getElementById('userName').textContent  = user.name || 'Admin';
+  document.getElementById('userRole').textContent  = user.role === 'admin' ? 'Administrator' : 'Staff';
+  document.getElementById('menuToggle').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('adminToken'); localStorage.removeItem('adminUser');
+    window.location.href = '/admin/login.html';
+  });
+  document.getElementById('closeModal').addEventListener('click', closeModal);
+  document.getElementById('fbModal').addEventListener('click', e => { if (e.target === document.getElementById('fbModal')) closeModal(); });
+
+  document.getElementById('searchInput').addEventListener('input',  debounce(filterAndRender, 250));
+  document.getElementById('statusFilter').addEventListener('change', filterAndRender);
+  document.getElementById('ratingFilter').addEventListener('change', filterAndRender);
+
+  loadFeedback();
+});
+
+let allFeedback = [];
+
+async function loadFeedback() {
+  try {
+    const res = await AdminAPI.request('/feedback', { method: 'GET' });
+    if (res.success) {
+      allFeedback = res.data || [];
+      updateStats();
+      filterAndRender();
+    }
+  } catch (err) { showToast('Gagal memuat feedback: ' + err.message, 'error'); }
+}
+
+function updateStats() {
+  const total     = allFeedback.length;
+  const pending   = allFeedback.filter(f => f.status === 'pending').length;
+  const replied   = allFeedback.filter(f => f.status === 'replied').length;
+  const published = allFeedback.filter(f => f.isPublished).length;
+  const avg       = total ? (allFeedback.reduce((s, f) => s + f.rating, 0) / total).toFixed(1) : '–';
+  document.getElementById('stTotal').textContent     = total;
+  document.getElementById('stPending').textContent   = pending;
+  document.getElementById('stReplied').textContent   = replied;
+  document.getElementById('stPublished').textContent = published;
+  document.getElementById('stAvg').textContent       = avg + (total ? ' ★' : '');
+}
+
+function filterAndRender() {
+  const search = (document.getElementById('searchInput').value || '').toLowerCase();
+  const status = document.getElementById('statusFilter').value;
+  const rating = document.getElementById('ratingFilter').value;
+
+  const filtered = allFeedback.filter(f => {
+    const name = (f.customer?.name || '').toLowerCase();
+    const matchSearch = !search || name.includes(search) || f.title.toLowerCase().includes(search);
+    const matchStatus = !status || f.status === status;
+    const matchRating = !rating || String(f.rating) === rating;
+    return matchSearch && matchStatus && matchRating;
+  });
+  renderTable(filtered);
+}
+
+function renderTable(items) {
+  const tbody = document.getElementById('fbTable');
+  if (items.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">Tidak ada feedback ditemukan</td></tr>';
+    return;
+  }
+  tbody.innerHTML = items.map(f => {
+    const pubBadge = f.isPublished
+      ? '<span class="pub-badge yes"><i class="fas fa-circle" style="font-size:0.55rem"></i> Dipublikasikan</span>'
+      : '<span class="pub-badge no"><i class="far fa-circle" style="font-size:0.55rem"></i> Belum</span>';
+    return `<tr>
+      <td>
+        <strong>${escHtml(f.customer?.name || '–')}</strong><br>
+        <small style="color:var(--gray-400)">${escHtml(f.customer?.email || '')}</small>
+      </td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escHtml(f.title)}">${escHtml(f.title)}</td>
+      <td><span class="rating-stars">${starsStr(f.rating)}</span></td>
+      <td><span class="fb-badge ${f.status}">${statusLabel(f.status)}</span></td>
+      <td>${pubBadge}</td>
+      <td>${formatDate(f.createdAt)}</td>
+      <td>
+        <button class="btn-action" onclick="viewFeedback('${f.id}')" title="Lihat & Balas">
+          <i class="fas fa-reply"></i>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function viewFeedback(id) {
+  try {
+    const res = await AdminAPI.request(`/feedback/${id}`, { method: 'GET' });
+    if (!res.success) return;
+    const f = res.data;
+
+    const replySection = f.adminReply
+      ? `<div class="admin-reply-display">
+           <div class="admin-reply-label"><i class="fas fa-reply"></i> Balasan Admin (sudah dikirim)</div>
+           <div>${escHtml(f.adminReply)}</div>
+         </div>`
+      : '';
+
+    const publishedDate = f.publishedAt
+      ? `<small style="color:#166534">sejak ${formatDate(f.publishedAt)}</small>`
+      : '';
+
+    const publishBox = f.isPublished
+      ? `<div class="publish-box">
+           <div class="pub-info">
+             <strong><i class="fas fa-globe" style="color:#16a34a"></i> Dipublikasikan ke Website</strong>
+             Feedback ini tampil di section "Kata Mereka" halaman utama. ${publishedDate}
+           </div>
+           <button class="btn-unpublish" onclick="togglePublish('${f.id}', false)">
+             <i class="fas fa-eye-slash"></i> Batalkan Publikasi
+           </button>
+         </div>`
+      : `<div class="publish-box" style="background:linear-gradient(135deg,#f9fafb,#f3f4f6);border-color:#d1d5db">
+           <div class="pub-info" style="color:#374151">
+             <strong style="color:#374151"><i class="fas fa-eye-slash" style="color:#6b7280"></i> Belum Dipublikasikan</strong>
+             Klik "Publikasikan" agar feedback ini tampil di website.
+           </div>
+           <button class="btn-publish" onclick="togglePublish('${f.id}', true)">
+             <i class="fas fa-globe"></i> Publikasikan
+           </button>
+         </div>`;
+
+    document.getElementById('fbModalBody').innerHTML = `
+      <div class="order-detail">
+        <div class="detail-section">
+          <h3>Informasi Pelanggan</h3>
+          <div class="detail-grid">
+            <div><label>Nama</label><span>${escHtml(f.customer?.name || '–')}</span></div>
+            <div><label>Email</label><span>${escHtml(f.customer?.email || '–')}</span></div>
+            <div><label>Telp</label><span>${escHtml(f.customer?.phone || '–')}</span></div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h3>Detail Feedback</h3>
+          <div class="detail-row"><label>Judul</label><span>${escHtml(f.title)}</span></div>
+          <div class="detail-row"><label>Rating</label><span class="rating-stars">${starsStr(f.rating)} (${f.rating}/5)</span></div>
+          <div class="detail-row"><label>Status</label><span class="fb-badge ${f.status}">${statusLabel(f.status)}</span></div>
+          <div class="detail-row"><label>Tanggal</label><span>${formatDate(f.createdAt)}</span></div>
+          <div class="detail-row"><label>Publikasi</label><span>${f.isPublished
+            ? '<span class="pub-badge yes"><i class="fas fa-circle" style="font-size:0.55rem"></i> Dipublikasikan</span>'
+            : '<span class="pub-badge no"><i class="far fa-circle" style="font-size:0.55rem"></i> Belum</span>'}</span></div>
+          ${f.orderId ? `<div class="detail-row"><label>Order ID</label><span><code>#${f.orderId.substring(0,8).toUpperCase()}</code></span></div>` : ''}
+          <div style="margin-top:8px"><label style="font-size:0.82rem;font-weight:600;color:var(--gray-600)">Pesan</label>
+            <div class="detail-msg">${escHtml(f.message)}</div>
+          </div>
+        </div>
+
+        ${replySection}
+
+        ${publishBox}
+
+        <!-- Reply form -->
+        <div class="reply-box">
+          <label for="replyText"><i class="fas fa-reply" style="color:var(--primary)"></i>
+            ${f.adminReply ? 'Perbarui Balasan' : 'Tulis Balasan'}
+          </label>
+          <textarea id="replyText" placeholder="Tulis balasan untuk pelanggan...">${escHtml(f.adminReply || '')}</textarea>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+            <button class="btn-primary" onclick="submitReply('${f.id}')" style="font-size:0.83rem;padding:8px 18px">
+              <i class="fas fa-paper-plane"></i> Kirim Balasan
+            </button>
+            <div class="status-btn-group">
+              <button class="status-btn pending" onclick="setStatus('${f.id}','pending')">Pending</button>
+              <button class="status-btn closed"  onclick="setStatus('${f.id}','closed')">Tutup</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.getElementById('fbModal').classList.add('show');
+  } catch (err) { showToast('Gagal memuat feedback', 'error'); }
+}
+
+async function togglePublish(id, publish) {
+  const endpoint = publish ? `/feedback/${id}/publish` : `/feedback/${id}/unpublish`;
+  try {
+    const res = await AdminAPI.request(endpoint, { method: 'PUT' });
+    if (res.success) {
+      showToast(publish ? 'Feedback dipublikasikan ke website' : 'Publikasi dibatalkan', 'success');
+      closeModal();
+      loadFeedback();
+    } else { showToast(res.message || 'Gagal', 'error'); }
+  } catch (err) { showToast(err.message, 'error'); }
+}
+
+async function submitReply(id) {
+  const text = (document.getElementById('replyText')?.value || '').trim();
+  if (!text) { showToast('Balasan tidak boleh kosong', 'error'); return; }
+  try {
+    const res = await AdminAPI.request(`/feedback/${id}/reply`, {
+      method: 'PUT',
+      body: JSON.stringify({ adminReply: text }),
+    });
+    if (res.success) {
+      showToast('Balasan berhasil dikirim', 'success');
+      closeModal();
+      loadFeedback();
+    } else { showToast(res.message || 'Gagal', 'error'); }
+  } catch (err) { showToast(err.message, 'error'); }
+}
+
+async function setStatus(id, status) {
+  try {
+    const res = await AdminAPI.request(`/feedback/${id}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+    if (res.success) {
+      showToast('Status diperbarui', 'success');
+      closeModal();
+      loadFeedback();
+    }
+  } catch (err) { showToast(err.message, 'error'); }
+}
+
+function closeModal() { document.getElementById('fbModal').classList.remove('show'); }
+
+/* ── helpers ── */
+function starsStr(n) {
+  let s = '';
+  for (let i = 1; i <= 5; i++) s += i <= n ? '★' : '☆';
+  return s;
+}
+function statusLabel(s) { return { pending: 'Menunggu', replied: 'Dibalas', closed: 'Selesai' }[s] || s; }
+function formatDate(ds) { return new Date(ds).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }); }
+function escHtml(str) { return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-circle'}"></i> <span>${msg}</span>`;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>

@@ -19,6 +19,7 @@ const expenseRoutes   = require('./src/routes/expenseRoutes');
 const settingsRoutes  = require('./src/routes/settingsRoutes');
 const dashboardRoutes = require('./src/routes/dashboardRoutes');
 const customerRoutes  = require('./src/routes/customerRoutes');
+const feedbackRoutes  = require('./src/routes/feedbackRoutes');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -57,6 +58,7 @@ app.use('/api/expenses',  expenseRoutes);
 app.use('/api/settings',  settingsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/customer',  customerRoutes);
+app.use('/api/feedback',  feedbackRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -72,6 +74,7 @@ app.get('/api/health', (req, res) => {
       settings:  '/api/settings',
       dashboard: '/api/dashboard',
       customer:  '/api/customer',
+      feedback:  '/api/feedback',
     },
   });
 });

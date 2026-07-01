@@ -44,6 +44,29 @@ class CustomerAPI {
   static async submitRevision(id, payload) {
     return this._req(`/orders/${id}/revision`, { method: 'POST', body: JSON.stringify(payload) });
   }
+  // ── Feedback ────────────────────────────────────────────────────
+  static async getMyFeedback()         { return this._req_abs('/api/feedback/my', { method: 'GET' }); }
+  static async createFeedback(payload) { return this._req_abs('/api/feedback',    { method: 'POST', body: JSON.stringify(payload) }); }
+
+  /** Absolute-path request (for endpoints outside /api/customer prefix) */
+  static async _req_abs(path, options = {}) {
+    const token = this._token();
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...options.headers,
+      },
+      ...options,
+    };
+    const res  = await fetch(path, config);
+    const data = await res.json();
+    if (!res.ok) {
+      if (res.status === 401) { CustomerAuth.clearSession(); window.location.href = '/customer/login.html'; }
+      throw new Error(data.message || 'Request failed');
+    }
+    return data;
+  }
   static async uploadRevisionFile(id, file) {
     const token = this._token();
     const formData = new FormData();

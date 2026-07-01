@@ -38,6 +38,7 @@ model Customer {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   orders    Order[]
+  feedbacks Feedback[]
 
   @@map("customers")
 }
@@ -85,6 +86,33 @@ model Order {
   updatedAt       DateTime  @updatedAt @map("updated_at")
 
   @@map("orders")
+}
+
+// ─────────────────────────────────────────────
+//  Customer Feedback / Testimonials
+// ─────────────────────────────────────────────
+model Feedback {
+  id         String   @id @default(uuid())
+
+  customerId String   @map("customer_id")
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  orderId    String?  @map("order_id")  // optional link to a specific order
+
+  title      String   @db.VarChar(120)
+  message    String   @db.Text
+  rating     Int      @default(5)       // 1–5
+
+  adminReply String?  @map("admin_reply") @db.Text
+  status     String   @default("pending") // pending | replied | closed
+
+  isPublished  Boolean   @default(false)  @map("is_published")
+  publishedAt  DateTime? @map("published_at")
+
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("feedbacks")
 }
 
 // ─────────────────────────────────────────────

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feedback – CVPro Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/customer.css" />
+  <script src="js/customerApi.js"></script>
+  <script src="js/auth.js"></script>
+
+  <style>
+    /* ── Feedback-specific styles (does not affect other pages) ── */
+    .fb-form-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 28px 28px 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+    .fb-form-card h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .fb-form-card h2 i { color: var(--primary); }
+
+    .fb-field { margin-bottom: 16px; }
+    .fb-field label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 6px;
+    }
+    .fb-field label span { color: var(--error); }
+    .fb-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+      color: var(--dark);
+    }
+    .fb-input:focus { border-color: var(--primary); }
+    .fb-input.error  { border-color: var(--error); }
+    textarea.fb-input { resize: vertical; min-height: 100px; }
+
+    /* Star rating */
+    .star-rating {
+      display: flex;
+      gap: 6px;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
+    .star-rating input { display: none; }
+    .star-rating label {
+      font-size: 1.6rem;
+      color: #d1d5db;
+      cursor: pointer;
+      transition: color 0.15s;
+      margin: 0;
+    }
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label { color: #f59e0b; }
+
+    /* Feedback list */
+    .fb-list { display: flex; flex-direction: column; gap: 16px; }
+    .fb-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid #f0edf8;
+    }
+    .fb-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .fb-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .fb-stars { color: #f59e0b; font-size: 0.85rem; letter-spacing: 1px; }
+    .fb-date  { font-size: 0.76rem; color: #9ca3af; margin-top: 3px; }
+    .fb-msg   {
+      font-size: 0.88rem;
+      color: #374151;
+      line-height: 1.65;
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 8px;
+    }
+    .fb-reply {
+      margin-top: 12px;
+      background: linear-gradient(135deg, #ede9fe, #dbeafe);
+      border-radius: 10px;
+      padding: 12px 16px;
+      border-left: 3px solid var(--primary);
+    }
+    .fb-reply-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+    .fb-reply-text { font-size: 0.87rem; color: var(--dark); line-height: 1.6; }
+
+    .fb-status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      flex-shrink: 0;
+    }
+    .fb-status-badge.pending { background: #fef3c7; color: #d97706; }
+    .fb-status-badge.replied { background: #d1fae5; color: #065f46; }
+    .fb-status-badge.closed  { background: #f3f4f6; color: #6b7280; }
+
+    .fb-empty {
+      text-align: center;
+      padding: 48px 20px;
+      color: #9ca3af;
+      font-size: 0.92rem;
+    }
+    .fb-empty i { font-size: 2.5rem; display: block; margin-bottom: 12px; color: #d1d5db; }
+
+    .fb-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s;
+    }
+    .fb-btn.primary {
+      background: var(--gradient);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(124,58,237,0.25);
+    }
+    .fb-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(124,58,237,0.35); }
+    .fb-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+
+    .fb-err { font-size: 0.78rem; color: var(--error); margin-top: 4px; display: none; }
+    .fb-err.show { display: block; }
+
+    .section-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label i { color: var(--primary); }
+  </style>
+</head>
+<body>
+<div class="customer-layout">
+
+  <!-- ── Sidebar ── -->
+  <aside class="customer-sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo">
+        <div class="logo-icon"><i class="fas fa-file-alt"></i></div>
+        CV<span>Pro</span> Studio
+      </div>
+      <p class="sidebar-user-name" id="sidebarUserName">Memuat...</p>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html"  class="sidebar-nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="orders.html"     class="sidebar-nav-item"><i class="fas fa-shopping-bag"></i> Pesanan Saya</a>
+      <a href="feedback.html"   class="sidebar-nav-item active"><i class="fas fa-star"></i> Feedback</a>
+      <a href="profile.html"    class="sidebar-nav-item"><i class="fas fa-user"></i> Profil</a>
+      <a href="../kontak.html"  class="sidebar-nav-item"><i class="fas fa-paper-plane"></i> Pesan Baru</a>
+      <a href="../index.html"   class="sidebar-nav-item"><i class="fas fa-home"></i> Ke Website</a>
+    </nav>
+    <div class="sidebar-footer-nav">
+      <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="customer-main">
+    <header class="customer-topbar">
+      <button class="topbar-menu-btn" id="menuToggle"><i class="fas fa-bars"></i></button>
+      <div class="topbar-right">
+        <div class="topbar-user">
+          <span class="topbar-user-name" id="topbarName">–</span>
+          <span class="topbar-user-role">Pelanggan</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="customer-content">
+
+      <div class="c-page-header">
+        <h1><i class="fas fa-star" style="color:var(--primary);margin-right:10px"></i>Feedback & Testimoni</h1>
+        <p>Bagikan pengalaman Anda menggunakan layanan CVPro Studio</p>
+      </div>
+
+      <!-- no-order notice (hidden by default) -->
+      <div id="noOrderNotice" style="display:none" class="section-card" style="text-align:center;padding:40px">
+        <i class="fas fa-info-circle" style="font-size:2rem;color:#f59e0b;display:block;margin-bottom:12px"></i>
+        <p style="color:#6b7280;font-size:0.93rem">
+          Feedback hanya tersedia untuk pelanggan yang telah melakukan pemesanan.
+        </p>
+        <a href="../kontak.html" class="fb-btn primary" style="margin-top:16px">
+          <i class="fas fa-paper-plane"></i> Pesan Sekarang
+        </a>
+      </div>
+
+      <!-- form card -->
+      <div id="formSection" style="display:none">
+        <div class="fb-form-card">
+          <h2><i class="fas fa-edit"></i> Tulis Feedback Baru</h2>
+
+          <div id="fbAlert" style="display:none;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:0.88rem"></div>
+
+          <form id="fbForm" novalidate>
+            <div class="fb-field">
+              <label for="fbTitle">Judul <span>*</span></label>
+              <input type="text" id="fbTitle" class="fb-input" placeholder="Contoh: Pelayanan sangat memuaskan" maxlength="120" />
+              <div class="fb-err" id="fbTitleErr">Judul wajib diisi (min. 3 karakter)</div>
+            </div>
+
+            <div class="fb-field">
+              <label>Rating <span>*</span></label>
+              <div class="star-rating" id="starRating">
+                <input type="radio" name="rating" id="s5" value="5"><label for="s5" title="5 bintang">&#9733;</label>
+                <input type="radio" name="rating" id="s4" value="4"><label for="s4" title="4 bintang">&#9733;</label>
+                <input type="radio" name="rating" id="s3" value="3"><label for="s3" title="3 bintang">&#9733;</label>
+                <input type="radio" name="rating" id="s2" value="2"><label for="s2" title="2 bintang">&#9733;</label>
+                <input type="radio" name="rating" id="s1" value="1"><label for="s1" title="1 bintang">&#9733;</label>
+              </div>
+              <div class="fb-err" id="fbRatingErr">Pilih rating terlebih dahulu</div>
+            </div>
+
+            <div class="fb-field">
+              <label for="fbMessage">Pesan / Ulasan <span>*</span></label>
+              <textarea id="fbMessage" class="fb-input" rows="4" maxlength="2000"
+                placeholder="Ceritakan pengalaman Anda dengan layanan kami..."></textarea>
+              <div class="fb-err" id="fbMessageErr">Pesan wajib diisi (min. 10 karakter)</div>
+            </div>
+
+            <div class="fb-field">
+              <label for="fbOrderId">Tautkan ke Pesanan (opsional)</label>
+              <select id="fbOrderId" class="fb-input">
+                <option value="">– Tidak ditautkan –</option>
+              </select>
+            </div>
+
+            <button type="submit" class="fb-btn primary" id="fbSubmitBtn">
+              <i class="fas fa-paper-plane"></i> Kirim Feedback
+            </button>
+          </form>
+        </div>
+
+        <!-- list -->
+        <div class="section-label"><i class="fas fa-list"></i> Feedback Saya</div>
+        <div id="fbList" class="fb-list">
+          <div class="fb-empty"><i class="fas fa-comment-slash"></i>Belum ada feedback. Tulis feedback pertama Anda!</div>
+        </div>
+      </div>
+
+    </div><!-- /customer-content -->
+  </main>
+</div>
+
+<div class="c-toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var cust = window._customer || {};
+  var el   = function (id) { return document.getElementById(id); };
+
+  el('sidebarUserName').textContent = cust.name || '–';
+  el('topbarName').textContent      = cust.name || '–';
+
+  el('menuToggle').addEventListener('click', function () { el('sidebar').classList.toggle('open'); });
+  el('logoutBtn').addEventListener('click', async function () {
+    try { await CustomerAPI.logout(); } catch (_) {}
+    CustomerAuth.clearSession();
+    window.location.replace('login.html');
+  });
+
+  /* ── helpers ── */
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function stars(n) {
+    var s = '';
+    for (var i = 1; i <= 5; i++) s += i <= n ? '★' : '☆';
+    return s;
+  }
+  function fmtDate(d) {
+    return new Date(d).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+  }
+  function statusBadge(s) {
+    var map = { pending: 'Menunggu', replied: 'Dibalas', closed: 'Selesai' };
+    return '<span class="fb-status-badge ' + esc(s) + '">' + (map[s] || esc(s)) + '</span>';
+  }
+  function showToast(msg, type) {
+    var t = el('toast');
+    t.className = 'c-toast ' + (type || 'info') + ' show';
+    t.innerHTML = '<i class="fas fa-info-circle"></i><span>' + esc(msg) + '</span>';
+    setTimeout(function () { t.classList.remove('show'); }, 3500);
+  }
+  function showAlert(msg, type) {
+    var a = el('fbAlert');
+    a.style.display = 'block';
+    a.style.background = type === 'success' ? '#d1fae5' : '#fee2e2';
+    a.style.color      = type === 'success' ? '#065f46' : '#991b1b';
+    a.style.border     = '1px solid ' + (type === 'success' ? '#6ee7b7' : '#fca5a5');
+    a.textContent = msg;
+    setTimeout(function () { a.style.display = 'none'; }, 4000);
+  }
+
+  /* ── Load orders for dropdown ── */
+  async function loadOrders() {
+    try {
+      var res = await CustomerAPI.getOrders();
+      if (res.success && res.data.length > 0) {
+        var sel = el('fbOrderId');
+        res.data.forEach(function (o) {
+          var opt = document.createElement('option');
+          opt.value = o.id;
+          opt.textContent = '#' + o.id.substring(0,8).toUpperCase() + ' – ' + o.serviceType;
+          sel.appendChild(opt);
+        });
+        return res.data.length;
+      }
+      return 0;
+    } catch (_) { return 0; }
+  }
+
+  /* ── Render feedback list ── */
+  function renderList(items) {
+    var list = el('fbList');
+    if (!items || items.length === 0) {
+      list.innerHTML = '<div class="fb-empty"><i class="fas fa-comment-slash"></i>Belum ada feedback. Tulis feedback pertama Anda!</div>';
+      return;
+    }
+    list.innerHTML = items.map(function (f) {
+      var replyHtml = '';
+      if (f.adminReply) {
+        replyHtml = '<div class="fb-reply">'
+          + '<div class="fb-reply-label"><i class="fas fa-reply"></i> Balasan Admin</div>'
+          + '<div class="fb-reply-text">' + esc(f.adminReply) + '</div>'
+          + '</div>';
+      }
+      return '<div class="fb-card">'
+        + '<div class="fb-card-header">'
+          + '<div>'
+            + '<div class="fb-card-title">' + esc(f.title) + '</div>'
+            + '<div class="fb-stars">' + stars(f.rating) + '</div>'
+            + '<div class="fb-date">' + fmtDate(f.createdAt) + '</div>'
+          + '</div>'
+          + statusBadge(f.status)
+        + '</div>'
+        + '<div class="fb-msg">' + esc(f.message) + '</div>'
+        + replyHtml
+        + '</div>';
+    }).join('');
+  }
+
+  /* ── Load feedback list ── */
+  async function loadFeedback() {
+    try {
+      var res = await CustomerAPI.getMyFeedback();
+      if (res.success) renderList(res.data);
+    } catch (_) {}
+  }
+
+  /* ── Form validation & submit ── */
+  el('fbForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    var title   = el('fbTitle').value.trim();
+    var message = el('fbMessage').value.trim();
+    var ratingEl = document.querySelector('input[name="rating"]:checked');
+    var orderId  = el('fbOrderId').value;
+
+    var ok = true;
+    function setErr(id, show) { el(id).classList.toggle('show', show); }
+    function setInputErr(inp, has) { inp.classList.toggle('error', has); }
+
+    if (title.length < 3) { setErr('fbTitleErr', true); setInputErr(el('fbTitle'), true); ok = false; }
+    else                  { setErr('fbTitleErr', false); setInputErr(el('fbTitle'), false); }
+
+    if (!ratingEl)         { setErr('fbRatingErr', true); ok = false; }
+    else                   { setErr('fbRatingErr', false); }
+
+    if (message.length < 10) { setErr('fbMessageErr', true); setInputErr(el('fbMessage'), true); ok = false; }
+    else                     { setErr('fbMessageErr', false); setInputErr(el('fbMessage'), false); }
+
+    if (!ok) return;
+
+    var btn = el('fbSubmitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+    try {
+      var payload = {
+        title:   title,
+        message: message,
+        rating:  parseInt(ratingEl.value, 10),
+        orderId: orderId || undefined,
+      };
+      var res = await CustomerAPI.createFeedback(payload);
+      if (res.success) {
+        showAlert('Feedback berhasil dikirim! Terima kasih.', 'success');
+        el('fbForm').reset();
+        loadFeedback();
+      } else {
+        showAlert(res.message || 'Gagal mengirim feedback', 'error');
+      }
+    } catch (err) {
+      showAlert(err.message || 'Terjadi kesalahan', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Feedback';
+    }
+  });
+
+  /* live clear errors */
+  el('fbTitle').addEventListener('input', function () {
+    el('fbTitleErr').classList.remove('show'); this.classList.remove('error');
+  });
+  el('fbMessage').addEventListener('input', function () {
+    el('fbMessageErr').classList.remove('show'); this.classList.remove('error');
+  });
+
+  /* ── Boot ── */
+  async function boot() {
+    var orderCount = await loadOrders();
+    if (orderCount === 0) {
+      el('noOrderNotice').style.display = '';
+      el('formSection').style.display   = 'none';
+    } else {
+      el('noOrderNotice').style.display = 'none';
+      el('formSection').style.display   = '';
+      loadFeedback();
+    }
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
