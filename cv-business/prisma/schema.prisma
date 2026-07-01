@@ -1,6 +1,3 @@
-// CVPro Studio — Prisma Schema
-// Service-based business model (CV & Portfolio ordering)
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,150 +7,107 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ─────────────────────────────────────────────
-//  Admin Users
-// ─────────────────────────────────────────────
 model User {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
-  role      String   @default("admin") // admin, staff
+  role      String   @default("admin")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
 }
 
-// ─────────────────────────────────────────────
-//  Customer Accounts (website users)
-// ─────────────────────────────────────────────
 model Customer {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   name      String
-  email     String   @unique
+  email     String     @unique
   phone     String?
   password  String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  orders    Order[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
   feedbacks Feedback[]
+  orders    Order[]
 
   @@map("customers")
 }
 
-// ─────────────────────────────────────────────
-//  Service Orders (from customer website)
-// ─────────────────────────────────────────────
 model Order {
-  id              String    @id @default(uuid())
-
-  // Linked customer account (optional — guest orders still work)
-  customerId      String?   @map("customer_id")
-  customer        Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
-
-  // Customer info (captured directly from form)
-  customerName    String    @map("customer_name")
-  customerEmail   String    @map("customer_email")
-  customerWhatsapp String   @map("customer_whatsapp")
-
-  // Service info
-  serviceType     String    @map("service_type")  // e.g. "CV Basic Clean"
-  package         String?   // Basic | Standard | Premium | Professional
-  price           Int       @default(0)
-
-  // Payment
-  paymentMethod   String    @map("payment_method")  // BCA | BSI | BRI | Mandiri | DANA | GoPay
-  proofImageUrl   String?   @map("proof_image_url")
-
-  // Customer message
-  message         String?   @db.Text
-
-  // Order management
-  // Statuses: menunggu_verifikasi | verifikasi_pembayaran | pembayaran_terverifikasi |
-  //           antrian | diproses | revisi | selesai | dibatalkan | ditolak
-  status          String    @default("menunggu_verifikasi")
-  adminNotes      String?   @map("admin_notes") @db.Text
-  downloadUrl     String?   @map("download_url")        // single file (legacy)
-  downloadFiles   String?   @map("download_files")      // JSON: [{label,url},...] for multiple files
-  revisionNote    String?   @map("revision_note") @db.Text  // customer's revision request text
-  revisionFileUrl String?   @map("revision_file_url")   // optional file attached to revision
-  revisionStatus  String?   @default("none") @map("revision_status") // none | requested | in_review | approved | done
-  completedAt     DateTime? @map("completed_at")
-
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  id               String    @id @default(uuid())
+  customerId       String?   @map("customer_id")
+  customerName     String    @map("customer_name")
+  customerEmail    String    @map("customer_email")
+  customerWhatsapp String    @map("customer_whatsapp")
+  serviceType      String    @map("service_type")
+  package          String?
+  price            Int       @default(0)
+  paymentMethod    String    @map("payment_method")
+  proofImageUrl    String?   @map("proof_image_url")
+  message          String?
+  status           String    @default("menunggu_verifikasi")
+  adminNotes       String?   @map("admin_notes")
+  downloadUrl      String?   @map("download_url")
+  downloadFiles    String?   @map("download_files")
+  revisionNote     String?   @map("revision_note")
+  revisionFileUrl  String?   @map("revision_file_url")
+  revisionStatus   String?   @default("none") @map("revision_status")
+  completedAt      DateTime? @map("completed_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  customer         Customer? @relation(fields: [customerId], references: [id])
 
   @@map("orders")
 }
 
-// ─────────────────────────────────────────────
-//  Customer Feedback / Testimonials
-// ─────────────────────────────────────────────
 model Feedback {
-  id         String   @id @default(uuid())
-
-  customerId String   @map("customer_id")
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  orderId    String?  @map("order_id")  // optional link to a specific order
-
-  title      String   @db.VarChar(120)
-  message    String   @db.Text
-  rating     Int      @default(5)       // 1–5
-
-  adminReply String?  @map("admin_reply") @db.Text
-  status     String   @default("pending") // pending | replied | closed
-
-  isPublished  Boolean   @default(false)  @map("is_published")
-  publishedAt  DateTime? @map("published_at")
-
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id          String    @id @default(uuid())
+  customerId  String    @map("customer_id")
+  orderId     String?   @map("order_id")
+  title       String    @db.VarChar(120)
+  message     String
+  rating      Int       @default(5)
+  adminReply  String?   @map("admin_reply")
+  status      String    @default("pending")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  isPublished Boolean   @default(false) @map("is_published")
+  publishedAt DateTime? @map("published_at")
+  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   @@map("feedbacks")
 }
 
-// ─────────────────────────────────────────────
-//  Expenses (operational costs)
-// ─────────────────────────────────────────────
 model Expense {
   id          String   @id @default(uuid())
   title       String
   amount      Int
   category    String?  @default("Operasional")
-  description String?  @db.Text
+  description String?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("expenses")
 }
 
-// ─────────────────────────────────────────────
-//  Business Settings
-// ─────────────────────────────────────────────
 model Setting {
-  id           String  @id @default(uuid())
-  businessName String  @map("business_name")
-  ownerName    String? @map("owner_name")
-  phone        String?
-  whatsapp     String?
-  email        String?
-  address      String?
-  instagram    String?
-  logo         String?
-
-  // Payment account info (stored as JSON strings)
-  paymentBca     String? @map("payment_bca")
-  paymentBsi     String? @map("payment_bsi")
-  paymentBri     String? @map("payment_bri")
-  paymentMandiri String? @map("payment_mandiri")
-  paymentDana    String? @map("payment_dana")
-  paymentGopay   String? @map("payment_gopay")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(uuid())
+  businessName   String   @map("business_name")
+  ownerName      String?  @map("owner_name")
+  phone          String?
+  whatsapp       String?
+  email          String?
+  address        String?
+  instagram      String?
+  logo           String?
+  paymentBca     String?  @map("payment_bca")
+  paymentBsi     String?  @map("payment_bsi")
+  paymentBri     String?  @map("payment_bri")
+  paymentMandiri String?  @map("payment_mandiri")
+  paymentDana    String?  @map("payment_dana")
+  paymentGopay   String?  @map("payment_gopay")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@map("settings")
 }
