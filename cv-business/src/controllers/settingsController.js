@@ -4,6 +4,7 @@
  */
 const Response = require('../utils/response');
 const prisma = require('../config/database');
+const { uploadToCloudinary } = require('../utils/cloudinaryUpload');
 
 const DEFAULT_SETTINGS = {
   id: 'default',
@@ -20,11 +21,9 @@ class SettingsController {
   static async getSettings(req, res, next) {
     try {
       let settings = await prisma.setting.findFirst();
-
       if (!settings) {
         settings = await prisma.setting.create({ data: DEFAULT_SETTINGS });
       }
-
       return Response.success(res, settings, 'Settings retrieved successfully');
     } catch (error) {
       next(error);
@@ -38,8 +37,11 @@ class SettingsController {
         paymentBca, paymentBsi, paymentBri, paymentMandiri, paymentDana, paymentGopay,
       } = req.body;
 
-      // Handle optional logo upload
-      const logo = req.file ? `/uploads/${req.file.filename}` : undefined;
+      // Upload logo to Cloudinary if provided
+      let logo = undefined;
+      if (req.file && req.file.buffer) {
+        logo = await uploadToCloudinary(req.file.buffer, 'cvpro-studio/logos');
+      }
 
       const data = {};
       if (businessName   !== undefined) data.businessName   = businessName;
@@ -58,7 +60,6 @@ class SettingsController {
       if (paymentGopay   !== undefined) data.paymentGopay   = paymentGopay;
 
       let settings = await prisma.setting.findFirst();
-
       if (!settings) {
         settings = await prisma.setting.create({ data: { ...DEFAULT_SETTINGS, ...data } });
       } else {

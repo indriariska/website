@@ -181,7 +181,7 @@ class CustomerAuthController {
   }
 
   // POST /api/customer/orders/:id/upload-revision-file
-  // Upload a file for revision (reuses existing multer from orderController)
+  // Upload a file for revision using Cloudinary
   static async uploadRevisionFile(req, res, next) {
     try {
       const order = await prisma.order.findFirst({
@@ -189,8 +189,12 @@ class CustomerAuthController {
       });
       if (!order) return Response.error(res, 'Order not found', 404);
 
-      const fileUrl = req.file ? `/uploads/${req.file.filename}` : null;
-      if (!fileUrl) return Response.error(res, 'No file uploaded', 400);
+      if (!req.file || !req.file.buffer) {
+        return Response.error(res, 'No file uploaded', 400);
+      }
+
+      const { uploadToCloudinary } = require('../utils/cloudinaryUpload');
+      const fileUrl = await uploadToCloudinary(req.file.buffer, 'cvpro-studio/revisions');
 
       return Response.success(res, { fileUrl }, 'File uploaded');
     } catch (error) {

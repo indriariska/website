@@ -6,8 +6,7 @@ const express                = require('express');
 const router                 = express.Router();
 const CustomerAuthController = require('../controllers/customerAuthController');
 const { customerAuth }       = require('../middleware/customerAuth');
-// Reuse the existing multer setup from orderController
-const { uploadProof }        = require('../controllers/orderController');
+const { upload }             = require('../utils/cloudinaryUpload');
 
 // ── Public ────────────────────────────────────────────────────────
 router.post('/register', CustomerAuthController.register);
@@ -27,10 +26,10 @@ router.post('/orders/:id/revision',
   CustomerAuthController.submitRevision
 );
 
-// Revision file upload (multipart, reuses existing multer — field name: proofImage)
+// Revision file upload via Cloudinary (memoryStorage, field name: proofImage)
 router.post('/orders/:id/revision-file',
   customerAuth,
-  uploadProof,
+  upload.single('proofImage'),
   CustomerAuthController.uploadRevisionFile
 );
 
