@@ -9,6 +9,33 @@ const prisma = require('../config/database');
 const path = require('path');
 const fs   = require('fs');
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+
+// ── Cloudinary configuration ─────────────────────────────────────
+// Credentials come from environment variables set in Vercel dashboard.
+// Locally, set them in .env. If not set, Cloudinary upload is skipped.
+if (process.env.CLOUDINARY_CLOUD_NAME) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key:    process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure:     true,
+  });
+}
+
+// ── Helper: upload buffer to Cloudinary ─────────────────────────
+function uploadBufferToCloudinary(buffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: folder || 'cvpro-studio', resource_type: 'auto' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
+  });
+}
 
 // ── Ensure upload directories exist ─────────────────────────────
 const uploadsDir  = path.join(process.cwd(), 'uploads');
@@ -23,10 +50,10 @@ if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   }
 }
 
-// ── Multer setup for payment proof uploads ───────────────────────
-// On Vercel: use memoryStorage (filesystem is read-only; disk storage crashes).
-// On local:  use diskStorage so files are persisted in uploads/.
-const isVercel = process.env.NODE_ENV === 'production' || process.env.VERCEL;
+// ── Multer setup ─────────────────────────────────────────────────
+// On Vercel: memoryStorage — file goes to req.file.buffer, then uploaded to Cloudinary.
+// On local:  diskStorage  — file saved to uploads/ folder as before.
+const isVercel = !!(process.env.VERCEL || process.env.CLOUDINARY_CLOUD_NAME);
 
 const proofStorage = isVercel
   ? multer.memoryStorage()
@@ -67,14 +94,12 @@ const deliveryUpload = multer({
   storage: deliveryStorage,
   limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
   fileFilter: (req, file, cb) => {
-    // Allow any reasonable document / image / archive
     const allowedExts = /\.(pdf|docx?|xlsx?|pptx?|zip|rar|7z|png|jpg|jpeg|gif|webp)$/i;
     if (allowedExts.test(path.extname(file.originalname))) return cb(null, true);
     cb(new Error('File type not allowed. Allowed: PDF, DOC, DOCX, XLS, ZIP, PNG, JPG'));
   },
 });
 
-// Field name MUST be "file" — matches FormData.append('file', ...)
 const uploadDelivery = deliveryUpload.single('file');
 
 // ── Controller ──────────────────────────────────────────────────
@@ -168,6 +193,18 @@ class OrderController {
         ? (isVercel ? null : `/uploads/${req.file.filename}`)
         : null;
 
+      // If on Vercel + file present + Cloudinary configured → upload to Cloudinary
+      let cloudinaryUrl = proofImageUrl;
+      if (isVercel && req.file && req.file.buffer && process.env.CLOUDINARY_CLOUD_NAME) {
+        try {
+          cloudinaryUrl = await uploadBufferToCloudinary(req.file.buffer, 'cvpro-studio/proofs');
+          console.log('[proof] Uploaded to Cloudinary:', cloudinaryUrl);
+        } catch (uploadErr) {
+          console.error('[proof] Cloudinary upload failed, saving order without proof URL:', uploadErr.message);
+          cloudinaryUrl = null;
+        }
+      }
+
       // If a customer token is present in the header, link the order to that customer
       let customerId = null;
       try {
@@ -191,7 +228,7 @@ class OrderController {
           package: pkg || null,
           price: parseInt(String(price).replace(/[^0-9]/g, '')) || 0,
           paymentMethod,
-          proofImageUrl,
+          proofImageUrl: cloudinaryUrl,
           message: message || null,
           status: 'menunggu_verifikasi',
         },
