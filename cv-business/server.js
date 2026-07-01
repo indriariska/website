@@ -25,10 +25,18 @@ const app  = express();
 const PORT = process.env.PORT || 3000;
 
 // ── Ensure uploads directories exist ─────────────────────────────
+// Guard: on Vercel the filesystem is read-only, skip directory creation.
+// Locally (NODE_ENV=development or require.main===module) we create them.
 const uploadsDir  = path.join(__dirname, 'uploads');
 const deliveryDir = path.join(__dirname, 'uploads', 'delivery');
-if (!fs.existsSync(uploadsDir))  fs.mkdirSync(uploadsDir,  { recursive: true });
-if (!fs.existsSync(deliveryDir)) fs.mkdirSync(deliveryDir, { recursive: true });
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    if (!fs.existsSync(uploadsDir))  fs.mkdirSync(uploadsDir,  { recursive: true });
+    if (!fs.existsSync(deliveryDir)) fs.mkdirSync(deliveryDir, { recursive: true });
+  } catch (e) {
+    console.warn('[uploads] Could not create upload directories:', e.message);
+  }
+}
 
 // ── Security & parsing ────────────────────────────────────────────
 app.use(helmet({
@@ -88,10 +96,15 @@ app.use(express.static(path.join(__dirname, '.')));
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`\nCVPro Studio API running on port ${PORT}`);
-  console.log(`Environment : ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Health check: http://localhost:${PORT}/api/health\n`);
-});
+// ── Start server only when run directly (not on Vercel) ──────────
+// Vercel imports this module and handles HTTP itself.
+// require.main === module is true only when: node server.js
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\nCVPro Studio API running on port ${PORT}`);
+    console.log(`Environment : ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Health check: http://localhost:${PORT}/api/health\n`);
+  });
+}
 
 module.exports = app;

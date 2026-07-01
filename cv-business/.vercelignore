@@ -1,0 +1,12 @@
+node_modules
+uploads
+.env
+prisma/seed.js
+restore-admin.js
+verify-all.js
+verify-publish.js
+verify-testimonials.js
+debug-testimonials.js
+check-db.js
+cleanup.js
+README.md
