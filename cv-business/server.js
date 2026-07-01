@@ -92,6 +92,26 @@ app.use('/admin',    express.static(path.join(__dirname, 'admin')));
 app.use('/customer', express.static(path.join(__dirname, 'customer')));
 app.use(express.static(path.join(__dirname, '.')));
 
+// ── Explicit HTML page routes ─────────────────────────────────────
+// Required on Vercel: express.static alone doesn't always serve index.html
+// for GET / in serverless environments.
+const pages = [
+  '/',           'index.html',
+  '/harga',      'harga.html',
+  '/kontak',     'kontak.html',
+  '/layanan',    'layanan.html',
+  '/tentang',    'tentang.html',
+  '/template',   'template.html',
+  '/sukses',     'sukses.html',
+];
+for (let i = 0; i < pages.length; i += 2) {
+  (function (route, file) {
+    app.get(route, function (req, res) {
+      res.sendFile(path.join(__dirname, file));
+    });
+  })(pages[i], pages[i + 1]);
+}
+
 // ── Error handlers ────────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
