@@ -38,17 +38,10 @@ async function loadTemplates() {
 }
 
 async function loadTestimonials() {
-  try {
-    const response = await API.getTestimonials();
-    if (response.success && response.data) {
-      testimonialsData = response.data;
-      console.log('Testimonials loaded from API:', testimonialsData);
-      return testimonialsData;
-    }
-  } catch (error) {
-    console.error('Failed to load testimonials from API:', error);
-    return null;
-  }
+  // Testimonials are now loaded directly via GET /api/feedback/public
+  // in the inline loadPublicTestimonials() IIFE in index.html.
+  // This function is kept for backward compatibility but is a no-op.
+  return null;
 }
 
 async function loadGallery() {

@@ -578,150 +578,12 @@
 
     <p class="section-subtitle fade-in">Ribuan klien puas dengan hasil kerja kami. Ini cerita mereka.</p>
 
-    <!-- Dynamic feedback cards loaded from /api/feedback/public -->
-    <div class="testimonials-grid" id="testimonialsGrid">
-
-      <!-- Fallback static cards shown while API loads or if no published feedback exists -->
-      <div class="testimonial-card fade-in delay-1" data-static="1">
-        <div class="quote-icon">"</div>
-        <p class="testimonial-text">
-          CV saya jadi jauh lebih menarik dan profesional. Dalam seminggu setelah kirim lamaran dengan CV baru ini, langsung dapat 3 panggilan interview. Recommended banget!
-        </p>
-        <div class="stars">★★★★★</div>
-        <div class="testimonial-author">
-          <div class="author-avatar">AR</div>
-          <div class="author-info">
-            <h4>Arinda Rahayu</h4>
-            <p>Marketing Executive · Jakarta</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card fade-in delay-2" data-static="1">
-        <div class="quote-icon">"</div>
-        <p class="testimonial-text">
-          Portofolio website yang dibuat keren banget, klien-klien saya langsung terkesan. Desainnya elegan dan profesional. Sudah dapat 5 project baru dalam sebulan!
-        </p>
-        <div class="stars">★★★★★</div>
-        <div class="testimonial-author">
-          <div class="author-avatar">BW</div>
-          <div class="author-info">
-            <h4>Bagas Wicaksono</h4>
-            <p>Freelance Designer · Yogyakarta</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card fade-in delay-3" data-static="1">
-        <div class="quote-icon">"</div>
-        <p class="testimonial-text">
-          Proses cepat, revisi responsif, dan hasilnya melebihi ekspektasi. CV ATS-nya berhasil lolos screening HRD perusahaan multinasional. Terima kasih CVPro Studio!
-        </p>
-        <div class="stars">★★★★★</div>
-        <div class="testimonial-author">
-          <div class="author-avatar">DS</div>
-          <div class="author-info">
-            <h4>Dita Sumarni</h4>
-            <p>Software Engineer · Bandung</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <!-- Diisi otomatis dari database — lihat loadPublicTestimonials() di bawah -->
+    <div class="testimonials-grid" id="testimonialsGrid"></div>
 
   </div>
 
 </section>
-
-<script>
-/* ── Kata Mereka — Load published feedback from API ── */
-(function () {
-  'use strict';
-
-  function esc(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-  function starsHtml(n) {
-    var s = '';
-    for (var i = 1; i <= 5; i++) s += i <= n ? '★' : '☆';
-    return s;
-  }
-  function fmtDate(d) {
-    if (!d) return '';
-    try { return new Date(d).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }); }
-    catch(_) { return ''; }
-  }
-  function initials(name) {
-    var parts = String(name || '').trim().split(/\s+/);
-    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-    return String(name || '?').substring(0, 2).toUpperCase();
-  }
-
-  function buildCard(f, delay) {
-    var replyHtml = f.adminReply
-      ? '<div style="margin-top:10px;padding:10px 14px;background:rgba(124,58,237,0.07);'
-        + 'border-radius:10px;border-left:3px solid #7c3aed;font-size:0.82rem;color:#4c1d95">'
-        + '<strong style="font-size:0.75rem;display:block;margin-bottom:4px;color:#6d28d9">'
-        + '<i class="fas fa-reply"></i> Balasan CVPro Studio</strong>'
-        + esc(f.adminReply)
-        + '</div>'
-      : '';
-    var card = document.createElement('div');
-    card.className = 'testimonial-card fade-in ' + delay;
-    card.setAttribute('data-dynamic', '1');
-    card.innerHTML =
-      '<div class="quote-icon">"</div>'
-      + '<p class="testimonial-text">' + esc(f.message) + '</p>'
-      + '<div class="stars">' + starsHtml(f.rating) + '</div>'
-      + replyHtml
-      + '<div class="testimonial-author" style="margin-top:12px">'
-        + '<div class="author-avatar">' + esc(initials(f.customerName)) + '</div>'
-        + '<div class="author-info">'
-          + '<h4>' + esc(f.customerName) + '</h4>'
-          + '<p>' + esc(f.title) + (f.publishedAt ? ' · ' + fmtDate(f.publishedAt) : '') + '</p>'
-        + '</div>'
-      + '</div>';
-    return card;
-  }
-
-  function loadTestimonials() {
-    var grid = document.getElementById('testimonialsGrid');
-    if (!grid) return;
-
-    fetch('/api/feedback/public')
-      .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      })
-      .then(function (res) {
-        if (!res.success || !Array.isArray(res.data) || res.data.length === 0) {
-          return; // no published feedback → keep static fallback cards
-        }
-
-        // Remove static fallback cards — keep any already-added dynamic ones
-        grid.querySelectorAll('[data-static]').forEach(function (c) { c.remove(); });
-        // Also remove any previously rendered dynamic cards (clean slate)
-        grid.querySelectorAll('[data-dynamic]').forEach(function (c) { c.remove(); });
-
-        var delays = ['delay-1','delay-2','delay-3','delay-4','delay-5','delay-6'];
-        res.data.forEach(function (f, i) {
-          grid.appendChild(buildCard(f, delays[i % delays.length]));
-        });
-      })
-      .catch(function (err) {
-        // Network error or JSON parse error — static fallback stays visible
-        console.log('[Testimoni] API tidak tersedia, menampilkan data statis.', err && err.message);
-      });
-  }
-
-  // Run after DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadTestimonials);
-  } else {
-    loadTestimonials();
-  }
-})();
-</script>
 
 
 
@@ -1207,6 +1069,117 @@
 <script src="js/script.js"></script>
 <script src="js/customer-nav.js"></script>
 <script src="js/welcome-popup.js"></script>
+
+<script>
+/* ── Kata Mereka — public testimonials from PostgreSQL ──────────
+   Uses window.API (js/api.js) so the base URL is always consistent
+   with the rest of the site, including Cloudflare Tunnel.
+   API_BASE_URL is '/api' — relative to current origin.
+   ──────────────────────────────────────────────────────────── */
+(function loadPublicTestimonials() {
+  var grid = document.getElementById('testimonialsGrid');
+  if (!grid) { console.warn('[Testimoni] #testimonialsGrid not found'); return; }
+
+  function esc(s) {
+    return String(s || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function stars(n) {
+    var s = '';
+    for (var i = 1; i <= 5; i++) s += (i <= n) ? '★' : '☆';
+    return s;
+  }
+  function fmtDate(d) {
+    if (!d) return '';
+    try { return new Date(d).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }); }
+    catch (_) { return ''; }
+  }
+  function initials(name) {
+    var p = String(name || '').trim().split(/\s+/);
+    return p.length >= 2
+      ? (p[0][0] + p[1][0]).toUpperCase()
+      : String(name || '?').substring(0, 2).toUpperCase();
+  }
+
+  function renderEmpty() {
+    grid.innerHTML =
+      '<div style="grid-column:1/-1;text-align:center;padding:48px 20px;'
+      + 'color:#9ca3af;font-size:1rem">'
+      + '<i class="fas fa-comment-slash" style="font-size:2.5rem;display:block;'
+      + 'margin-bottom:14px;color:#d1d5db"></i>'
+      + 'Belum ada testimoni yang dipublikasikan.'
+      + '</div>';
+  }
+
+  function renderCards(data) {
+    grid.innerHTML = '';
+    if (!data || data.length === 0) {
+      console.log('[Testimoni] No published feedback, showing empty state');
+      renderEmpty();
+      return;
+    }
+
+    console.log('[Testimoni] Rendering', data.length, 'card(s)');
+    var delays = ['delay-1','delay-2','delay-3','delay-4','delay-5','delay-6'];
+    data.forEach(function (f, i) {
+      var replyHtml = f.adminReply
+        ? '<div style="margin-top:10px;padding:10px 14px;background:rgba(124,58,237,0.07);'
+          + 'border-radius:10px;border-left:3px solid #7c3aed;font-size:0.82rem;color:#4c1d95">'
+          + '<strong style="font-size:0.75rem;display:block;margin-bottom:4px;color:#6d28d9">'
+          + '<i class="fas fa-reply"></i> Balasan CVPro Studio</strong>'
+          + esc(f.adminReply) + '</div>'
+        : '';
+
+      var card = document.createElement('div');
+      // Add 'visible' immediately so the card is not hidden by the fade-in CSS
+      // (IntersectionObserver already ran before fetch completed, so it won't
+      //  observe these dynamically-inserted cards automatically)
+      card.className = 'testimonial-card fade-in visible ' + delays[i % delays.length];
+      card.innerHTML =
+          '<div class="quote-icon">"</div>'
+        + '<p class="testimonial-text">' + esc(f.message) + '</p>'
+        + '<div class="stars">' + stars(f.rating) + '</div>'
+        + replyHtml
+        + '<div class="testimonial-author" style="margin-top:12px">'
+          + '<div class="author-avatar">' + esc(initials(f.customerName)) + '</div>'
+          + '<div class="author-info">'
+            + '<h4>' + esc(f.customerName) + '</h4>'
+            + '<p>' + esc(f.title)
+              + (f.publishedAt ? ' &middot; ' + fmtDate(f.publishedAt) : '')
+            + '</p>'
+          + '</div>'
+        + '</div>';
+      grid.appendChild(card);
+    });
+    console.log('[Testimoni] Cards appended. Grid children:', grid.children.length);
+  }
+
+  // Show loading spinner
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:#9ca3af">'
+    + '<i class="fas fa-spinner fa-spin" style="font-size:1.5rem"></i></div>';
+
+  // Use window.API so the request uses the same API_BASE_URL as all other
+  // requests on this page — works correctly on Cloudflare Tunnel and localhost.
+  var apiUrl = (typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : '/api') + '/feedback/public';
+  console.log('[Testimoni] Fetching:', apiUrl);
+
+  fetch(apiUrl)
+    .then(function (r) {
+      console.log('[Testimoni] Response status:', r.status, r.url);
+      if (!r.ok) throw new Error('HTTP ' + r.status + ' from ' + r.url);
+      return r.json();
+    })
+    .then(function (res) {
+      console.log('[Testimoni] Response JSON:', res.success, 'count:', res.data && res.data.length);
+      renderCards(res.success ? res.data : []);
+    })
+    .catch(function (err) {
+      console.error('[Testimoni] fetch failed:', err.message);
+      renderEmpty();
+    });
+})();
+</script>
 
 <script>
 
@@ -1853,19 +1826,10 @@ document.querySelector("form").addEventListener("submit", function(e) {
   </div>
 </div>
 
-<script>
-function closeTemplateDetailModal() {
-  const modal = document.getElementById('templateDetailModal');
-  if (modal) {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-}
-</script>
-  </div>
-</div>
+
 
 </body>
+
 
 </html>
 

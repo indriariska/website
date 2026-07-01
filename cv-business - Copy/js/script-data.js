@@ -38,17 +38,18 @@ async function loadTemplates() {
 }
 
 async function loadTestimonials() {
-  try {
-    const response = await API.getTestimonials();
+try {
+    const response = await API.getPublicFeedback();
+
     if (response.success && response.data) {
-      testimonialsData = response.data;
-      console.log('Testimonials loaded from API:', testimonialsData);
-      return testimonialsData;
+        testimonialsData = response.data;
+        console.log('Testimonials loaded from API:', testimonialsData);
+        return testimonialsData;
     }
-  } catch (error) {
+} catch (error) {
     console.error('Failed to load testimonials from API:', error);
     return null;
-  }
+}
 }
 
 async function loadGallery() {

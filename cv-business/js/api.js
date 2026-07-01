@@ -95,6 +95,10 @@ class API {
     return this.get('/testimonials');
   }
 
+  static async getPublicFeedback() {
+    return this.get('/feedback/public');
+  }
+
   static async getGallery(category = null) {
     const params = category ? `?category=${category}` : '';
     return this.get(`/gallery${params}`);
