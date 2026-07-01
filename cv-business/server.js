@@ -24,6 +24,9 @@ const feedbackRoutes  = require('./src/routes/feedbackRoutes');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust Vercel's reverse proxy so req.ip and rate limiting work correctly
+app.set('trust proxy', 1);
+
 // ── Ensure uploads directories exist ─────────────────────────────
 // Guard: on Vercel the filesystem is read-only, skip directory creation.
 // Locally (NODE_ENV=development or require.main===module) we create them.

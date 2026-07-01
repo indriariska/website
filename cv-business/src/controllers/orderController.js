@@ -24,13 +24,19 @@ if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
 }
 
 // ── Multer setup for payment proof uploads ───────────────────────
-const proofStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, 'proof-' + unique + path.extname(file.originalname));
-  },
-});
+// On Vercel: use memoryStorage (filesystem is read-only; disk storage crashes).
+// On local:  use diskStorage so files are persisted in uploads/.
+const isVercel = process.env.NODE_ENV === 'production' || process.env.VERCEL;
+
+const proofStorage = isVercel
+  ? multer.memoryStorage()
+  : multer.diskStorage({
+      destination: (req, file, cb) => cb(null, uploadsDir),
+      filename: (req, file, cb) => {
+        const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, 'proof-' + unique + path.extname(file.originalname));
+      },
+    });
 
 const proofUpload = multer({
   storage: proofStorage,
@@ -47,13 +53,15 @@ const proofUpload = multer({
 const uploadProof = proofUpload.single('proofImage');
 
 // ── Multer setup for delivery files (PDF, DOCX, ZIP, etc.) ───────
-const deliveryStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, deliveryDir),
-  filename: (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, 'delivery-' + unique + path.extname(file.originalname));
-  },
-});
+const deliveryStorage = isVercel
+  ? multer.memoryStorage()
+  : multer.diskStorage({
+      destination: (req, file, cb) => cb(null, deliveryDir),
+      filename: (req, file, cb) => {
+        const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, 'delivery-' + unique + path.extname(file.originalname));
+      },
+    });
 
 const deliveryUpload = multer({
   storage: deliveryStorage,
@@ -156,7 +164,9 @@ class OrderController {
         return Response.error(res, 'Missing required fields: customerName, customerEmail, customerWhatsapp, serviceType, paymentMethod', 400);
       }
 
-      const proofImageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+      const proofImageUrl = req.file
+        ? (isVercel ? null : `/uploads/${req.file.filename}`)
+        : null;
 
       // If a customer token is present in the header, link the order to that customer
       let customerId = null;
