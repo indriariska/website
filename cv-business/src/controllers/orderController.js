@@ -419,14 +419,27 @@ class OrderController {
       }
 
       // 2. Determine file URL
+      //    On Vercel (memoryStorage): upload buffer to Cloudinary → get secure_url
+      //    On local  (diskStorage):   use /uploads/delivery/<filename>
       let primaryUrl  = null;
       let primaryName = null;
 
       if (req.file) {
-        // Real file uploaded via multipart field "file"
-        primaryUrl  = '/uploads/delivery/' + req.file.filename;
         primaryName = req.file.originalname;
-        console.log('[delivery] File saved:', primaryUrl);
+        if (isVercel && req.file.buffer && process.env.CLOUDINARY_CLOUD_NAME) {
+          // Upload to Cloudinary — no /uploads/delivery/ path on Vercel
+          try {
+            primaryUrl = await uploadBufferToCloudinary(req.file.buffer, 'cvpro-studio/delivery');
+            console.log('[delivery] Uploaded to Cloudinary:', primaryUrl);
+          } catch (uploadErr) {
+            console.error('[delivery] Cloudinary upload failed:', uploadErr.message);
+            return Response.error(res, 'Gagal mengupload file. Coba lagi.', 500);
+          }
+        } else if (req.file.filename) {
+          // Local: file saved to disk by diskStorage
+          primaryUrl = '/uploads/delivery/' + req.file.filename;
+          console.log('[delivery] File saved locally:', primaryUrl);
+        }
       }
 
       // 3. Build the final downloadFiles array
