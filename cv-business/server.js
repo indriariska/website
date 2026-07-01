@@ -88,13 +88,15 @@ app.get('/api/health', (req, res) => {
 });
 
 // ── Serve admin & customer-facing static files ───────────────────
+// With the new vercel.json routing, static assets (css/js/images) are
+// served directly by Vercel CDN — they never reach Express.
+// Express only handles /api/* and explicit HTML page routes.
+// Use __dirname: on Vercel @vercel/node, __dirname = project root (/var/task).
 app.use('/admin',    express.static(path.join(__dirname, 'admin')));
 app.use('/customer', express.static(path.join(__dirname, 'customer')));
-app.use(express.static(path.join(__dirname, '.')));
+app.use(express.static(__dirname));
 
 // ── Explicit HTML page routes ─────────────────────────────────────
-// Required on Vercel: express.static alone doesn't always serve index.html
-// for GET / in serverless environments.
 const pages = [
   '/',           'index.html',
   '/harga',      'harga.html',
